@@ -61,6 +61,7 @@ public:
   Vec3<T> body_pos_world_, body_vel_world_, body_vel_local_, body_acc_local_;
   Vec3<T> body_ang_vel_local_, body_ang_vel_world_;
   Quat<T> body_quat_;
+  T Trunk_mass;
 
   Vec3<T> joint_pos_act_[4], joint_vel_act_[4];
 
@@ -69,6 +70,7 @@ public:
   T foot_contact_[4];
 
   //************************************* Custom VARIABLES ************************************************
+  T M_d_R;
   T r_TD, dr_TD, th_TD, dth_TD, t_TD,t_stance;
   T r_LO, dr_LO, th_LO, dth_LO, t_LO, V_y_LO;
 
@@ -85,7 +87,6 @@ public:
    */
 
   //* variables for StanceForceControl *//
-  T M_d_R;
   Vec2<T> stance_force_contorl_joint_des_;
 
   //* Variables for Compensation Control *//

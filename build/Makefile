@@ -123,6 +123,33 @@ simulation/fast:
 	$(MAKE) -f CMakeFiles/simulation.dir/build.make CMakeFiles/simulation.dir/build
 .PHONY : simulation/fast
 
+src/controller/CompensationControl.o: src/controller/CompensationControl.cpp.o
+
+.PHONY : src/controller/CompensationControl.o
+
+# target to build an object file
+src/controller/CompensationControl.cpp.o:
+	$(MAKE) -f CMakeFiles/simulation.dir/build.make CMakeFiles/simulation.dir/src/controller/CompensationControl.cpp.o
+.PHONY : src/controller/CompensationControl.cpp.o
+
+src/controller/CompensationControl.i: src/controller/CompensationControl.cpp.i
+
+.PHONY : src/controller/CompensationControl.i
+
+# target to preprocess a source file
+src/controller/CompensationControl.cpp.i:
+	$(MAKE) -f CMakeFiles/simulation.dir/build.make CMakeFiles/simulation.dir/src/controller/CompensationControl.cpp.i
+.PHONY : src/controller/CompensationControl.cpp.i
+
+src/controller/CompensationControl.s: src/controller/CompensationControl.cpp.s
+
+.PHONY : src/controller/CompensationControl.s
+
+# target to generate assembly for a file
+src/controller/CompensationControl.cpp.s:
+	$(MAKE) -f CMakeFiles/simulation.dir/build.make CMakeFiles/simulation.dir/src/controller/CompensationControl.cpp.s
+.PHONY : src/controller/CompensationControl.cpp.s
+
 src/controller/TrackingController.o: src/controller/TrackingController.cpp.o
 
 .PHONY : src/controller/TrackingController.o
@@ -429,6 +456,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... simulation"
+	@echo "... src/controller/CompensationControl.o"
+	@echo "... src/controller/CompensationControl.i"
+	@echo "... src/controller/CompensationControl.s"
 	@echo "... src/controller/TrackingController.o"
 	@echo "... src/controller/TrackingController.i"
 	@echo "... src/controller/TrackingController.s"

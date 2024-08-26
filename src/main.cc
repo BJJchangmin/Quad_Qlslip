@@ -36,6 +36,7 @@
 #include "MuJoCoInterface.hpp"
 #include "TrackingController.hpp"
 #include "data_logging.hpp"
+#include "CompensationControl.hpp"
 
 
 #define MUJOCO_PLUGIN_DIR "mujoco_plugin"
@@ -71,6 +72,9 @@ RobotLeg<float> robot = buildMclQuad<float>();  // robot model
 TrackingController<float> track_ctrl(robot);     // tracking controller
 MotionTrajectory<float> traj_generator;            // motion trajectory
 DataLogging<float> data_logger(robot);         // data logger
+CompensationControl<float> comp_ctrl(robot);   // compensation controller
+
+
 
 std::shared_ptr<MuJoCoInterface<float>::MuJoCoActuatorCommand> actuator_cmd_ptr;
 std::shared_ptr<MotionTrajectory<float>::DesiredFootTrajectory> foot_traj_ptr;
@@ -428,6 +432,7 @@ void PhysicsLoop(mj::Simulate& sim) {
             //* ***** GENERATE DESIRED JOINT COMMAND AND APPLY CONTROL INPUT FOR SIMULATION***** *//
             bool bIsPerturbOn = false;
             traj_generator.stance_test();
+            comp_ctrl.compensation_control();
             track_ctrl.joint_HAA_control();
             track_ctrl.RW_posPD_control();
             apply_joint_control(d);
@@ -473,12 +478,7 @@ void PhysicsLoop(mj::Simulate& sim) {
             //* ***** GENERATE DESIRED JOINT COMMAND AND APPLY CONTROL INPUT FOR SIMULATION***** *//
             bool bIsPerturbOn = false;
             traj_generator.stance_test();
-            // std::cout << "foot pos: " << foot_traj_ptr->foot_pos_rw_des_[0] << std::endl;
-            // std::cout << "foot pos: " << robot.foot_pos_rw_act_local_[0] << std::endl;
-
-            std::cout << "joint_pos_ref: " << joint_traj_ptr->joint_pos_des_[0] << std::endl;
-            std::cout << "joint_vel_ref: " << joint_traj_ptr->joint_vel_des_[0] << std::endl;
-
+            comp_ctrl.compensation_control();
             track_ctrl.joint_HAA_control();
             track_ctrl.RW_posPD_control();
             apply_joint_control(d);

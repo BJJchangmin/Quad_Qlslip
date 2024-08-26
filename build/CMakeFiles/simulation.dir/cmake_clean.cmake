@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/simulation.dir/src/controller/CompensationControl.cpp.o"
   "CMakeFiles/simulation.dir/src/controller/TrackingController.cpp.o"
   "CMakeFiles/simulation.dir/src/glfw_adapter.cc.o"
   "CMakeFiles/simulation.dir/src/glfw_dispatch.cc.o"

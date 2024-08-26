@@ -1,6 +1,11 @@
 [
 {
   "directory": "/home/ycm/mujoco/quad_qlslip/build",
+  "command": "/usr/bin/c++   -I/home/ycm/mujoco/quad_qlslip/include -I/home/ycm/mujoco/quad_qlslip/include/math -I/home/ycm/mujoco/quad_qlslip/include/robot -I/home/ycm/mujoco/quad_qlslip/include/trajectory -I/home/ycm/mujoco/quad_qlslip/include/controller -I/home/ycm/mujoco/quad_qlslip/include/utilities  -g   -Wpedantic -std=gnu++17 -o CMakeFiles/simulation.dir/src/controller/CompensationControl.cpp.o -c /home/ycm/mujoco/quad_qlslip/src/controller/CompensationControl.cpp",
+  "file": "/home/ycm/mujoco/quad_qlslip/src/controller/CompensationControl.cpp"
+},
+{
+  "directory": "/home/ycm/mujoco/quad_qlslip/build",
   "command": "/usr/bin/c++   -I/home/ycm/mujoco/quad_qlslip/include -I/home/ycm/mujoco/quad_qlslip/include/math -I/home/ycm/mujoco/quad_qlslip/include/robot -I/home/ycm/mujoco/quad_qlslip/include/trajectory -I/home/ycm/mujoco/quad_qlslip/include/controller -I/home/ycm/mujoco/quad_qlslip/include/utilities  -g   -Wpedantic -std=gnu++17 -o CMakeFiles/simulation.dir/src/controller/TrackingController.cpp.o -c /home/ycm/mujoco/quad_qlslip/src/controller/TrackingController.cpp",
   "file": "/home/ycm/mujoco/quad_qlslip/src/controller/TrackingController.cpp"
 },

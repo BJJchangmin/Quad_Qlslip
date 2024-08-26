@@ -48,6 +48,11 @@ RobotLeg<T> buildMclQuad()
 
     
   }
+
+  //* QLSLIP Parameter *//
+  mclQuad.M_d_R = 1.0;
+  mclQuad.Trunk_mass = 10.0+18.0+ 4*2.5; // m_trunk_front + m_trunk_back + 4*HAA
+
   return mclQuad;
 
 }
