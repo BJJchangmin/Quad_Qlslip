@@ -35,6 +35,23 @@ endif()
 
 
 ################################################################################
+# Find Python3 casadi
+################################################################################
+find_package(Python3 COMPONENTS Development NumPy REQUIRED)
+find_package(PythonLibs REQUIRED)
+
+# # Set the CMAKE_PREFIX_PATH to include the CasADi installation directory
+# set(CMAKE_PREFIX_PATH "/home/ycm/YCM/third-party/casadi/build" ${CMAKE_PREFIX_PATH})
+# # Update the Casadi_DIR variable to the correct directory
+
+# find_package(Casadi REQUIRED)
+# if(Casadi_Found)
+#   message(STATUS "Found CasADi: ${Casadi_DIR}")
+# else()
+#   message("CasADi not found")
+# endif()
+
+################################################################################
 # Find source and header files to create executable simulation file
 ################################################################################
 file(GLOB_RECURSE SOURCES
@@ -44,12 +61,12 @@ file(GLOB_RECURSE SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/trajectory/*.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/controller/*cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/utilities/*.cpp
-  
+
 
 )
 
 add_executable(simulation ${SOURCES})
-target_link_libraries(simulation mujoco glfw pthread rt ${CMAKE_DL_LIBS} )
+target_link_libraries(simulation mujoco glfw pthread rt casadi ipopt ${CMAKE_DL_LIBS} Python3::Python Python3::NumPy ${Python3_LIBRARY})
 target_include_directories(simulation
 PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -58,9 +75,13 @@ PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include/trajectory
   ${CMAKE_CURRENT_SOURCE_DIR}/include/controller
   ${CMAKE_CURRENT_SOURCE_DIR}/include/utilities
-
-
+  /home/ycm/YCM/third-party/casadi/build/lib
+  /home/ycm/YCM/third-party/casadi/build
+  /home/ycm/YCM/third-party/casadi
+  /home/ycm/YCM/third-party/Ipopt/src/Common
+  /home/ycm/YCM/third-party/Ipopt/src/Interfaces
+  /home/ycm/YCM/third-party/Ipopt/src/LinAlg
 
   $<INSTALL_INTERFACE:include>
-  
+
 )
