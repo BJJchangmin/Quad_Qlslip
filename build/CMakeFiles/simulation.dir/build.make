@@ -70,9 +70,48 @@ CMakeFiles/simulation.dir/src/controller/CompensationControl.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/simulation.dir/src/controller/CompensationControl.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ycm/mujoco/quad_qlslip/src/controller/CompensationControl.cpp -o CMakeFiles/simulation.dir/src/controller/CompensationControl.cpp.s
 
+CMakeFiles/simulation.dir/src/controller/FSM.cpp.o: CMakeFiles/simulation.dir/flags.make
+CMakeFiles/simulation.dir/src/controller/FSM.cpp.o: ../src/controller/FSM.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/simulation.dir/src/controller/FSM.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/simulation.dir/src/controller/FSM.cpp.o -c /home/ycm/mujoco/quad_qlslip/src/controller/FSM.cpp
+
+CMakeFiles/simulation.dir/src/controller/FSM.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/simulation.dir/src/controller/FSM.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ycm/mujoco/quad_qlslip/src/controller/FSM.cpp > CMakeFiles/simulation.dir/src/controller/FSM.cpp.i
+
+CMakeFiles/simulation.dir/src/controller/FSM.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/simulation.dir/src/controller/FSM.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ycm/mujoco/quad_qlslip/src/controller/FSM.cpp -o CMakeFiles/simulation.dir/src/controller/FSM.cpp.s
+
+CMakeFiles/simulation.dir/src/controller/FlightControl.cpp.o: CMakeFiles/simulation.dir/flags.make
+CMakeFiles/simulation.dir/src/controller/FlightControl.cpp.o: ../src/controller/FlightControl.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/simulation.dir/src/controller/FlightControl.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/simulation.dir/src/controller/FlightControl.cpp.o -c /home/ycm/mujoco/quad_qlslip/src/controller/FlightControl.cpp
+
+CMakeFiles/simulation.dir/src/controller/FlightControl.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/simulation.dir/src/controller/FlightControl.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ycm/mujoco/quad_qlslip/src/controller/FlightControl.cpp > CMakeFiles/simulation.dir/src/controller/FlightControl.cpp.i
+
+CMakeFiles/simulation.dir/src/controller/FlightControl.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/simulation.dir/src/controller/FlightControl.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ycm/mujoco/quad_qlslip/src/controller/FlightControl.cpp -o CMakeFiles/simulation.dir/src/controller/FlightControl.cpp.s
+
+CMakeFiles/simulation.dir/src/controller/StanceForceControl.cpp.o: CMakeFiles/simulation.dir/flags.make
+CMakeFiles/simulation.dir/src/controller/StanceForceControl.cpp.o: ../src/controller/StanceForceControl.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/simulation.dir/src/controller/StanceForceControl.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/simulation.dir/src/controller/StanceForceControl.cpp.o -c /home/ycm/mujoco/quad_qlslip/src/controller/StanceForceControl.cpp
+
+CMakeFiles/simulation.dir/src/controller/StanceForceControl.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/simulation.dir/src/controller/StanceForceControl.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ycm/mujoco/quad_qlslip/src/controller/StanceForceControl.cpp > CMakeFiles/simulation.dir/src/controller/StanceForceControl.cpp.i
+
+CMakeFiles/simulation.dir/src/controller/StanceForceControl.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/simulation.dir/src/controller/StanceForceControl.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ycm/mujoco/quad_qlslip/src/controller/StanceForceControl.cpp -o CMakeFiles/simulation.dir/src/controller/StanceForceControl.cpp.s
+
 CMakeFiles/simulation.dir/src/controller/TrackingController.cpp.o: CMakeFiles/simulation.dir/flags.make
 CMakeFiles/simulation.dir/src/controller/TrackingController.cpp.o: ../src/controller/TrackingController.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/simulation.dir/src/controller/TrackingController.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/simulation.dir/src/controller/TrackingController.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/simulation.dir/src/controller/TrackingController.cpp.o -c /home/ycm/mujoco/quad_qlslip/src/controller/TrackingController.cpp
 
 CMakeFiles/simulation.dir/src/controller/TrackingController.cpp.i: cmake_force
@@ -85,7 +124,7 @@ CMakeFiles/simulation.dir/src/controller/TrackingController.cpp.s: cmake_force
 
 CMakeFiles/simulation.dir/src/glfw_adapter.cc.o: CMakeFiles/simulation.dir/flags.make
 CMakeFiles/simulation.dir/src/glfw_adapter.cc.o: ../src/glfw_adapter.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/simulation.dir/src/glfw_adapter.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/simulation.dir/src/glfw_adapter.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/simulation.dir/src/glfw_adapter.cc.o -c /home/ycm/mujoco/quad_qlslip/src/glfw_adapter.cc
 
 CMakeFiles/simulation.dir/src/glfw_adapter.cc.i: cmake_force
@@ -98,7 +137,7 @@ CMakeFiles/simulation.dir/src/glfw_adapter.cc.s: cmake_force
 
 CMakeFiles/simulation.dir/src/glfw_dispatch.cc.o: CMakeFiles/simulation.dir/flags.make
 CMakeFiles/simulation.dir/src/glfw_dispatch.cc.o: ../src/glfw_dispatch.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/simulation.dir/src/glfw_dispatch.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/simulation.dir/src/glfw_dispatch.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/simulation.dir/src/glfw_dispatch.cc.o -c /home/ycm/mujoco/quad_qlslip/src/glfw_dispatch.cc
 
 CMakeFiles/simulation.dir/src/glfw_dispatch.cc.i: cmake_force
@@ -111,7 +150,7 @@ CMakeFiles/simulation.dir/src/glfw_dispatch.cc.s: cmake_force
 
 CMakeFiles/simulation.dir/src/lodepng.cpp.o: CMakeFiles/simulation.dir/flags.make
 CMakeFiles/simulation.dir/src/lodepng.cpp.o: ../src/lodepng.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/simulation.dir/src/lodepng.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/simulation.dir/src/lodepng.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/simulation.dir/src/lodepng.cpp.o -c /home/ycm/mujoco/quad_qlslip/src/lodepng.cpp
 
 CMakeFiles/simulation.dir/src/lodepng.cpp.i: cmake_force
@@ -124,7 +163,7 @@ CMakeFiles/simulation.dir/src/lodepng.cpp.s: cmake_force
 
 CMakeFiles/simulation.dir/src/main.cc.o: CMakeFiles/simulation.dir/flags.make
 CMakeFiles/simulation.dir/src/main.cc.o: ../src/main.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/simulation.dir/src/main.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/simulation.dir/src/main.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/simulation.dir/src/main.cc.o -c /home/ycm/mujoco/quad_qlslip/src/main.cc
 
 CMakeFiles/simulation.dir/src/main.cc.i: cmake_force
@@ -137,7 +176,7 @@ CMakeFiles/simulation.dir/src/main.cc.s: cmake_force
 
 CMakeFiles/simulation.dir/src/platform_ui_adapter.cc.o: CMakeFiles/simulation.dir/flags.make
 CMakeFiles/simulation.dir/src/platform_ui_adapter.cc.o: ../src/platform_ui_adapter.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/simulation.dir/src/platform_ui_adapter.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/simulation.dir/src/platform_ui_adapter.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/simulation.dir/src/platform_ui_adapter.cc.o -c /home/ycm/mujoco/quad_qlslip/src/platform_ui_adapter.cc
 
 CMakeFiles/simulation.dir/src/platform_ui_adapter.cc.i: cmake_force
@@ -150,7 +189,7 @@ CMakeFiles/simulation.dir/src/platform_ui_adapter.cc.s: cmake_force
 
 CMakeFiles/simulation.dir/src/robot/MuJoCoInterface.cpp.o: CMakeFiles/simulation.dir/flags.make
 CMakeFiles/simulation.dir/src/robot/MuJoCoInterface.cpp.o: ../src/robot/MuJoCoInterface.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/simulation.dir/src/robot/MuJoCoInterface.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/simulation.dir/src/robot/MuJoCoInterface.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/simulation.dir/src/robot/MuJoCoInterface.cpp.o -c /home/ycm/mujoco/quad_qlslip/src/robot/MuJoCoInterface.cpp
 
 CMakeFiles/simulation.dir/src/robot/MuJoCoInterface.cpp.i: cmake_force
@@ -163,7 +202,7 @@ CMakeFiles/simulation.dir/src/robot/MuJoCoInterface.cpp.s: cmake_force
 
 CMakeFiles/simulation.dir/src/robot/RobotLeg.cpp.o: CMakeFiles/simulation.dir/flags.make
 CMakeFiles/simulation.dir/src/robot/RobotLeg.cpp.o: ../src/robot/RobotLeg.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/simulation.dir/src/robot/RobotLeg.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/simulation.dir/src/robot/RobotLeg.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/simulation.dir/src/robot/RobotLeg.cpp.o -c /home/ycm/mujoco/quad_qlslip/src/robot/RobotLeg.cpp
 
 CMakeFiles/simulation.dir/src/robot/RobotLeg.cpp.i: cmake_force
@@ -176,7 +215,7 @@ CMakeFiles/simulation.dir/src/robot/RobotLeg.cpp.s: cmake_force
 
 CMakeFiles/simulation.dir/src/simulate.cc.o: CMakeFiles/simulation.dir/flags.make
 CMakeFiles/simulation.dir/src/simulate.cc.o: ../src/simulate.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/simulation.dir/src/simulate.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/simulation.dir/src/simulate.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/simulation.dir/src/simulate.cc.o -c /home/ycm/mujoco/quad_qlslip/src/simulate.cc
 
 CMakeFiles/simulation.dir/src/simulate.cc.i: cmake_force
@@ -189,7 +228,7 @@ CMakeFiles/simulation.dir/src/simulate.cc.s: cmake_force
 
 CMakeFiles/simulation.dir/src/trajectory/MotionTrajectory.cpp.o: CMakeFiles/simulation.dir/flags.make
 CMakeFiles/simulation.dir/src/trajectory/MotionTrajectory.cpp.o: ../src/trajectory/MotionTrajectory.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/simulation.dir/src/trajectory/MotionTrajectory.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/simulation.dir/src/trajectory/MotionTrajectory.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/simulation.dir/src/trajectory/MotionTrajectory.cpp.o -c /home/ycm/mujoco/quad_qlslip/src/trajectory/MotionTrajectory.cpp
 
 CMakeFiles/simulation.dir/src/trajectory/MotionTrajectory.cpp.i: cmake_force
@@ -200,9 +239,22 @@ CMakeFiles/simulation.dir/src/trajectory/MotionTrajectory.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/simulation.dir/src/trajectory/MotionTrajectory.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ycm/mujoco/quad_qlslip/src/trajectory/MotionTrajectory.cpp -o CMakeFiles/simulation.dir/src/trajectory/MotionTrajectory.cpp.s
 
+CMakeFiles/simulation.dir/src/trajectory/TrajectoryOptimization.cpp.o: CMakeFiles/simulation.dir/flags.make
+CMakeFiles/simulation.dir/src/trajectory/TrajectoryOptimization.cpp.o: ../src/trajectory/TrajectoryOptimization.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/simulation.dir/src/trajectory/TrajectoryOptimization.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/simulation.dir/src/trajectory/TrajectoryOptimization.cpp.o -c /home/ycm/mujoco/quad_qlslip/src/trajectory/TrajectoryOptimization.cpp
+
+CMakeFiles/simulation.dir/src/trajectory/TrajectoryOptimization.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/simulation.dir/src/trajectory/TrajectoryOptimization.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ycm/mujoco/quad_qlslip/src/trajectory/TrajectoryOptimization.cpp > CMakeFiles/simulation.dir/src/trajectory/TrajectoryOptimization.cpp.i
+
+CMakeFiles/simulation.dir/src/trajectory/TrajectoryOptimization.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/simulation.dir/src/trajectory/TrajectoryOptimization.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ycm/mujoco/quad_qlslip/src/trajectory/TrajectoryOptimization.cpp -o CMakeFiles/simulation.dir/src/trajectory/TrajectoryOptimization.cpp.s
+
 CMakeFiles/simulation.dir/src/utilities/data_logging.cpp.o: CMakeFiles/simulation.dir/flags.make
 CMakeFiles/simulation.dir/src/utilities/data_logging.cpp.o: ../src/utilities/data_logging.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/simulation.dir/src/utilities/data_logging.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/simulation.dir/src/utilities/data_logging.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/simulation.dir/src/utilities/data_logging.cpp.o -c /home/ycm/mujoco/quad_qlslip/src/utilities/data_logging.cpp
 
 CMakeFiles/simulation.dir/src/utilities/data_logging.cpp.i: cmake_force
@@ -216,6 +268,9 @@ CMakeFiles/simulation.dir/src/utilities/data_logging.cpp.s: cmake_force
 # Object files for target simulation
 simulation_OBJECTS = \
 "CMakeFiles/simulation.dir/src/controller/CompensationControl.cpp.o" \
+"CMakeFiles/simulation.dir/src/controller/FSM.cpp.o" \
+"CMakeFiles/simulation.dir/src/controller/FlightControl.cpp.o" \
+"CMakeFiles/simulation.dir/src/controller/StanceForceControl.cpp.o" \
 "CMakeFiles/simulation.dir/src/controller/TrackingController.cpp.o" \
 "CMakeFiles/simulation.dir/src/glfw_adapter.cc.o" \
 "CMakeFiles/simulation.dir/src/glfw_dispatch.cc.o" \
@@ -226,12 +281,16 @@ simulation_OBJECTS = \
 "CMakeFiles/simulation.dir/src/robot/RobotLeg.cpp.o" \
 "CMakeFiles/simulation.dir/src/simulate.cc.o" \
 "CMakeFiles/simulation.dir/src/trajectory/MotionTrajectory.cpp.o" \
+"CMakeFiles/simulation.dir/src/trajectory/TrajectoryOptimization.cpp.o" \
 "CMakeFiles/simulation.dir/src/utilities/data_logging.cpp.o"
 
 # External object files for target simulation
 simulation_EXTERNAL_OBJECTS =
 
 simulation: CMakeFiles/simulation.dir/src/controller/CompensationControl.cpp.o
+simulation: CMakeFiles/simulation.dir/src/controller/FSM.cpp.o
+simulation: CMakeFiles/simulation.dir/src/controller/FlightControl.cpp.o
+simulation: CMakeFiles/simulation.dir/src/controller/StanceForceControl.cpp.o
 simulation: CMakeFiles/simulation.dir/src/controller/TrackingController.cpp.o
 simulation: CMakeFiles/simulation.dir/src/glfw_adapter.cc.o
 simulation: CMakeFiles/simulation.dir/src/glfw_dispatch.cc.o
@@ -242,10 +301,13 @@ simulation: CMakeFiles/simulation.dir/src/robot/MuJoCoInterface.cpp.o
 simulation: CMakeFiles/simulation.dir/src/robot/RobotLeg.cpp.o
 simulation: CMakeFiles/simulation.dir/src/simulate.cc.o
 simulation: CMakeFiles/simulation.dir/src/trajectory/MotionTrajectory.cpp.o
+simulation: CMakeFiles/simulation.dir/src/trajectory/TrajectoryOptimization.cpp.o
 simulation: CMakeFiles/simulation.dir/src/utilities/data_logging.cpp.o
 simulation: CMakeFiles/simulation.dir/build.make
+simulation: /usr/lib/x86_64-linux-gnu/libpython3.8.so
+simulation: /usr/lib/x86_64-linux-gnu/libpython3.8.so
 simulation: CMakeFiles/simulation.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking CXX executable simulation"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/ycm/mujoco/quad_qlslip/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Linking CXX executable simulation"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/simulation.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

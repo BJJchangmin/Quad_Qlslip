@@ -1,5 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/simulation.dir/src/controller/CompensationControl.cpp.o"
+  "CMakeFiles/simulation.dir/src/controller/FSM.cpp.o"
+  "CMakeFiles/simulation.dir/src/controller/FlightControl.cpp.o"
+  "CMakeFiles/simulation.dir/src/controller/StanceForceControl.cpp.o"
   "CMakeFiles/simulation.dir/src/controller/TrackingController.cpp.o"
   "CMakeFiles/simulation.dir/src/glfw_adapter.cc.o"
   "CMakeFiles/simulation.dir/src/glfw_dispatch.cc.o"
@@ -10,6 +13,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/simulation.dir/src/robot/RobotLeg.cpp.o"
   "CMakeFiles/simulation.dir/src/simulate.cc.o"
   "CMakeFiles/simulation.dir/src/trajectory/MotionTrajectory.cpp.o"
+  "CMakeFiles/simulation.dir/src/trajectory/TrajectoryOptimization.cpp.o"
   "CMakeFiles/simulation.dir/src/utilities/data_logging.cpp.o"
   "simulation"
   "simulation.pdb"

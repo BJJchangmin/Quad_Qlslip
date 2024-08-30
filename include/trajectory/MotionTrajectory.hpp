@@ -12,6 +12,8 @@ template <typename T>
 class MotionTrajectory
 {
   private:
+    RobotLeg<T> & robot_;
+
     T t_;
     T T_pause_;   // pause duration
     T T_crouch_;  // crouch duration
@@ -32,6 +34,11 @@ class MotionTrajectory
         Vec2<T> foot_pos_rw_des_[4];
         Vec2<T> foot_vel_rw_des_[4];
 
+        T r_optimized_flight_[4];
+        T dr_optimized_flight_[4];
+        T th_optimized_flight_[4];
+        T dth_optimized_flight_[4];
+
     };
 
     struct DesiredJointTrajectory
@@ -49,9 +56,10 @@ class MotionTrajectory
 
   public:
 
-    MotionTrajectory();
+    MotionTrajectory(RobotLeg<T> & robot_);
     void squat(T time);
     void stance_test();
+    void QLSLIP_Trajectory(T r_ref, T v_ref);
 
 
 };

@@ -71,12 +71,7 @@ public:
 
   //************************************* Custom VARIABLES ************************************************
   T M_d_R;
-  T r_TD, dr_TD, th_TD, dth_TD, t_TD,t_stance;
-  T r_LO, dr_LO, th_LO, dth_LO, t_LO, V_y_LO;
-
-  T LO_state, phase_state, LO_TD_phase_state;
-
-  T dth_des_TD, th_des_TD, dr_des_TD, swept_angle, t_flight_des;
+  T phase_[4],event_[4];
 
 
   /**

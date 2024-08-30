@@ -6,5 +6,5 @@ CXX_FLAGS = -g   -Wpedantic -std=gnu++17
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/ycm/mujoco/quad_qlslip/include -I/home/ycm/mujoco/quad_qlslip/include/math -I/home/ycm/mujoco/quad_qlslip/include/robot -I/home/ycm/mujoco/quad_qlslip/include/trajectory -I/home/ycm/mujoco/quad_qlslip/include/controller -I/home/ycm/mujoco/quad_qlslip/include/utilities 
+CXX_INCLUDES = -I/home/ycm/mujoco/quad_qlslip/include -I/home/ycm/mujoco/quad_qlslip/include/math -I/home/ycm/mujoco/quad_qlslip/include/robot -I/home/ycm/mujoco/quad_qlslip/include/trajectory -I/home/ycm/mujoco/quad_qlslip/include/controller -I/home/ycm/mujoco/quad_qlslip/include/utilities -I/home/ycm/YCM/third-party/casadi/build/lib -I/home/ycm/YCM/third-party/casadi/build -I/home/ycm/YCM/third-party/casadi -I/home/ycm/YCM/third-party/Ipopt/src/Common -I/home/ycm/YCM/third-party/Ipopt/src/Interfaces -I/home/ycm/YCM/third-party/Ipopt/src/LinAlg -isystem /usr/include/python3.8 -isystem /usr/lib/python3/dist-packages/numpy/core/include 
 

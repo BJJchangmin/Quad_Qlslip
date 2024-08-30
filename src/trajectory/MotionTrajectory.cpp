@@ -5,8 +5,10 @@
 using namespace std;
 
 template <typename T>
-MotionTrajectory<T>::MotionTrajectory()
-  : t_(0.0),
+MotionTrajectory<T>::MotionTrajectory(RobotLeg<T> & robot_)
+  :
+    robot_(robot_),
+    t_(0.0),
     T_pause_(1.0),
     T_crouch_(1.0),
     T_land_(0.5),
@@ -16,7 +18,6 @@ MotionTrajectory<T>::MotionTrajectory()
     h_home_(0.32355),
     dthr_init_(0.0)
 {
-    state_ = 0.0;
 
     foot_traj_ptr_ = std::make_shared<DesiredFootTrajectory>();
     joint_traj_ptr_ = std::make_shared<DesiredJointTrajectory>();
@@ -43,6 +44,51 @@ void MotionTrajectory<T>::stance_test()
   }
 
 }
+
+template <typename T>
+void MotionTrajectory<T>::QLSLIP_Trajectory(T r_ref, T v_ref)
+{
+  /**
+   * @brief QLSLIP Trajectory
+   * @param r_ref: reference r position
+   * @param v_ref: reference r velocity
+   * @param joint_traj_ptr_ for HAA fix
+   * @param foot_traj_ptr_ for foot trajectory
+   */
+
+  T dth_ref = - v_ref / r_ref;
+
+  for (size_t i = 0; i < 4; i++)
+  {
+
+    //********************************** Joint Velocity Control for HAA ******************************/
+    joint_traj_ptr_->joint_vel_des_[i][0]= 0.0;
+    joint_traj_ptr_->joint_pos_des_[i][0]= 0.0;
+    // ****************************************** Stance Control ****************************************** */
+    if (robot_.phase_[i] == 0)
+    {
+      foot_traj_ptr_->foot_pos_rw_des_[i][0] = r_ref;
+      foot_traj_ptr_->foot_vel_rw_des_[i][1] = 0.0;
+    }
+    // ****************************************** Flight Control ****************************************** */
+    else if (robot_.phase_[i] == 1)
+    {
+      foot_traj_ptr_->foot_pos_rw_des_[i][0] = foot_traj_ptr_->r_optimized_flight_[i];
+      foot_traj_ptr_->foot_pos_rw_des_[i][1] = foot_traj_ptr_->th_optimized_flight_[i];
+
+      foot_traj_ptr_->foot_vel_rw_des_[i][0] = foot_traj_ptr_->dr_optimized_flight_[i];
+      foot_traj_ptr_->foot_vel_rw_des_[i][1] = foot_traj_ptr_->dth_optimized_flight_[i];
+    }
+    // ****************************************** Joint Control ****************************************** */
+    else
+    {
+      foot_traj_ptr_->foot_pos_rw_des_[i][0] = r_ref;
+      foot_traj_ptr_->foot_vel_rw_des_[i][1] = 0.0;
+    }
+
+  }
+}
+
 
 template <typename T>
 std::shared_ptr<typename MotionTrajectory<T>::DesiredFootTrajectory> MotionTrajectory<T>::get_foot_traj_ptr()

@@ -6,86 +6,126 @@ using namespace std;
  * ! If you don't change file name, and run the simulation again, the data will be overwritten.
  */
 template <typename T>
-DataLogging<T>::DataLogging(RobotLeg<T> & robot)
-  : fout_FL_("../data/data_FL.csv"),
-    fout_FR_("../data/data_FR.csv"),
-    fout_RL_("../data/data_RL.csv"),
-    fout_RR_("../data/data_RR.csv"),
-    fout_trunk_("../data/data_trunk.csv"),
-    robot_(robot)
+DataLogging<T>::DataLogging(RobotLeg<T> & robot_)
+  : robot_(robot_)
 {
   cout << "Data Logger object is created" << endl;
-
+  fout_[0].open("../data/data_FL.csv");
+  fout_[1].open("../data/data_FR.csv");
+  fout_[2].open("../data/data_RL.csv");
+  fout_[3].open("../data/data_RR.csv");
+  fout_[4].open("../data/data_trunk.csv");
 
 
   foot_traj_ptr_ = nullptr;
-
-  if (!fout_FL_)
+  for (int i = 0; i < 5; i++)
   {
-    std::cerr << "Cannot open file" << std::endl;
-    exit(1);
+    if (!fout_[i])
+    {
+      std::cerr << "Cannot open file: " << i <<std::endl;
+      exit(1);
+    }
   }
 
-  init_data_FL();
+  init_data();
 
 }
 
-/**
- * @brief Select data to save
- * You can select which data of the LoggingData struct to save.
- * * Data are separated by a comma (,) followed by a space
- * ! comma (,) should be omitted in the last line and newline must exist after the last data.
- */
+
 template <typename T>
-void DataLogging<T>::save_data_FL(const mjModel* m, mjData* d)
+void DataLogging<T>::save_data(const mjModel* m, mjData* d)
 {
-  if (!fout_FL_)
+  /**
+  * @brief Select data to save
+  * You can select which data of the LoggingData struct to save.
+  * * Data are separated by a comma (,) followed by a space
+  * ! comma (,) should be omitted in the last line and newline must exist after the last data.
+  */
+
+
+  for (int i = 0; i < 4; i++)
   {
-    std::cerr << "Cannot open file" << std::endl;
+    //************************************ Leg Data ********************************************** */
+    if (!fout_[i])
+    {
+
+      std::cerr << "Cannot open file: " << i <<std::endl;
+      exit(1);
+    }
+    else
+    {
+
+      fout_[i] << d->time << ","; // time
+      fout_[i] << foot_traj_ptr_->foot_pos_rw_des_[i][0] << ","; // r direction ref
+      fout_[i] << robot_.foot_pos_rw_act_local_[i][0] << ","; // r direction,FL
+      fout_[i] << foot_traj_ptr_->foot_pos_rw_des_[i][1] << ","; // th_r direction ref
+      fout_[i] << robot_.foot_pos_rw_act_local_[i][1] << ","; // th_r direction,FL
+
+      fout_[i] << foot_traj_ptr_->foot_vel_rw_des_[i][0] << ","; // r direction vel ref
+      fout_[i] << robot_.foot_vel_rw_act_local_[i][0] << ","; // r direction vel,FL
+      fout_[i] << foot_traj_ptr_->foot_vel_rw_des_[i][1] << ","; // th_r direction vel ref
+      fout_[i] << robot_.foot_vel_rw_act_local_[i][1] << ","; // th_r direction vel,FL
+
+      fout_[i] << robot_.joint_torque_des_[i][0] << ","; // joint torque HAA
+      fout_[i] << robot_.joint_torque_des_[i][1] << ","; // joint torque HFE
+      fout_[i] << robot_.joint_torque_des_[i][2]; // joint torque KFE
+
+      // ! Don't remove the newline
+      fout_[i] << endl;
+
+    }
+  }
+
+
+  //************************************Trunk Data ********************************************** */
+  if (!fout_[4])
+  {
+    std::cerr << "Cannot open file: " << 4 <<std::endl;
     exit(1);
   }
   else
   {
-    // // Debugging: Print to console what we're writing
-    // std::cout << "Writing data to file: " << std::endl;
-    // std::cout << d->time << ", " << robot_.foot_pos_rw_act_local_[0] << ", "
-    //           << robot_.foot_pos_rw_act_local_[1] << ", " << robot_.foot_pos_rw_act_local_[2] << ", "
-    //           << robot_.foot_vel_rw_act_local_[0] << std::endl;
 
-    fout_FL_ << d->time << ","; // time
-    fout_FL_ << robot_.foot_pos_rw_act_local_[FL][0] << ","; // r direction,FL
-    fout_FL_ << robot_.foot_pos_rw_act_local_[FL][1] << ","; // th_r direction,FL
-    fout_FL_ << robot_.joint_pos_bi_act_[FL][0] << ","; // th_mo,FL
-    fout_FL_ << robot_.joint_pos_bi_act_[FL][1] ; // th_bi,FL
-
+    fout_[4] << d->time; // time
 
 
     // ! Don't remove the newline
-    fout_FL_ << endl;
+    fout_[4] << endl;
+  }
 
-    }
+
 
 }
 
-/**
- * @brief Set names of data to be saved
- * After you select which data to save, you can set the headers here.
- * You have to set the headers in the same order as the data and it is recommended that
- * the headers should be named as brief but you can recognize the data.
- * * Data are separated by a comma (,) followed by a space
- */
 template <typename T>
-void DataLogging<T>::init_data_FL()
+void DataLogging<T>::init_data()
 {
-  if (!fout_FL_)
+  //************************************ Leg Data ********************************************** */
+  for (int i = 0; i < 4; i++)
   {
-    std::cerr << "Cannot open file" << std::endl;
+    if (!fout_[i])
+    {
+      std::cerr << "Cannot open file: " << i <<std::endl;
+      exit(1);
+    }
+    else
+    {
+      fout_[i] << "time, r_des, r_act, th_des, th_act,";
+      fout_[i] << "dr_des, dr_act, dth_des, dth_act, ";
+      fout_[i] << "tau_HAA, tau_HFE, tau_KFE " <<std::endl;
+    }
+  }
+  //************************************Trunk Data ********************************************** */
+  if (!fout_[4])
+  {
+    std::cerr << "Cannot open file: " << 4 <<std::endl;
     exit(1);
   }
   else
   {
-    fout_FL_ << "time, act_r, act_thr, th_mo, th_bi" << std::endl;
+    fout_[4] << "time" << std::endl;
   }
+
 }
 
 template <typename T>

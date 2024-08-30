@@ -5,6 +5,9 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/ycm/mujoco/quad_qlslip/src/controller/CompensationControl.cpp" "/home/ycm/mujoco/quad_qlslip/build/CMakeFiles/simulation.dir/src/controller/CompensationControl.cpp.o"
+  "/home/ycm/mujoco/quad_qlslip/src/controller/FSM.cpp" "/home/ycm/mujoco/quad_qlslip/build/CMakeFiles/simulation.dir/src/controller/FSM.cpp.o"
+  "/home/ycm/mujoco/quad_qlslip/src/controller/FlightControl.cpp" "/home/ycm/mujoco/quad_qlslip/build/CMakeFiles/simulation.dir/src/controller/FlightControl.cpp.o"
+  "/home/ycm/mujoco/quad_qlslip/src/controller/StanceForceControl.cpp" "/home/ycm/mujoco/quad_qlslip/build/CMakeFiles/simulation.dir/src/controller/StanceForceControl.cpp.o"
   "/home/ycm/mujoco/quad_qlslip/src/controller/TrackingController.cpp" "/home/ycm/mujoco/quad_qlslip/build/CMakeFiles/simulation.dir/src/controller/TrackingController.cpp.o"
   "/home/ycm/mujoco/quad_qlslip/src/glfw_adapter.cc" "/home/ycm/mujoco/quad_qlslip/build/CMakeFiles/simulation.dir/src/glfw_adapter.cc.o"
   "/home/ycm/mujoco/quad_qlslip/src/glfw_dispatch.cc" "/home/ycm/mujoco/quad_qlslip/build/CMakeFiles/simulation.dir/src/glfw_dispatch.cc.o"
@@ -15,6 +18,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/ycm/mujoco/quad_qlslip/src/robot/RobotLeg.cpp" "/home/ycm/mujoco/quad_qlslip/build/CMakeFiles/simulation.dir/src/robot/RobotLeg.cpp.o"
   "/home/ycm/mujoco/quad_qlslip/src/simulate.cc" "/home/ycm/mujoco/quad_qlslip/build/CMakeFiles/simulation.dir/src/simulate.cc.o"
   "/home/ycm/mujoco/quad_qlslip/src/trajectory/MotionTrajectory.cpp" "/home/ycm/mujoco/quad_qlslip/build/CMakeFiles/simulation.dir/src/trajectory/MotionTrajectory.cpp.o"
+  "/home/ycm/mujoco/quad_qlslip/src/trajectory/TrajectoryOptimization.cpp" "/home/ycm/mujoco/quad_qlslip/build/CMakeFiles/simulation.dir/src/trajectory/TrajectoryOptimization.cpp.o"
   "/home/ycm/mujoco/quad_qlslip/src/utilities/data_logging.cpp" "/home/ycm/mujoco/quad_qlslip/build/CMakeFiles/simulation.dir/src/utilities/data_logging.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
@@ -27,6 +31,14 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "../include/trajectory"
   "../include/controller"
   "../include/utilities"
+  "/home/ycm/YCM/third-party/casadi/build/lib"
+  "/home/ycm/YCM/third-party/casadi/build"
+  "/home/ycm/YCM/third-party/casadi"
+  "/home/ycm/YCM/third-party/Ipopt/src/Common"
+  "/home/ycm/YCM/third-party/Ipopt/src/Interfaces"
+  "/home/ycm/YCM/third-party/Ipopt/src/LinAlg"
+  "/usr/include/python3.8"
+  "/usr/lib/python3/dist-packages/numpy/core/include"
   )
 
 # Targets to which this target links.

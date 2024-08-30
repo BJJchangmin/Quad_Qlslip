@@ -11,6 +11,7 @@
 		"commands" : 
 		[
 			"add_executable",
+			"target_link_libraries",
 			"add_compile_options",
 			"target_include_directories"
 		],
@@ -26,19 +27,25 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 51,
+				"line" : 68,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 23,
+				"line" : 69,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 53,
+				"line" : 23,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 70,
 				"parent" : 0
 			}
 		]
@@ -52,7 +59,7 @@
 					"fragment" : "-g  "
 				},
 				{
-					"backtrace" : 2,
+					"backtrace" : 3,
 					"fragment" : "-Wpedantic"
 				},
 				{
@@ -62,28 +69,62 @@
 			"includes" : 
 			[
 				{
-					"backtrace" : 3,
+					"backtrace" : 4,
 					"path" : "/home/ycm/mujoco/quad_qlslip/include"
 				},
 				{
-					"backtrace" : 3,
+					"backtrace" : 4,
 					"path" : "/home/ycm/mujoco/quad_qlslip/include/math"
 				},
 				{
-					"backtrace" : 3,
+					"backtrace" : 4,
 					"path" : "/home/ycm/mujoco/quad_qlslip/include/robot"
 				},
 				{
-					"backtrace" : 3,
+					"backtrace" : 4,
 					"path" : "/home/ycm/mujoco/quad_qlslip/include/trajectory"
 				},
 				{
-					"backtrace" : 3,
+					"backtrace" : 4,
 					"path" : "/home/ycm/mujoco/quad_qlslip/include/controller"
 				},
 				{
-					"backtrace" : 3,
+					"backtrace" : 4,
 					"path" : "/home/ycm/mujoco/quad_qlslip/include/utilities"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/home/ycm/YCM/third-party/casadi/build/lib"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/home/ycm/YCM/third-party/casadi/build"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/home/ycm/YCM/third-party/casadi"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/home/ycm/YCM/third-party/Ipopt/src/Common"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/home/ycm/YCM/third-party/Ipopt/src/Interfaces"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/home/ycm/YCM/third-party/Ipopt/src/LinAlg"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/usr/include/python3.8"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "/usr/lib/python3/dist-packages/numpy/core/include"
 				}
 			],
 			"language" : "CXX",
@@ -100,7 +141,11 @@
 				8,
 				9,
 				10,
-				11
+				11,
+				12,
+				13,
+				14,
+				15
 			]
 		}
 	],
@@ -134,7 +179,25 @@
 				"role" : "libraries"
 			},
 			{
+				"fragment" : "-lcasadi",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-lipopt",
+				"role" : "libraries"
+			},
+			{
 				"fragment" : "-ldl",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "/usr/lib/x86_64-linux-gnu/libpython3.8.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "/usr/lib/x86_64-linux-gnu/libpython3.8.so",
 				"role" : "libraries"
 			}
 		],
@@ -164,7 +227,11 @@
 				8,
 				9,
 				10,
-				11
+				11,
+				12,
+				13,
+				14,
+				15
 			]
 		}
 	],
@@ -174,6 +241,24 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
 			"path" : "src/controller/CompensationControl.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/controller/FSM.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/controller/FlightControl.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/controller/StanceForceControl.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
@@ -234,6 +319,12 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
 			"path" : "src/trajectory/MotionTrajectory.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/trajectory/TrajectoryOptimization.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{

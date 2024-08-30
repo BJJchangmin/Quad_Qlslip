@@ -150,6 +150,87 @@ src/controller/CompensationControl.cpp.s:
 	$(MAKE) -f CMakeFiles/simulation.dir/build.make CMakeFiles/simulation.dir/src/controller/CompensationControl.cpp.s
 .PHONY : src/controller/CompensationControl.cpp.s
 
+src/controller/FSM.o: src/controller/FSM.cpp.o
+
+.PHONY : src/controller/FSM.o
+
+# target to build an object file
+src/controller/FSM.cpp.o:
+	$(MAKE) -f CMakeFiles/simulation.dir/build.make CMakeFiles/simulation.dir/src/controller/FSM.cpp.o
+.PHONY : src/controller/FSM.cpp.o
+
+src/controller/FSM.i: src/controller/FSM.cpp.i
+
+.PHONY : src/controller/FSM.i
+
+# target to preprocess a source file
+src/controller/FSM.cpp.i:
+	$(MAKE) -f CMakeFiles/simulation.dir/build.make CMakeFiles/simulation.dir/src/controller/FSM.cpp.i
+.PHONY : src/controller/FSM.cpp.i
+
+src/controller/FSM.s: src/controller/FSM.cpp.s
+
+.PHONY : src/controller/FSM.s
+
+# target to generate assembly for a file
+src/controller/FSM.cpp.s:
+	$(MAKE) -f CMakeFiles/simulation.dir/build.make CMakeFiles/simulation.dir/src/controller/FSM.cpp.s
+.PHONY : src/controller/FSM.cpp.s
+
+src/controller/FlightControl.o: src/controller/FlightControl.cpp.o
+
+.PHONY : src/controller/FlightControl.o
+
+# target to build an object file
+src/controller/FlightControl.cpp.o:
+	$(MAKE) -f CMakeFiles/simulation.dir/build.make CMakeFiles/simulation.dir/src/controller/FlightControl.cpp.o
+.PHONY : src/controller/FlightControl.cpp.o
+
+src/controller/FlightControl.i: src/controller/FlightControl.cpp.i
+
+.PHONY : src/controller/FlightControl.i
+
+# target to preprocess a source file
+src/controller/FlightControl.cpp.i:
+	$(MAKE) -f CMakeFiles/simulation.dir/build.make CMakeFiles/simulation.dir/src/controller/FlightControl.cpp.i
+.PHONY : src/controller/FlightControl.cpp.i
+
+src/controller/FlightControl.s: src/controller/FlightControl.cpp.s
+
+.PHONY : src/controller/FlightControl.s
+
+# target to generate assembly for a file
+src/controller/FlightControl.cpp.s:
+	$(MAKE) -f CMakeFiles/simulation.dir/build.make CMakeFiles/simulation.dir/src/controller/FlightControl.cpp.s
+.PHONY : src/controller/FlightControl.cpp.s
+
+src/controller/StanceForceControl.o: src/controller/StanceForceControl.cpp.o
+
+.PHONY : src/controller/StanceForceControl.o
+
+# target to build an object file
+src/controller/StanceForceControl.cpp.o:
+	$(MAKE) -f CMakeFiles/simulation.dir/build.make CMakeFiles/simulation.dir/src/controller/StanceForceControl.cpp.o
+.PHONY : src/controller/StanceForceControl.cpp.o
+
+src/controller/StanceForceControl.i: src/controller/StanceForceControl.cpp.i
+
+.PHONY : src/controller/StanceForceControl.i
+
+# target to preprocess a source file
+src/controller/StanceForceControl.cpp.i:
+	$(MAKE) -f CMakeFiles/simulation.dir/build.make CMakeFiles/simulation.dir/src/controller/StanceForceControl.cpp.i
+.PHONY : src/controller/StanceForceControl.cpp.i
+
+src/controller/StanceForceControl.s: src/controller/StanceForceControl.cpp.s
+
+.PHONY : src/controller/StanceForceControl.s
+
+# target to generate assembly for a file
+src/controller/StanceForceControl.cpp.s:
+	$(MAKE) -f CMakeFiles/simulation.dir/build.make CMakeFiles/simulation.dir/src/controller/StanceForceControl.cpp.s
+.PHONY : src/controller/StanceForceControl.cpp.s
+
 src/controller/TrackingController.o: src/controller/TrackingController.cpp.o
 
 .PHONY : src/controller/TrackingController.o
@@ -420,6 +501,33 @@ src/trajectory/MotionTrajectory.cpp.s:
 	$(MAKE) -f CMakeFiles/simulation.dir/build.make CMakeFiles/simulation.dir/src/trajectory/MotionTrajectory.cpp.s
 .PHONY : src/trajectory/MotionTrajectory.cpp.s
 
+src/trajectory/TrajectoryOptimization.o: src/trajectory/TrajectoryOptimization.cpp.o
+
+.PHONY : src/trajectory/TrajectoryOptimization.o
+
+# target to build an object file
+src/trajectory/TrajectoryOptimization.cpp.o:
+	$(MAKE) -f CMakeFiles/simulation.dir/build.make CMakeFiles/simulation.dir/src/trajectory/TrajectoryOptimization.cpp.o
+.PHONY : src/trajectory/TrajectoryOptimization.cpp.o
+
+src/trajectory/TrajectoryOptimization.i: src/trajectory/TrajectoryOptimization.cpp.i
+
+.PHONY : src/trajectory/TrajectoryOptimization.i
+
+# target to preprocess a source file
+src/trajectory/TrajectoryOptimization.cpp.i:
+	$(MAKE) -f CMakeFiles/simulation.dir/build.make CMakeFiles/simulation.dir/src/trajectory/TrajectoryOptimization.cpp.i
+.PHONY : src/trajectory/TrajectoryOptimization.cpp.i
+
+src/trajectory/TrajectoryOptimization.s: src/trajectory/TrajectoryOptimization.cpp.s
+
+.PHONY : src/trajectory/TrajectoryOptimization.s
+
+# target to generate assembly for a file
+src/trajectory/TrajectoryOptimization.cpp.s:
+	$(MAKE) -f CMakeFiles/simulation.dir/build.make CMakeFiles/simulation.dir/src/trajectory/TrajectoryOptimization.cpp.s
+.PHONY : src/trajectory/TrajectoryOptimization.cpp.s
+
 src/utilities/data_logging.o: src/utilities/data_logging.cpp.o
 
 .PHONY : src/utilities/data_logging.o
@@ -459,6 +567,15 @@ help:
 	@echo "... src/controller/CompensationControl.o"
 	@echo "... src/controller/CompensationControl.i"
 	@echo "... src/controller/CompensationControl.s"
+	@echo "... src/controller/FSM.o"
+	@echo "... src/controller/FSM.i"
+	@echo "... src/controller/FSM.s"
+	@echo "... src/controller/FlightControl.o"
+	@echo "... src/controller/FlightControl.i"
+	@echo "... src/controller/FlightControl.s"
+	@echo "... src/controller/StanceForceControl.o"
+	@echo "... src/controller/StanceForceControl.i"
+	@echo "... src/controller/StanceForceControl.s"
 	@echo "... src/controller/TrackingController.o"
 	@echo "... src/controller/TrackingController.i"
 	@echo "... src/controller/TrackingController.s"
@@ -489,6 +606,9 @@ help:
 	@echo "... src/trajectory/MotionTrajectory.o"
 	@echo "... src/trajectory/MotionTrajectory.i"
 	@echo "... src/trajectory/MotionTrajectory.s"
+	@echo "... src/trajectory/TrajectoryOptimization.o"
+	@echo "... src/trajectory/TrajectoryOptimization.i"
+	@echo "... src/trajectory/TrajectoryOptimization.s"
 	@echo "... src/utilities/data_logging.o"
 	@echo "... src/utilities/data_logging.i"
 	@echo "... src/utilities/data_logging.s"

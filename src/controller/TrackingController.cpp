@@ -27,8 +27,8 @@ void TrackingController<T>::joint_HAA_control()
 {
   for (size_t i = 0; i < 4; i++)
   {
-    robot_.joint_torque_des_[i][0] = 100 * (joint_traj_ptr_->joint_pos_des_[i][0] - robot_.joint_pos_act_[i][0]) +
-                                     5 * (joint_traj_ptr_->joint_vel_des_[i][0] - robot_.joint_vel_act_[i][0]);
+    robot_.joint_torque_des_[i][0] = 5000 * (joint_traj_ptr_->joint_pos_des_[i][0] - robot_.joint_pos_act_[i][0]) +
+                                     20 * (joint_traj_ptr_->joint_vel_des_[i][0] - robot_.joint_vel_act_[i][0]);
 
 
   }

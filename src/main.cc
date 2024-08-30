@@ -37,6 +37,10 @@
 #include "TrackingController.hpp"
 #include "data_logging.hpp"
 #include "CompensationControl.hpp"
+#include "TrajectoryOptimization.hpp"
+#include "StanceForceControl.hpp"
+#include "FlightControl.hpp"
+#include "FSM.hpp"
 
 
 #define MUJOCO_PLUGIN_DIR "mujoco_plugin"
@@ -70,15 +74,22 @@ const double sim_end_time = 15.0;       // simulation end time (seconds)
 unsigned int loop_iter = 0;             // loop iteration counter
 RobotLeg<float> robot = buildMclQuad<float>();  // robot model
 TrackingController<float> track_ctrl(robot);     // tracking controller
-MotionTrajectory<float> traj_generator;            // motion trajectory
+MotionTrajectory<float> traj_generator(robot);            // motion trajectory
 DataLogging<float> data_logger(robot);         // data logger
 CompensationControl<float> comp_ctrl(robot);   // compensation controller
+TrajectoryOptimization<float> traj_opt(robot);  // trajectory optimization
+StanceForceControl<float> stance_ctrl(robot);  // stance force controller
+FlightControl<float> flight_ctrl(robot);       // flight controller
+FSM<float> fsm(robot,comp_ctrl,flight_ctrl,stance_ctrl);  // finite state machine
 
 
 
 std::shared_ptr<MuJoCoInterface<float>::MuJoCoActuatorCommand> actuator_cmd_ptr;
 std::shared_ptr<MotionTrajectory<float>::DesiredFootTrajectory> foot_traj_ptr;
 std::shared_ptr<MotionTrajectory<float>::DesiredJointTrajectory> joint_traj_ptr;
+std::shared_ptr<TrajectoryOptimization<float>::LO_param> lo_param_ptr;
+std::shared_ptr<TrajectoryOptimization<float>::TD_param> td_param_ptr;
+std::shared_ptr<TrajectoryOptimization<float>::Optimization_param> op_param_ptr;
 
 
 //* ******************************************************************************************** *//
@@ -286,7 +297,10 @@ mjModel* LoadModel(const char* file, mj::Simulate& sim) {
 //* ******************************** Custom Function  ****************************************** *//
 void apply_joint_control(mjData * d)
 {
-
+  d->qpos[7] = 0;
+  d->qpos[10] = 0;
+  d->qpos[13] = 0;
+  d->qpos[16] = 0;
   for (size_t i = 0; i < 4; i++)
   {
     for (size_t j = 0; j < 3; j++)
@@ -428,13 +442,13 @@ void PhysicsLoop(mj::Simulate& sim) {
             sim.speed_changed = false;
 
             // * **************************************************************************************** *//
-            // TODO: Make Controller in here
+            // TODO: Data logging 함수에다가 포인터들 넣어줘야한다. 그리고 optimization에 time 넣어줘야함
             //* ***** GENERATE DESIRED JOINT COMMAND AND APPLY CONTROL INPUT FOR SIMULATION***** *//
             bool bIsPerturbOn = false;
-            traj_generator.stance_test();
-            comp_ctrl.compensation_control();
-            track_ctrl.joint_HAA_control();
-            track_ctrl.RW_posPD_control();
+            fsm.phase_update(d);
+            traj_opt.Flight_traj_generate(d);
+            traj_generator.QLSLIP_Trajectory(0.4, 0.5);
+            fsm.FSM_control();
             apply_joint_control(d);
 
             // run single step, let next iteration deal with timing
@@ -449,7 +463,7 @@ void PhysicsLoop(mj::Simulate& sim) {
 
             if (loop_iter % data_logger.get_logging_freq() == 0)
             {
-              data_logger.save_data_FL(m, d);
+              data_logger.save_data(m, d);
             }
             loop_iter++;
 
@@ -474,13 +488,13 @@ void PhysicsLoop(mj::Simulate& sim) {
               }
 
             // * **************************************************************************************** *//
-            // TODO: Make Controller in here
+            // TODO: Data logging 함수에다가 포인터들 넣어줘야한다. 그리고 optimization에 time 넣어줘야함
             //* ***** GENERATE DESIRED JOINT COMMAND AND APPLY CONTROL INPUT FOR SIMULATION***** *//
             bool bIsPerturbOn = false;
-            traj_generator.stance_test();
-            comp_ctrl.compensation_control();
-            track_ctrl.joint_HAA_control();
-            track_ctrl.RW_posPD_control();
+            fsm.phase_update(d);
+            traj_opt.Flight_traj_generate(d);
+            traj_generator.QLSLIP_Trajectory(0.4, 0.5);
+            fsm.FSM_control();
             apply_joint_control(d);
 
             // run single step, let next iteration deal with timing
@@ -495,7 +509,8 @@ void PhysicsLoop(mj::Simulate& sim) {
 
             if (loop_iter % data_logger.get_logging_freq() == 0)
             {
-              data_logger.save_data_FL(m, d);
+
+              data_logger.save_data(m, d);
             }
             loop_iter++;
 
@@ -620,13 +635,25 @@ int main(int argc, char** argv) {
   auto mujoco_interface = std::make_shared<MuJoCoInterface<float>>(sim.get(), robot);
   foot_traj_ptr = traj_generator.get_foot_traj_ptr();
   joint_traj_ptr = traj_generator.get_joint_traj_ptr();
+  lo_param_ptr = traj_opt.get_lo_param_ptr();
+  td_param_ptr = traj_opt.get_td_param_ptr();
+  op_param_ptr = traj_opt.get_op_param_ptr();
+
 
   //* ****************************************************************************************** *//
   //* *************** GET POINTER s.t. EACH OBJECT CAN SHARE THE SAME DATA ********************* *//
   //* ****************************************************************************************** *//
-  //* **************** Changmin StanceForceControl Test Version ******************************** *//
-
   track_ctrl.get_traj_pointer(foot_traj_ptr, joint_traj_ptr);
+  traj_opt.get_traj_pointer(foot_traj_ptr);
+  stance_ctrl.get_traj_pointer(foot_traj_ptr);
+  flight_ctrl.get_traj_pointer(foot_traj_ptr);
+  fsm.get_optimization_pointer(lo_param_ptr, td_param_ptr);
+  data_logger.set_traj_ptr(foot_traj_ptr, joint_traj_ptr);
+
+
+
+
+
 
   // start physics thread
   std::thread physicsthreadhandle(&PhysicsThread, sim.get(), filename);
