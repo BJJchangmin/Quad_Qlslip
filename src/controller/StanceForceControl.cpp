@@ -11,7 +11,8 @@ StanceForceControl<T>::StanceForceControl(RobotLeg<T> & robot) : robot_(robot)
 {
   foot_traj_ptr_ = nullptr;
 
-  g=9.81;
+  g= 9.81;
+  // g= 0;
 
   for (size_t i = 0; i < 4; i++)
   {
@@ -21,8 +22,8 @@ StanceForceControl<T>::StanceForceControl(RobotLeg<T> & robot) : robot_(robot)
     dthbr_[i] = 0;
     dr_[i] = 0;
 
-    spring_K_[i] = 20*100;
-    kp_tau_[i] = 20*1000;
+    spring_K_[i] = 20*1000;
+    kp_tau_[i] = 10*100;
 
     force_rw_stance_des_[i] = Vec2<T>(0,0);
   }
@@ -40,16 +41,16 @@ void StanceForceControl<T>::spring_force_control(int Leg_num)
  */
 
 
-    thbr_[Leg_num] = robot_.joint_pos_act_[Leg_num][2];
-    dthbr_[Leg_num] = robot_.joint_vel_act_[Leg_num][2];
-    dr_[Leg_num] = robot_.foot_vel_rw_act_local_[Leg_num][0];
+  thbr_[Leg_num] = robot_.joint_pos_act_[Leg_num][2];
+  dthbr_[Leg_num] = robot_.joint_vel_act_[Leg_num][2];
+  dr_[Leg_num] = robot_.foot_vel_rw_act_local_[Leg_num][0];
 
-    error_pos_[Leg_num][0] = foot_traj_ptr_->foot_pos_rw_des_[Leg_num][0] - robot_.foot_pos_rw_act_local_[Leg_num][0];
+  error_pos_[Leg_num][0] = foot_traj_ptr_->foot_pos_rw_des_[Leg_num][0] - robot_.foot_pos_rw_act_local_[Leg_num][0];
 
-    // force_rw_stance_des_[Leg_num][0] = spring_K_[Leg_num] * error_pos_[Leg_num][0] -(robot_.M_d_R)*(1/(2*tan(thbr_[Leg_num]/2)))*dthbr_[Leg_num]*dr_[Leg_num]+
-    //   (robot_.M_d_R+robot_.Trunk_mass/4+robot_.thigh_mass_[Leg_num]+robot_.shank_mass_[Leg_num] + 10)*g;
+  force_rw_stance_des_[Leg_num][0] = spring_K_[Leg_num] * error_pos_[Leg_num][0] -(robot_.M_d_R)*(1/(2*tan(thbr_[Leg_num]/2)))*dthbr_[Leg_num]*dr_[Leg_num]+
+    (robot_.M_d_R+ robot_.Trunk_mass/4 + robot_.thigh_mass_[Leg_num]+robot_.shank_mass_[Leg_num] + 30)*g;
 
-    force_rw_stance_des_[Leg_num][0] = spring_K_[Leg_num] * error_pos_[Leg_num][0];
+  // force_rw_stance_des_[Leg_num][0] = spring_K_[Leg_num] * error_pos_[Leg_num][0];
 
 }
 
@@ -62,9 +63,17 @@ void StanceForceControl<T>::tau_control(int Leg_num)
 
 
   error_vel_[Leg_num][1] = foot_traj_ptr_->foot_vel_rw_des_[Leg_num][1] - robot_.foot_vel_rw_act_local_[Leg_num][1];
-  error_pos_[Leg_num][1] = M_PI/2 - robot_.foot_pos_rw_act_local_[Leg_num][1];
+  error_pos_[Leg_num][1] = foot_traj_ptr_->foot_pos_rw_des_[Leg_num][1] - robot_.foot_pos_rw_act_local_[Leg_num][1];
 
-  force_rw_stance_des_[Leg_num][1] = kp_tau_[Leg_num] * error_pos_[Leg_num][1];
+  if ( robot_.phase_[Leg_num] == 0)
+  {
+    force_rw_stance_des_[Leg_num][1] = kp_tau_[Leg_num] * error_pos_[Leg_num][1];
+  }
+  else
+  {
+    force_rw_stance_des_[Leg_num][1] = kp_tau_[Leg_num] * error_vel_[Leg_num][1];
+  }
+
 
 
 
@@ -81,11 +90,11 @@ void StanceForceControl<T>::stance_control(int Leg_num)
    */
 
   spring_force_control(Leg_num);
+  // std::cout << "1 : " << force_rw_stance_des_[0][0] << ", "<< force_rw_stance_des_[0][1] << std::endl;
   tau_control(Leg_num);
+  // std::cout << "2 : " << force_rw_stance_des_[0][0] << ", "<< force_rw_stance_des_[0][1] << std::endl;
 
   robot_.inverse_static_rotating(force_rw_stance_des_[Leg_num],Leg_num);
-
-
 
 }
 

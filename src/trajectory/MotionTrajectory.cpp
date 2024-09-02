@@ -46,7 +46,7 @@ void MotionTrajectory<T>::stance_test()
 }
 
 template <typename T>
-void MotionTrajectory<T>::QLSLIP_Trajectory(T r_ref, T v_ref)
+void MotionTrajectory<T>::QLSLIP_Trajectory(T r_ref, T v_ref, mjData * d)
 {
   /**
    * @brief QLSLIP Trajectory
@@ -57,6 +57,7 @@ void MotionTrajectory<T>::QLSLIP_Trajectory(T r_ref, T v_ref)
    */
 
   T dth_ref = - v_ref / r_ref;
+  T f = 2;
 
   for (size_t i = 0; i < 4; i++)
   {
@@ -65,13 +66,13 @@ void MotionTrajectory<T>::QLSLIP_Trajectory(T r_ref, T v_ref)
     joint_traj_ptr_->joint_vel_des_[i][0]= 0.0;
     joint_traj_ptr_->joint_pos_des_[i][0]= 0.0;
     // ****************************************** Stance Control ****************************************** */
-    if (robot_.phase_[i] == 0)
+    if (robot_.phase_[i] == 1)
     {
       foot_traj_ptr_->foot_pos_rw_des_[i][0] = r_ref;
-      foot_traj_ptr_->foot_vel_rw_des_[i][1] = 0.0;
+      foot_traj_ptr_->foot_vel_rw_des_[i][1] = dth_ref;
     }
     // ****************************************** Flight Control ****************************************** */
-    else if (robot_.phase_[i] == 1)
+    else if (robot_.phase_[i] == 2)
     {
       foot_traj_ptr_->foot_pos_rw_des_[i][0] = foot_traj_ptr_->r_optimized_flight_[i];
       foot_traj_ptr_->foot_pos_rw_des_[i][1] = foot_traj_ptr_->th_optimized_flight_[i];
@@ -82,8 +83,9 @@ void MotionTrajectory<T>::QLSLIP_Trajectory(T r_ref, T v_ref)
     // ****************************************** Joint Control ****************************************** */
     else
     {
-      foot_traj_ptr_->foot_pos_rw_des_[i][0] = r_ref;
-      foot_traj_ptr_->foot_vel_rw_des_[i][1] = 0.0;
+      foot_traj_ptr_->foot_pos_rw_des_[i][0] = r_ref ;
+      foot_traj_ptr_->foot_pos_rw_des_[i][1] = 1.36394 ;
+      foot_traj_ptr_->foot_vel_rw_des_[i][1] =  0.0;
     }
 
   }

@@ -53,7 +53,7 @@ void RobotLeg<T>::get_jacobians_rotating()
   for (size_t i = 0; i < 4; i++)
   {
     jacbRW[i] << thigh_link_length_[i] * sin(joint_pos_act_[i][2] / 2),
-                 -thigh_link_length_[i]*sin(joint_pos_act_[i][2] / 2),
+                 -thigh_link_length_[i] * sin(joint_pos_act_[i][2] / 2),
                  thigh_link_length_[i] * cos(joint_pos_act_[i][2] / 2),
                  thigh_link_length_[i] * cos(joint_pos_act_[i][2] / 2);
     jacbRW_inv[i] = jacbRW[i].inverse();
@@ -81,7 +81,8 @@ void RobotLeg<T>::inverse_static_rotating(const Vec2<T> & force_rw_des,int Leg_n
      */
 
    get_jacobians_rotating();
-   joint_torque_bi_des_[Leg_num] = jacbRW_tran[Leg_num] * force_rw_des;
+   joint_torque_bi_des_[Leg_num] = jacbRW[Leg_num].transpose() * force_rw_des;
+
 
    joint_torque_des_[Leg_num][1] = joint_torque_bi_des_[Leg_num][0] + joint_torque_bi_des_[Leg_num][1];
    joint_torque_des_[Leg_num][2] = joint_torque_bi_des_[Leg_num][1];

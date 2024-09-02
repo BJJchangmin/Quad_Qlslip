@@ -18,17 +18,17 @@ RobotLeg<T> buildMclQuad()
   for(int i=0; i<4;i++)
   {
     mclQuad.hip_mass_[i] = 1.047;
-    mclQuad.thigh_mass_[i] = 0.50316;
-    mclQuad.shank_mass_[i] = 0.28735;
+    mclQuad.thigh_mass_[i] = 1.017;
+    mclQuad.shank_mass_[i] = 0.143;
 
     mclQuad.thigh_link_length_[i] = 0.25;
     mclQuad.shank_link_length_[i] = 0.25;
 
-    mclQuad.thigh_body_inertia_[i] << 2.6521E-04, 0.006258718, 0.006208038;
+    mclQuad.thigh_body_inertia_[i] << 2.6521E-04, 0.006258718, 0.0057;
     mclQuad.shank_body_inertia_[i] << 1.6488E-04, 0.003937, 0.004042;
 
-    mclQuad.thigh_com_location_[i] << 0.085604, 0, 0;
-    mclQuad.shank_com_location_[i] << 0.14427, 0, 0;
+    mclQuad.thigh_com_location_[i] << 0.22, 0, 0;
+    mclQuad.shank_com_location_[i] << 0.02, 0, 0;
 
   }
   

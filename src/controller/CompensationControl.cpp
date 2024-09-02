@@ -14,6 +14,7 @@ CompensationControl<T>::CompensationControl(RobotLeg<T> & robot) : robot_(robot)
    * ! Parameter is time independent. so I Just using FL leg value
    */
   g = -9.81;
+  // g =  0;
   pi = 3.14159265358979323846;
   sampling_time = 0.001;
 
@@ -32,7 +33,7 @@ CompensationControl<T>::CompensationControl(RobotLeg<T> & robot) : robot_(robot)
   C_I = m2*l2_c*l;
 
   I_m = I1_zz + m2*l*l+m1*l1_c*l1_c;
-  I_b = I2_zz +m2*l2_c*l2_c;
+  I_b = I2_zz + m2*l2_c*l2_c;
 
   // Calculate for motor accelelration
   for (int i = 0; i < 4; i++)
@@ -68,8 +69,8 @@ void CompensationControl<T>::state_update()
     dth_b[i] = robot_.joint_vel_bi_act_[i][1];
     dth_br[i] = robot_.joint_vel_act_[i][2];
 
-    ddth_m[i] = tustin_derivative(dth_m[i], dth_m_old[i], ddth_m[i], ddth_m_old[i], 100);
-    ddth_b[i] = tustin_derivative(dth_b[i], dth_b_old[i], ddth_b[i], ddth_b_old[i], 100);
+    ddth_m[i] = tustin_derivative(dth_m[i], dth_m_old[i], ddth_m[i], ddth_m_old[i], 15);
+    ddth_b[i] = tustin_derivative(dth_b[i], dth_b_old[i], ddth_b[i], ddth_b_old[i], 15);
   }
 }
 
@@ -125,11 +126,12 @@ void CompensationControl<T>::Inertia_modulation()
   /**
   * @brief Inertia modulation compensation
   */
-
   for (int i = 0; i < 4; i++)
   {
-    inertia_modulation_joint_des_[i] << I_m-M_d*pow(l,2)*(1-cos(th_br[i]))*ddth_m[i],
-                                        I_b-M_d*pow(l,2)*(1-cos(th_br[i]))*ddth_b[i];
+    inertia_modulation_joint_des_[i] << I_m-M_d*pow(l,2)*(1-cos(0))*ddth_m[i],
+                                        I_b-M_d*pow(l,2)*(1-cos(0))*ddth_b[i];
+
+
 
   }
 
@@ -166,14 +168,23 @@ void CompensationControl<T>::compensation_control()
 
   for (int i = 0; i < 4; i++)
   {
+    // compensation_joint_des_[i] = gravity_compensation_joint_des_[i] + coriollis_compensation_joint_des_[i] +
+                                    // inertia_decoupling_joint_des_[i] + inertia_modulation_joint_des_[i];
     compensation_joint_des_[i] = gravity_compensation_joint_des_[i] + coriollis_compensation_joint_des_[i] +
-                                    inertia_decoupling_joint_des_[i] + inertia_modulation_joint_des_[i];
+     inertia_decoupling_joint_des_[i] + inertia_modulation_joint_des_[i];
+
+    // compensation_joint_des_[i] = inertia_modulation_joint_des_[i];
   }
 
   for (int i = 0; i < 4; i++)
   {
-    robot_.joint_torque_des_[i][0] =+ compensation_joint_des_[i][0];
-    robot_.joint_torque_des_[i][1] =+ compensation_joint_des_[i][1];
+    robot_.joint_torque_des_[i][1] = robot_.joint_torque_des_[i][1] + compensation_joint_des_[i][0] + compensation_joint_des_[i][1];
+    robot_.joint_torque_des_[i][2] = robot_.joint_torque_des_[i][2] + compensation_joint_des_[i][1];
+
+
+
+
+
   }
 
 }

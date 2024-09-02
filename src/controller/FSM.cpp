@@ -69,8 +69,9 @@ void FSM<T>::phase_update(mjData * d)
         touch_[i][3] > touch_threshold_ && touch_[i][4] > touch_threshold_ && touch_[i][5] > touch_threshold_ &&
         touch_[i][6] > touch_threshold_ && touch_[i][7] > touch_threshold_ && touch_[i][8] > touch_threshold_ &&
         touch_[i][9] > touch_threshold_ && touch_[i][10] > touch_threshold_ && touch_[i][11] > touch_threshold_ &&
-        touch_[i][12] > touch_threshold_ && touch_[i][13] > touch_threshold_ && touch_[i][14] > touch_threshold_)
+        touch_[i][12] > touch_threshold_ )
         {
+          cout << "Lift off state in  FSM" << endl;
           event_[i] = 4;
           Lift_off_state(i);
         }
@@ -80,6 +81,7 @@ void FSM<T>::phase_update(mjData * d)
         touch_[i][9] <= touch_threshold_ && touch_[i][10] <= touch_threshold_ && touch_[i][11] <= touch_threshold_ &&
         touch_[i][12] <= touch_threshold_ && touch_[i][13] <= touch_threshold_ && touch_[i][14] <= touch_threshold_)
         {
+
           event_[i] = 3;
           Touch_down_state(i);
         }
@@ -89,11 +91,11 @@ void FSM<T>::phase_update(mjData * d)
       //********************************************** Phase Check ***************************************** */
       if (time_ >= td_param_ptr_->t_TD[i] && td_param_ptr_->t_TD[i] > lo_param_ptr_->t_LO[i] )
       {
-        phase_[i] = 0;
+        phase_[i] = 1;
       }
       else if (time_ >= lo_param_ptr_->t_LO[i] && lo_param_ptr_->t_LO[i] > td_param_ptr_->t_TD[i])
       {
-        phase_[i] = 1;
+        phase_[i] = 2;
       }
 
     }
@@ -113,6 +115,7 @@ void FSM<T>::Lift_off_state(int Leg_num)
   /**
    * @brief Update Lift off state
    */
+  cout << "Lift off state" << endl;
   lo_param_ptr_->r_LO[Leg_num] = robot_.foot_pos_rw_act_local_[Leg_num][0];
   lo_param_ptr_->dr_LO[Leg_num] = robot_.foot_vel_rw_act_local_[Leg_num][0];
   lo_param_ptr_->th_LO[Leg_num] = robot_.foot_pos_rw_act_local_[Leg_num][1];
@@ -121,7 +124,7 @@ void FSM<T>::Lift_off_state(int Leg_num)
 
   lo_param_ptr_->t_stance[Leg_num] = lo_param_ptr_->t_LO[Leg_num] - td_param_ptr_->t_TD[Leg_num];
   lo_param_ptr_->V_y_LO[Leg_num] = lo_param_ptr_->dr_LO[Leg_num]*sin(lo_param_ptr_->th_LO[Leg_num]) -
-    lo_param_ptr_->r_LO[Leg_num]*lo_param_ptr_->dth_LO[Leg_num]*cos(lo_param_ptr_->th_LO[Leg_num]);
+  lo_param_ptr_->r_LO[Leg_num]*lo_param_ptr_->dth_LO[Leg_num]*cos(lo_param_ptr_->th_LO[Leg_num]);
 
 }
 
@@ -148,16 +151,18 @@ void FSM<T>::FSM_control()
 
   for(size_t i = 0; i < 4; i++)
   {
-    if (phase_[i] == 0)
+    if (phase_[i] == 1 || phase_[i] == 0)
     {
+      // std::cout << "1 : " << i << std::endl;
       stance_ctrl_.stance_control(i);
     }
-    else if (phase_[i] == 1)
+    else if (phase_[i] == 2)
     {
       flight_ctrl_.flight_control(i);
     }
   }
   comp_ctrl_.compensation_control(); // Phase에 상관없이 실행되어야함.
+
 
 }
 

@@ -49,7 +49,7 @@ void TrajectoryOptimization<T>::Flight_traj_generate(mjData * d)
       Angular_Optimization(i);
     };
 
-    if (robot_.phase_[i] == 1)
+    if (robot_.phase_[i] == 2)
     {
       Polynomial_Trajectory(i);
     };

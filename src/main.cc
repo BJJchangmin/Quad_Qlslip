@@ -301,9 +301,10 @@ void apply_joint_control(mjData * d)
   d->qpos[10] = 0;
   d->qpos[13] = 0;
   d->qpos[16] = 0;
+
   for (size_t i = 0; i < 4; i++)
   {
-    for (size_t j = 0; j < 3; j++)
+    for (size_t j = 1; j < 3; j++)
     {
       d->ctrl[3*i+j] = robot.joint_torque_des_[i][j];
     }
@@ -447,19 +448,23 @@ void PhysicsLoop(mj::Simulate& sim) {
             bool bIsPerturbOn = false;
             fsm.phase_update(d);
             traj_opt.Flight_traj_generate(d);
-            traj_generator.QLSLIP_Trajectory(0.4, 0.5);
+            traj_generator.QLSLIP_Trajectory(0.3536, 0.5, d);
             fsm.FSM_control();
             apply_joint_control(d);
+
+
 
             // run single step, let next iteration deal with timing
             mj_step(m, d);
             stepped = true;
-            //* ******************************************************************************** *//
-            // TODO: Make this sequence as a function
-            //* ******** READ SENSOR DATA AND CONDUCT CALCULATOIN FOR STATE ESTIMATION ********* *//
+
             robot.get_sensor_data(d);
             robot.bi_kinematic_transform();
             robot.forward_kinematics_rotating();
+            //* ******************************************************************************** *//
+            // TODO: Make this sequence as a function
+            //* ******** READ SENSOR DATA AND CONDUCT CALCULATOIN FOR STATE ESTIMATION ********* *//
+
 
             if (loop_iter % data_logger.get_logging_freq() == 0)
             {
@@ -493,7 +498,7 @@ void PhysicsLoop(mj::Simulate& sim) {
             bool bIsPerturbOn = false;
             fsm.phase_update(d);
             traj_opt.Flight_traj_generate(d);
-            traj_generator.QLSLIP_Trajectory(0.4, 0.5);
+            traj_generator.QLSLIP_Trajectory(0.3536, 0.5, d);
             fsm.FSM_control();
             apply_joint_control(d);
 
@@ -509,10 +514,9 @@ void PhysicsLoop(mj::Simulate& sim) {
 
             if (loop_iter % data_logger.get_logging_freq() == 0)
             {
-
               data_logger.save_data(m, d);
             }
-            loop_iter++;
+             loop_iter++;
 
               //* **************************************************************************************** *//
               // break if reset

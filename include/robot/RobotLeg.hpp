@@ -74,11 +74,12 @@ public:
   T phase_[4],event_[4];
 
 
+
   /**
    * @brief Make for StanceForceControl and CompensationControl
    * @brief there is a reason why i write joint_des.please check in controller
    * @todo Flight phase control
-   * 
+   *
    */
 
   //* variables for StanceForceControl *//

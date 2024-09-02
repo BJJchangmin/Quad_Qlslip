@@ -1,6 +1,5 @@
 close all;
 
-
 filename{1} = 'data_FL.csv';
 filename{2} = 'data_FR.csv';
 filename{3} = 'data_RL.csv';
@@ -42,13 +41,14 @@ end
 %Plotting Parameter
 lw =1;   %Line Width
 FT = 7; %Title Fonte Size
-sgT= 15; % subtitle plot title
-Faxis = 10; %Axis Fonte Size
+sgT= 18; % subtitle plot title
+Faxis = 12.5; %Axis Fonte Size
 fl =10 ; % Legend Fonte Size
 Ms = 3 ; %Mark Size
 
 
-%Need to change total plot
+%%%Need to change total plot
+
 figure(1)
 for i = 1:1:4
     subplot(2,2,i);
@@ -56,23 +56,24 @@ for i = 1:1:4
     hold on
     plot(t,r_act{i},'r-','LineWidth',lw);
     grid on;
-    legend('ref','act','FontName','Times New Roman','location','northeast','FontSize',fl)
-    ylabel('r (m)','FontName','Times New Roman','FontSize', Faxis); % y축 레이블
+    legend('ref','act','FontName','Times New Roman','location','northeast','FontSize',fl,'Interpreter', 'latex')
+    ylabel('r (m)','FontName','Times New Roman','FontSize', Faxis,'Interpreter', 'latex'); % y축 레이블
+    ylim([0 0.5]);
 end
-sgtitle('r tracking ','FontName','Times New Roman','FontSize',sgT);
+sgtitle('r tracking ','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'latex');
 
-figure(2)
-for i = 1:1:4
-    subplot(2,2,i);
-    plot(t,dr_des{i},'b-','LineWidth', lw);
-    hold on
-    plot(t,dr_act{i},'r-','LineWidth',lw);
-    grid on;
-    legend('ref','act','FontName','Times New Roman','location','northeast','FontSize',fl)
-    ylabel('dr (m/s)','FontName','Times New Roman','FontSize', Faxis); % y축 레이블
-end
-sgtitle('dr tracking ','FontName','Times New Roman','FontSize',sgT);
-
+% figure(2)
+% for i = 1:1:4
+%     subplot(2,2,i);
+%     plot(t,dr_des{i},'b-','LineWidth', lw);
+%     hold on
+%     plot(t,dr_act{i},'r-','LineWidth',lw);
+%     grid on;
+%     legend('ref','act','FontName','Times New Roman','location','northeast','FontSize',fl,'Interpreter', 'latex')
+%     ylabel('$\dot{r}$ (m/s)','FontName','Times New Roman','FontSize', Faxis,'Interpreter', 'latex'); % y축 레이블
+% end
+% sgtitle('$\dot{r}$ tracking ','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'latex');
+% 
 figure(3)
 for i = 1:1:4
     subplot(2,2,i);
@@ -80,10 +81,10 @@ for i = 1:1:4
     hold on
     plot(t,th_act{i},'r-','LineWidth',lw);
     grid on;
-    legend('ref','act','FontName','Times New Roman','location','northeast','FontSize',fl)
-    ylabel('theta (rad)','FontName','Times New Roman','FontSize', Faxis,'Interpreter', 'latex'); % y축 레이블
+    legend('ref','act','FontName','Times New Roman','location','northeast','FontSize',fl,'Interpreter', 'latex')
+    ylabel('$\theta$ (rad)','FontName','Times New Roman','FontSize', Faxis,'Interpreter', 'latex'); % y축 레이블
 end
-sgtitle('th tracking ','FontName','Times New Roman','FontSize',sgT);
+sgtitle('$\theta$ tracking ','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'latex');
 
 figure(4)
 for i = 1:1:4
@@ -92,25 +93,27 @@ for i = 1:1:4
     hold on
     plot(t,dth_act{i},'r-','LineWidth',lw);
     grid on;
-    legend('ref','act','FontName','Times New Roman','location','northeast','FontSize',fl)
+    legend('ref','act','FontName','Times New Roman','location','northeast','FontSize',fl,'Interpreter', 'latex')
     ylabel('$\dot{\theta}$ (rad/s)','FontName','Times New Roman','FontSize', Faxis,'Interpreter', 'latex'); % y축 레이블
 end
-sgtitle('dth tracking ','FontName','Times New Roman','FontSize',sgT);
+sgtitle('$\dot{\theta}$ tracking ','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'latex');
 
 figure(5)
 for i = 1:1:4
     subplot(2,2,i)
     plot(t,tau_HAA{i},'b-','LineWidth', lw);
     hold on
-    plot(t,tau_HFE{i},'r-','LineWidth', lw);
+    plot(t,tau_HFE{i},'r-','LineWidth', lw); 
     hold on
     plot(t,tau_KFE{i},'g-','LineWidth', lw);
-    legend('ref','act','FontName','Times New Roman','location','northeast','FontSize',fl)
-    ylabel('\tau (rad/s)','FontName','Times New Roman','FontSize', Faxis); % y축 레이블
+    grid on
+    legend('HAA','HFE','KFE','FontName','Times New Roman','location','northeast','FontSize',fl,'Interpreter', 'latex')
+    ylabel('$\tau$ (rad/s)','FontName','Times New Roman','FontSize', Faxis,'Interpreter', 'latex'); % y축 레이블
 end
-sgtitle('Actual Torque ','FontName','Times New Roman','FontSize',sgT);
+sgtitle('Actual Torque ','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'latex');
 
 
+setFigurePositions(5);
 
 
 

@@ -59,7 +59,7 @@ class MotionTrajectory
     MotionTrajectory(RobotLeg<T> & robot_);
     void squat(T time);
     void stance_test();
-    void QLSLIP_Trajectory(T r_ref, T v_ref);
+    void QLSLIP_Trajectory(T r_ref, T v_ref, mjData * d);
 
 
 };

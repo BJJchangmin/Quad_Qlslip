@@ -1,6 +1,5 @@
 close all;
 
-
 filename{1} = 'data_FL.csv';
 filename{2} = 'data_FR.csv';
 filename{3} = 'data_RL.csv';
@@ -28,6 +27,10 @@ for i = 1:1:4
     tau_HFE{i} = Arr_Leg{i}(:,11);
     tau_KFE{i} = Arr_Leg{i}(:,12);
 
+    phase{i} = Arr_Leg{i}(:,13);
+    event{i} = Arr_Leg{i}(:,14);
+    touch{i} = Arr_Leg{i}(:,15);
+
 end
 
 
@@ -48,7 +51,8 @@ fl =10 ; % Legend Fonte Size
 Ms = 3 ; %Mark Size
 
 
-%Need to change total plot
+%%%Need to change total plot
+
 figure(1)
 for i = 1:1:4
     subplot(2,2,i);
@@ -58,21 +62,22 @@ for i = 1:1:4
     grid on;
     legend('ref','act','FontName','Times New Roman','location','northeast','FontSize',fl,'Interpreter', 'latex')
     ylabel('r (m)','FontName','Times New Roman','FontSize', Faxis,'Interpreter', 'latex'); % y축 레이블
+    ylim([0 0.5]);
 end
 sgtitle('r tracking ','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'latex');
 
-figure(2)
-for i = 1:1:4
-    subplot(2,2,i);
-    plot(t,dr_des{i},'b-','LineWidth', lw);
-    hold on
-    plot(t,dr_act{i},'r-','LineWidth',lw);
-    grid on;
-    legend('ref','act','FontName','Times New Roman','location','northeast','FontSize',fl,'Interpreter', 'latex')
-    ylabel('$\dot{r}$ (m/s)','FontName','Times New Roman','FontSize', Faxis,'Interpreter', 'latex'); % y축 레이블
-end
-sgtitle('$\dot{r}$ tracking ','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'latex');
-
+% figure(2)
+% for i = 1:1:4
+%     subplot(2,2,i);
+%     plot(t,dr_des{i},'b-','LineWidth', lw);
+%     hold on
+%     plot(t,dr_act{i},'r-','LineWidth',lw);
+%     grid on;
+%     legend('ref','act','FontName','Times New Roman','location','northeast','FontSize',fl,'Interpreter', 'latex')
+%     ylabel('$\dot{r}$ (m/s)','FontName','Times New Roman','FontSize', Faxis,'Interpreter', 'latex'); % y축 레이블
+% end
+% sgtitle('$\dot{r}$ tracking ','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'latex');
+% 
 figure(3)
 for i = 1:1:4
     subplot(2,2,i);
@@ -102,7 +107,7 @@ for i = 1:1:4
     subplot(2,2,i)
     plot(t,tau_HAA{i},'b-','LineWidth', lw);
     hold on
-    plot(t,tau_HFE{i},'r-','LineWidth', lw);
+    plot(t,tau_HFE{i},'r-','LineWidth', lw); 
     hold on
     plot(t,tau_KFE{i},'g-','LineWidth', lw);
     grid on
@@ -111,7 +116,30 @@ for i = 1:1:4
 end
 sgtitle('Actual Torque ','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'latex');
 
+figure(6)
+for i = 1:1:4
+    subplot(2,2,i)
+    plot(t,phase{i},'b-','LineWidth', lw);
+    hold on
+    plot(t,event{i},'r-','LineWidth', lw); 
+    grid on
+    legend('phase','event','FontName','Times New Roman','location','northeast','FontSize',fl,'Interpreter', 'latex')
+    ylabel('status','FontName','Times New Roman','FontSize', Faxis,'Interpreter', 'latex'); % y축 레이블
+end
+sgtitle('Status','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'latex');
 
+figure(7)
+for i = 1:1:4
+    subplot(2,2,i)
+    plot(t,touch{i},'b-','LineWidth', lw);
+    grid on;
+    legend('touch','event','FontName','Times New Roman','location','northeast','FontSize',fl,'Interpreter', 'latex')
+    ylabel('N','FontName','Times New Roman','FontSize', Faxis,'Interpreter', 'latex'); % y축 레이블
+end
+sgtitle('Touch Sensor','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'latex');
+
+
+setFigurePositions(6);
 
 
 

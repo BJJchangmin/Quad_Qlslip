@@ -68,7 +68,11 @@ void DataLogging<T>::save_data(const mjModel* m, mjData* d)
 
       fout_[i] << robot_.joint_torque_des_[i][0] << ","; // joint torque HAA
       fout_[i] << robot_.joint_torque_des_[i][1] << ","; // joint torque HFE
-      fout_[i] << robot_.joint_torque_des_[i][2]; // joint torque KFE
+      fout_[i] << robot_.joint_torque_des_[i][2] << ",";  // joint torque KFE
+
+      fout_[i] << robot_.phase_[i] << ",";  // phase
+      fout_[i] << robot_.event_[i] << ",";  // event
+      fout_[i] << robot_.foot_contact_[i] ;
 
       // ! Don't remove the newline
       fout_[i] << endl;
@@ -112,7 +116,8 @@ void DataLogging<T>::init_data()
     {
       fout_[i] << "time, r_des, r_act, th_des, th_act,";
       fout_[i] << "dr_des, dr_act, dth_des, dth_act, ";
-      fout_[i] << "tau_HAA, tau_HFE, tau_KFE " <<std::endl;
+      fout_[i] << "tau_HAA, tau_HFE, tau_KFE, ";
+      fout_[i] << "phase, event, touch "<<std::endl;
     }
   }
   //************************************Trunk Data ********************************************** */
