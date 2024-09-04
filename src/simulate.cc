@@ -2670,6 +2670,27 @@ void Simulate::RenderLoop() {
         this->loadrequest = 1;
       }
 
+      //* ************************************************************************************** *//
+      //* ******************************** CAMERA VIEW SETTINGS ******************************** *//
+      // printf("Current Camera View: %f, %f, %f, %f, %f, %f \n", this->cam.azimuth,
+      //        this->cam.distance, this->cam.elevation, this->cam.lookat[0], this->cam.lookat[1],
+      //        this->cam.lookat[2]);
+      this->cam.type = mjCAMERA_TRACKING;
+      this->cam.fixedcamid = -1;
+      this->cam.trackbodyid = 0;
+      this->cam.distance = 2;
+      this->cam.azimuth = -90.0;
+      this->cam.elevation = -1;
+      // this->cam.distance = 3.0;
+      // this->cam.lookat[0] = d_->qvel[0];
+      // this->cam.lookat[0] += 0.001;
+      // this->cam.lookat[1] = 0.0;
+      // this->cam.lookat[2] = 0.15;
+      //* Perturbation *//
+      this->opt.flags[mjVIS_PERTFORCE] = true;
+      //* ************************************************************************************** *//
+
+
       // poll and handle events
       this->platform_ui->PollEvents();
 
