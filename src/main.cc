@@ -430,6 +430,7 @@ void PhysicsLoop(mj::Simulate& sim) {
           // requested slow-down factor
           double slowdown = 100 / sim.percentRealTime[sim.real_time_index];
 
+
           // misalignment condition: distance from target sim time is bigger than syncmisalign
           bool misaligned =
               mju_abs(Seconds(elapsedCPU).count()/slowdown - elapsedSim) > syncMisalign;
@@ -653,6 +654,7 @@ int main(int argc, char** argv) {
   flight_ctrl.get_traj_pointer(foot_traj_ptr);
   fsm.get_optimization_pointer(lo_param_ptr, td_param_ptr);
   data_logger.set_traj_ptr(foot_traj_ptr, joint_traj_ptr);
+  data_logger.set_op_param_ptr(op_param_ptr, lo_param_ptr, td_param_ptr);
 
 
 

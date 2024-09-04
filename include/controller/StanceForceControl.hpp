@@ -20,7 +20,7 @@ private:
   // spring force control
   T spring_K_[4];
   // tau_control
-  T kp_tau_[4];
+  T kp_tau_[4], kd_tau_[4];
 
   Vec2<T> error_pos_[4], error_vel_[4];
   T thbr_[4], dthbr_[4], dr_[4];

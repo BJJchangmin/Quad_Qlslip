@@ -14,7 +14,6 @@ CompensationControl<T>::CompensationControl(RobotLeg<T> & robot) : robot_(robot)
    * ! Parameter is time independent. so I Just using FL leg value
    */
   g = -9.81;
-  // g =  0;
   pi = 3.14159265358979323846;
   sampling_time = 0.001;
 
@@ -38,6 +37,15 @@ CompensationControl<T>::CompensationControl(RobotLeg<T> & robot) : robot_(robot)
   // Calculate for motor accelelration
   for (int i = 0; i < 4; i++)
   {
+    th_m[i] = 0;
+    th_b[i] = 0;
+
+    dth_m[i] = 0;
+    dth_b[i] = 0;
+    dth_br[i] = 0;
+    ddth_m[i] = 0;
+    ddth_b[i] = 0;
+
     dth_m_old[i] = 0;
     dth_b_old[i] = 0;
     ddth_m_old[i] = 0;
@@ -52,30 +60,29 @@ CompensationControl<T>::CompensationControl(RobotLeg<T> & robot) : robot_(robot)
 }
 
 template <typename T>
-void CompensationControl<T>::state_update()
+void CompensationControl<T>::state_update(int Leg_num)
 {
-  for (int i = 0; i < 4; i++)
-  {
-    dth_m_old[i] = dth_m[i];
-    dth_b_old[i] = dth_b[i];
-    ddth_m_old[i] = ddth_m[i];
-    ddth_b_old[i] = ddth_b[i];
 
-    th_m[i] = robot_.joint_pos_bi_act_[i][0];
-    th_b[i] = robot_.joint_pos_bi_act_[i][1];
-    th_br[i] = robot_.joint_pos_act_[i][2];
+  dth_m_old[Leg_num] = dth_m[Leg_num];
+  dth_b_old[Leg_num] = dth_b[Leg_num];
+  ddth_m_old[Leg_num] = ddth_m[Leg_num];
+  ddth_b_old[Leg_num] = ddth_b[Leg_num];
 
-    dth_m[i] = robot_.joint_vel_bi_act_[i][0];
-    dth_b[i] = robot_.joint_vel_bi_act_[i][1];
-    dth_br[i] = robot_.joint_vel_act_[i][2];
+  th_m[Leg_num] = robot_.joint_pos_bi_act_[Leg_num][0];
+  th_b[Leg_num] = robot_.joint_pos_bi_act_[Leg_num][1];
+  th_br[Leg_num] = robot_.joint_pos_act_[Leg_num][2];
 
-    ddth_m[i] = tustin_derivative(dth_m[i], dth_m_old[i], ddth_m[i], ddth_m_old[i], 15);
-    ddth_b[i] = tustin_derivative(dth_b[i], dth_b_old[i], ddth_b[i], ddth_b_old[i], 15);
-  }
+  dth_m[Leg_num] = robot_.joint_vel_bi_act_[Leg_num][0];
+  dth_b[Leg_num] = robot_.joint_vel_bi_act_[Leg_num][1];
+  dth_br[Leg_num] = robot_.joint_vel_act_[Leg_num][2];
+
+  ddth_m[Leg_num] = tustin_derivative(dth_m[Leg_num], dth_m_old[Leg_num], ddth_m[Leg_num], ddth_m_old[Leg_num], 15);
+  ddth_b[Leg_num] = tustin_derivative(dth_b[Leg_num], dth_b_old[Leg_num], ddth_b[Leg_num], ddth_b_old[Leg_num], 15);
+
 }
 
 template <typename T>
-void CompensationControl<T>::Gravity_compensation()
+void CompensationControl<T>::Gravity_compensation(int Leg_num)
 {
   /**
   * @brief Gravity compensation
@@ -84,14 +91,13 @@ void CompensationControl<T>::Gravity_compensation()
   *
   */
 
-  for (int i = 0; i < 4; i++)
-  {
-    gravity_compensation_joint_des_[i] << G_m*cos(th_m[i]), G_b*cos(th_b[i]);
-  }
+
+  gravity_compensation_joint_des_[Leg_num] << G_m*cos(th_m[Leg_num]), G_b*cos(th_b[Leg_num]);
+
 }
 
 template <typename T>
-void CompensationControl<T>::Coriollis_compensation()
+void CompensationControl<T>::Coriollis_compensation(int Leg_num)
 {
   /**
   * @brief Coriollis compensation
@@ -99,46 +105,39 @@ void CompensationControl<T>::Coriollis_compensation()
   *
   */
 
-  for (int i = 0; i < 4; i++)
-  {
-    coriollis_compensation_joint_des_[i] << -C_I*sin(th_br[i])*pow(dth_b[i],2),
-                                            C_I*sin(th_br[i])*pow(dth_m[i],2);
-  }
+
+  coriollis_compensation_joint_des_[Leg_num] << -C_I*sin(th_br[Leg_num])*pow(dth_b[Leg_num],2),
+                                            C_I*sin(th_br[Leg_num])*pow(dth_m[Leg_num],2);
+
 }
 
 template <typename T>
-void CompensationControl<T>::Inertia_Decoupling()
+void CompensationControl<T>::Inertia_Decoupling(int Leg_num)
 {
   /**
   * @brief Inertia Decoupling compensation
   */
 
-  for (int i = 0; i < 4; i++)
-  {
-    inertia_decoupling_joint_des_[i] << C_I*cos(th_br[i])*ddth_b[i],
-                                        C_I*cos(th_br[i])*ddth_m[i];
-  }
+
+  inertia_decoupling_joint_des_[Leg_num] << C_I*cos(th_br[Leg_num])*ddth_b[Leg_num],
+                                        C_I*cos(th_br[Leg_num])*ddth_m[Leg_num];
 }
 
 template <typename T>
-void CompensationControl<T>::Inertia_modulation()
+void CompensationControl<T>::Inertia_modulation(int Leg_num)
 {
   /**
   * @brief Inertia modulation compensation
   */
-  for (int i = 0; i < 4; i++)
-  {
-    inertia_modulation_joint_des_[i] << I_m-M_d*pow(l,2)*(1-cos(0))*ddth_m[i],
-                                        I_b-M_d*pow(l,2)*(1-cos(0))*ddth_b[i];
 
+  inertia_modulation_joint_des_[Leg_num] << I_m-M_d*pow(l,2)*(1-cos(0))*ddth_m[Leg_num],
+                                            I_b-M_d*pow(l,2)*(1-cos(0))*ddth_b[Leg_num];
 
-
-  }
 
 }
 
 template <typename T>
-void CompensationControl<T>::Trunk_mass_compensation()
+void CompensationControl<T>::Trunk_mass_compensation(int Leg_num)
 {
   /**
    * @brief Trunk mass compensation
@@ -149,7 +148,7 @@ void CompensationControl<T>::Trunk_mass_compensation()
 }
 
 template <typename T>
-void CompensationControl<T>::compensation_control()
+void CompensationControl<T>::compensation_control(int Leg_num)
 {
   /**
    * @brief Compensation Control
@@ -159,33 +158,23 @@ void CompensationControl<T>::compensation_control()
    * @param inertia_modulation_joint_des_: desired inertia modulation compensation
    */
 
-  state_update();
+  state_update(Leg_num);
 
-  Gravity_compensation();
-  Coriollis_compensation();
-  Inertia_Decoupling();
-  Inertia_modulation();
+  Gravity_compensation(Leg_num);
+  Coriollis_compensation(Leg_num);
+  Inertia_Decoupling(Leg_num);
+  Inertia_modulation(Leg_num);
 
-  for (int i = 0; i < 4; i++)
-  {
-    // compensation_joint_des_[i] = gravity_compensation_joint_des_[i] + coriollis_compensation_joint_des_[i] +
-                                    // inertia_decoupling_joint_des_[i] + inertia_modulation_joint_des_[i];
-    compensation_joint_des_[i] = gravity_compensation_joint_des_[i] + coriollis_compensation_joint_des_[i] +
-     inertia_decoupling_joint_des_[i] + inertia_modulation_joint_des_[i];
 
-    // compensation_joint_des_[i] = inertia_modulation_joint_des_[i];
-  }
-
-  for (int i = 0; i < 4; i++)
-  {
-    robot_.joint_torque_des_[i][1] = robot_.joint_torque_des_[i][1] + compensation_joint_des_[i][0] + compensation_joint_des_[i][1];
-    robot_.joint_torque_des_[i][2] = robot_.joint_torque_des_[i][2] + compensation_joint_des_[i][1];
+  compensation_joint_des_[Leg_num] = gravity_compensation_joint_des_[Leg_num] + coriollis_compensation_joint_des_[Leg_num] +
+    inertia_decoupling_joint_des_[Leg_num] + inertia_modulation_joint_des_[Leg_num];
 
 
 
 
+  robot_.joint_torque_des_[Leg_num][1] = robot_.joint_torque_des_[Leg_num][1] + compensation_joint_des_[Leg_num][0] + compensation_joint_des_[Leg_num][1];
+  robot_.joint_torque_des_[Leg_num][2] = robot_.joint_torque_des_[Leg_num][2] + compensation_joint_des_[Leg_num][1];
 
-  }
 
 }
 

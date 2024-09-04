@@ -46,15 +46,15 @@ class CompensationControl
   public:
     CompensationControl(RobotLeg<T> & robot);
 
-    void state_update();
+    void state_update(int Leg_num);
     T tustin_derivative(T input, T input_old, T output ,T output_old, T cut_off);
-    void Gravity_compensation();
-    void Coriollis_compensation();
-    void Inertia_Decoupling();
-    void Inertia_modulation();
-    void Trunk_mass_compensation();
+    void Gravity_compensation(int Leg_num);
+    void Coriollis_compensation(int Leg_num);
+    void Inertia_Decoupling(int Leg_num);
+    void Inertia_modulation(int Leg_num);
+    void Trunk_mass_compensation(int Leg_num);
 
-    void compensation_control();
+    void compensation_control(int Leg_num);
 
 
 

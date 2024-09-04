@@ -62,9 +62,6 @@ void MotionTrajectory<T>::QLSLIP_Trajectory(T r_ref, T v_ref, mjData * d)
   for (size_t i = 0; i < 4; i++)
   {
 
-    //********************************** Joint Velocity Control for HAA ******************************/
-    joint_traj_ptr_->joint_vel_des_[i][0]= 0.0;
-    joint_traj_ptr_->joint_pos_des_[i][0]= 0.0;
     // ****************************************** Stance Control ****************************************** */
     if (robot_.phase_[i] == 1)
     {
@@ -83,9 +80,9 @@ void MotionTrajectory<T>::QLSLIP_Trajectory(T r_ref, T v_ref, mjData * d)
     // ****************************************** Joint Control ****************************************** */
     else
     {
-      foot_traj_ptr_->foot_pos_rw_des_[i][0] = r_ref ;
-      foot_traj_ptr_->foot_pos_rw_des_[i][1] = 1.36394 ;
-      foot_traj_ptr_->foot_vel_rw_des_[i][1] =  0.0;
+      foot_traj_ptr_->foot_pos_rw_des_[i][0] = 0.4 ;
+      foot_traj_ptr_->foot_pos_rw_des_[i][1] = M_PI / 2 ;
+      foot_traj_ptr_->foot_vel_rw_des_[i][1] =  0.0 ;
     }
 
   }

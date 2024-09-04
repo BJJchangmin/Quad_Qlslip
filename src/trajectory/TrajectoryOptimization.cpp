@@ -60,8 +60,8 @@ void TrajectoryOptimization<T>::Flight_traj_generate(mjData * d)
 template <typename T>
 void TrajectoryOptimization<T>::state_update(int Leg_num)
 {
-  lo_param_ptr_->th_LO[Leg_num] =- M_PI/2;
-  td_param_ptr_->th_TD[Leg_num] =- M_PI/2;
+  lo_param_ptr_->th_LO[Leg_num] -= M_PI/2;
+  td_param_ptr_->th_TD[Leg_num] -= M_PI/2;
 
   r_ref[Leg_num] = foot_traj_ptr_->foot_pos_rw_des_[Leg_num][0];
   dth_ref[Leg_num] = foot_traj_ptr_->foot_vel_rw_des_[Leg_num][1];
@@ -260,8 +260,8 @@ void TrajectoryOptimization<T>::Angular_Optimization(int Leg_num)
   ipopt_opts["max_iter"] = 500;                      // Set maximum number of iterations
   ipopt_opts["tol"] = 1e-6;                          // Convergence tolerance
   ipopt_opts["print_level"] = 0;                     // Verbosity level of the solver output
-  ipopt_opts["print_timing_statistics"] = "no";      // disable timing statistics
-  ipopt_opts["print_options_documentation"] = "no";  // Suppress documentation
+  ipopt_opts["print_timing_statistics"] = "yes";      // disable timing statistics
+  ipopt_opts["print_options_documentation"] = "yes";  // Suppress documentation
   // ipopt_opts["ma27_print_level"] = 0;
   ipopt_opts["acceptable_tol"] = 1e-5;  // Acceptable convergence tolerance
   ipopt_opts["sb"] = "yes";             // short banner for startup
@@ -312,6 +312,7 @@ void TrajectoryOptimization<T>::Polynomial_Trajectory(int Leg_num)
   //******************************** Early TD *************************************/
   if (optimized_flight_time <= t_des_TD)
   {
+    cout << "Early TD" << endl;
     op_param_ptr_->t_r[Leg_num] = optimized_flight_time;
     op_param_ptr_->t_th[Leg_num] = optimized_flight_time;
 
@@ -344,6 +345,7 @@ void TrajectoryOptimization<T>::Polynomial_Trajectory(int Leg_num)
   //*********************************************** late TD *******************************************************************/
   else if (optimized_flight_time > t_des_TD)
   {
+    cout << "Late TD" << endl;
     op_param_ptr_->t_r[Leg_num] = optimized_flight_time - t_des_TD;
     op_param_ptr_->t_th[Leg_num] = t_des_TD;
 
@@ -371,6 +373,7 @@ void TrajectoryOptimization<T>::Polynomial_Trajectory(int Leg_num)
   //*********************************************** ELSE ************************************************************************* */
   else
   {
+
     op_param_ptr_->t_r[Leg_num] = 0;
     op_param_ptr_->t_th[Leg_num] = 0;
 

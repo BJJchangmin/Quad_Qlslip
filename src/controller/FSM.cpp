@@ -71,7 +71,6 @@ void FSM<T>::phase_update(mjData * d)
         touch_[i][9] > touch_threshold_ && touch_[i][10] > touch_threshold_ && touch_[i][11] > touch_threshold_ &&
         touch_[i][12] > touch_threshold_ )
         {
-          cout << "Lift off state in  FSM" << endl;
           event_[i] = 4;
           Lift_off_state(i);
         }
@@ -115,7 +114,7 @@ void FSM<T>::Lift_off_state(int Leg_num)
   /**
    * @brief Update Lift off state
    */
-  cout << "Lift off state" << endl;
+
   lo_param_ptr_->r_LO[Leg_num] = robot_.foot_pos_rw_act_local_[Leg_num][0];
   lo_param_ptr_->dr_LO[Leg_num] = robot_.foot_vel_rw_act_local_[Leg_num][0];
   lo_param_ptr_->th_LO[Leg_num] = robot_.foot_pos_rw_act_local_[Leg_num][1];
@@ -151,17 +150,18 @@ void FSM<T>::FSM_control()
 
   for(size_t i = 0; i < 4; i++)
   {
-    if (phase_[i] == 1 || phase_[i] == 0)
+    if (phase_[i] == 1 )
     {
-      // std::cout << "1 : " << i << std::endl;
       stance_ctrl_.stance_control(i);
+      comp_ctrl_.compensation_control(i); // Phase에 상관없이 실행되어야함.
     }
     else if (phase_[i] == 2)
     {
       flight_ctrl_.flight_control(i);
+      comp_ctrl_.compensation_control(i); // Phase에 상관없이 실행되어야함.
     }
   }
-  comp_ctrl_.compensation_control(); // Phase에 상관없이 실행되어야함.
+
 
 
 }
