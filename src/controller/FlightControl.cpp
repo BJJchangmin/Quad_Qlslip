@@ -15,7 +15,7 @@ FlightControl<T>::FlightControl(RobotLeg<T> & robot) : robot_(robot)
     error_pos_[i] = Vec2<T>::Zero();
     error_vel_[i] = Vec2<T>::Zero();
 
-    kp_r_[i] = 20*100;
+    kp_r_[i] = 20*400;
     kd_r_[i] = 15*10;
     kp_th_[i] =10*200;
     kd_th_[i] = 10*10;
@@ -23,6 +23,8 @@ FlightControl<T>::FlightControl(RobotLeg<T> & robot) : robot_(robot)
     force_rw_flight_des_[i] = Vec2<T>::Zero();
 
   }
+
+
 }
 
 template <typename T>

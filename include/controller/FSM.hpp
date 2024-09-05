@@ -9,9 +9,6 @@
 #include "FlightControl.hpp"
 #include "TrajectoryOptimization.hpp"
 
-/**
- * todo: state and phase를 어떻게 넘길 것인지 고민해야함
- */
 
 template <typename T>
 class FSM
@@ -21,6 +18,8 @@ class FSM
     CompensationControl<T> & comp_ctrl_;
     FlightControl<T> & flight_ctrl_;
     StanceForceControl<T> & stance_ctrl_;
+    TrajectoryOptimization<T> & traj_opt_;
+
 
     T touch_threshold_, start_[4], threshold_size_, time_;
     Eigen::VectorXd touch_[4];
@@ -34,7 +33,7 @@ class FSM
 
   public:
     explicit FSM(RobotLeg<T> & robot, CompensationControl<T> & comp_ctrl, FlightControl<T> & flight_ctrl,
-                 StanceForceControl<T> & stance_ctrl);
+                 StanceForceControl<T> & stance_ctrl, TrajectoryOptimization<T> & traj_opt);
 
     void phase_update(mjData * d);
     void Lift_off_state(int Leg_num);

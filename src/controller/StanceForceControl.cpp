@@ -27,6 +27,12 @@ StanceForceControl<T>::StanceForceControl(RobotLeg<T> & robot) : robot_(robot)
 
     force_rw_stance_des_[i] = Vec2<T>(0,0);
   }
+
+  //! 뒷다리가 무게로 인해 Tracking이 더 어려워서 따로 게인을 설정해봄
+  spring_K_[3] = 20*8000;
+
+
+
 }
 
 template <typename T>

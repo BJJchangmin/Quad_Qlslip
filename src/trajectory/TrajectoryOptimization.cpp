@@ -188,7 +188,7 @@ void TrajectoryOptimization<T>::Radial_Optimization(int Leg_num)
   ipopt_opts["print_options_documentation"] = "no";  // Suppress documentation
   // ipopt_opts["ma27_print_level"] = 0;
   ipopt_opts["acceptable_tol"] = 1e-5;  // Acceptable convergence tolerance
-  ipopt_opts["sb"] = "yes";             // short banner for startup
+  ipopt_opts["sb"] = "no";             // short banner for startup
   // ipopt_opts["file_print_level"] = 0;            // suppress file output
   Dict nlp_opts;
   nlp_opts["ipopt"] = ipopt_opts;
@@ -202,6 +202,8 @@ void TrajectoryOptimization<T>::Radial_Optimization(int Leg_num)
   DM A0 = DM::zeros(n_r, 1);
   DM lbx = DM::ones(n_r) * -optimization_limit_; // 변수 하한
   DM ubx = DM::ones(n_r) * optimization_limit_; // 변수 상한
+
+  // cout << "r_LO : " << lo_param_ptr_->r_LO[1] << endl;
 
   // ! constraint의 변수의 상한 및 하한을 정해준다.
   DM l_r = DM::vertcat({lo_param_ptr_->r_LO[Leg_num], 0,  0.38, op_param_ptr_->r_des_TD[Leg_num] ,
@@ -260,8 +262,8 @@ void TrajectoryOptimization<T>::Angular_Optimization(int Leg_num)
   ipopt_opts["max_iter"] = 500;                      // Set maximum number of iterations
   ipopt_opts["tol"] = 1e-6;                          // Convergence tolerance
   ipopt_opts["print_level"] = 0;                     // Verbosity level of the solver output
-  ipopt_opts["print_timing_statistics"] = "yes";      // disable timing statistics
-  ipopt_opts["print_options_documentation"] = "yes";  // Suppress documentation
+  ipopt_opts["print_timing_statistics"] = "no";      // disable timing statistics
+  ipopt_opts["print_options_documentation"] = "no";  // Suppress documentation
   // ipopt_opts["ma27_print_level"] = 0;
   ipopt_opts["acceptable_tol"] = 1e-5;  // Acceptable convergence tolerance
   ipopt_opts["sb"] = "yes";             // short banner for startup
@@ -312,6 +314,7 @@ void TrajectoryOptimization<T>::Polynomial_Trajectory(int Leg_num)
   //******************************** Early TD *************************************/
   if (optimized_flight_time <= t_des_TD)
   {
+    cout << "Late TD" << endl;
 
     op_param_ptr_->t_r[Leg_num] = optimized_flight_time;
     op_param_ptr_->t_th[Leg_num] = optimized_flight_time;
@@ -389,7 +392,7 @@ void TrajectoryOptimization<T>::Polynomial_Trajectory(int Leg_num)
 
   foot_traj_ptr_->th_optimized_flight_[Leg_num] = op_param_ptr_->th_optimized_flight[Leg_num] + M_PI/2;
   foot_traj_ptr_->dth_optimized_flight_[Leg_num] = op_param_ptr_->dth_optimized_flight[Leg_num];
-
+  //cout << "r_optimized_flight : " << lo_param_ptr_->t_LO[2] << endl;
 }
 
 

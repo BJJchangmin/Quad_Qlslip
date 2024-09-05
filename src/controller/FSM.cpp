@@ -9,8 +9,9 @@ using namespace std;
 
 template <typename T>
 FSM<T>::FSM(RobotLeg<T> & robot, CompensationControl<T> & comp_ctrl, FlightControl<T> & flight_ctrl,
-             StanceForceControl<T> & stance_ctrl)
-: robot_(robot), comp_ctrl_(comp_ctrl), flight_ctrl_(flight_ctrl), stance_ctrl_(stance_ctrl)
+             StanceForceControl<T> & stance_ctrl, TrajectoryOptimization<T> & traj_opt)
+: robot_(robot), comp_ctrl_(comp_ctrl), flight_ctrl_(flight_ctrl),
+  stance_ctrl_(stance_ctrl), traj_opt_(traj_opt)
 {
   lo_param_ptr_ = nullptr;
   td_param_ptr_ = nullptr;
@@ -50,9 +51,54 @@ void FSM<T>::phase_update(mjData * d)
     touch_[i][0] = robot_.foot_contact_[i];
 
     //******************************************* Free Faling Start Check ****************************************** */
-    if (touch_[i][0] > touch_threshold_ && start_[i] == 0)
+    if (touch_[i][0] > touch_threshold_ && start_[i] == 0 )
     {
+
       start_[i] = 1;
+      if (start_[0] == 1 && start_[3] == 1)
+      {
+        /**
+         * * 조건문에 만족하는 경우는 한 step 밖에 없기에 한번만 실행됨
+         * @brief 시작할 때 나머지 다리 두개를 Swing Leg로 지정해주기 위해서 설계
+         * @param i: 0, 3 -> Stance LEG (3*i)
+         * @param i: 1, 2 -> Swing LEG (i+1)
+         * todo : Optimization 실행시켜줘야함 그 부분을 뭘로 할지 고민해봐야함
+         * ! 문제가 될 여지가 있는 param은 밑에 기록해둠
+         */
+
+
+        for (size_t i = 0; i < 2; i++)
+        {
+          Touch_down_state(3*i);
+          start_[i+1] = 1;
+          td_param_ptr_->t_TD[i+1] = 0;
+
+          lo_param_ptr_->r_LO[i+1] = robot_.foot_pos_rw_act_local_[i+1][0];
+          lo_param_ptr_->dr_LO[i+1] = robot_.foot_vel_rw_act_local_[i+1][0];
+          lo_param_ptr_->th_LO[i+1] = robot_.foot_pos_rw_act_local_[i+1][1];
+          lo_param_ptr_->dth_LO[i+1] = robot_.foot_vel_rw_act_local_[i+1][1];
+          lo_param_ptr_->t_LO[i+1] = time_;
+
+          //? t_stance가 굉장히 짧을 수 있음. 어떤 값을 사용해야하나?
+          lo_param_ptr_->t_stance[i+1] =  10*(lo_param_ptr_->t_LO[i+1] - td_param_ptr_->t_TD[i+1]);
+
+          //? L_O 속도 어떤 값을 사용해야하나? 떨어 질 때 속도를 부호 바꿔서 사용? 생각해봐야함
+          lo_param_ptr_->V_y_LO[i+1] = 0.6;
+
+          td_param_ptr_->r_TD[i+1] = td_param_ptr_->r_TD[3*i];
+          td_param_ptr_->dr_TD[i+1] = td_param_ptr_->dr_TD[3*i];
+          td_param_ptr_->th_TD[i+1] = td_param_ptr_->th_TD[3*i];
+          td_param_ptr_->dth_TD[i+1] = td_param_ptr_->dth_TD[3*i];
+
+          traj_opt_.state_update(i+1);
+          traj_opt_.Desired_Touch_Down_state(i+1);
+          traj_opt_.Desired_Flight_Time(i+1);
+
+          traj_opt_.Radial_Optimization(i+1);
+          traj_opt_.Angular_Optimization(i+1);
+
+        }
+      }
     }
     else if (touch_[i][0] < touch_threshold_ && start_[i] == 0)
     {
@@ -123,7 +169,7 @@ void FSM<T>::Lift_off_state(int Leg_num)
 
   lo_param_ptr_->t_stance[Leg_num] = lo_param_ptr_->t_LO[Leg_num] - td_param_ptr_->t_TD[Leg_num];
   lo_param_ptr_->V_y_LO[Leg_num] = lo_param_ptr_->dr_LO[Leg_num]*sin(lo_param_ptr_->th_LO[Leg_num]) -
-  lo_param_ptr_->r_LO[Leg_num]*lo_param_ptr_->dth_LO[Leg_num]*cos(lo_param_ptr_->th_LO[Leg_num]);
+    lo_param_ptr_->r_LO[Leg_num]*lo_param_ptr_->dth_LO[Leg_num]*cos(lo_param_ptr_->th_LO[Leg_num]);
 
 }
 

@@ -80,7 +80,7 @@ CompensationControl<float> comp_ctrl(robot);   // compensation controller
 TrajectoryOptimization<float> traj_opt(robot);  // trajectory optimization
 StanceForceControl<float> stance_ctrl(robot);  // stance force controller
 FlightControl<float> flight_ctrl(robot);       // flight controller
-FSM<float> fsm(robot,comp_ctrl,flight_ctrl,stance_ctrl);  // finite state machine
+FSM<float> fsm(robot,comp_ctrl,flight_ctrl,stance_ctrl, traj_opt);  // finite state machine
 
 
 
@@ -297,6 +297,7 @@ mjModel* LoadModel(const char* file, mj::Simulate& sim) {
 //* ******************************** Custom Function  ****************************************** *//
 void apply_joint_control(mjData * d)
 {
+  //! qpos and qvel is different number
   d->qpos[7] = 0;
   d->qpos[10] = 0;
   d->qpos[13] = 0;
@@ -449,7 +450,7 @@ void PhysicsLoop(mj::Simulate& sim) {
             bool bIsPerturbOn = false;
             fsm.phase_update(d);
             traj_opt.Flight_traj_generate(d);
-            traj_generator.QLSLIP_Trajectory(0.4, 0.01, d);
+            traj_generator.QLSLIP_Trajectory(0.4, 0.5, d);
             fsm.FSM_control();
             apply_joint_control(d);
 
@@ -499,7 +500,7 @@ void PhysicsLoop(mj::Simulate& sim) {
             bool bIsPerturbOn = false;
             fsm.phase_update(d);
             traj_opt.Flight_traj_generate(d);
-            traj_generator.QLSLIP_Trajectory(0.4, 0.01, d);
+            traj_generator.QLSLIP_Trajectory(0.4, 0.5, d);
             fsm.FSM_control();
             apply_joint_control(d);
 
