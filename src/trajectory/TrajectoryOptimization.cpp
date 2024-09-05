@@ -312,7 +312,7 @@ void TrajectoryOptimization<T>::Polynomial_Trajectory(int Leg_num)
   //******************************** Early TD *************************************/
   if (optimized_flight_time <= t_des_TD)
   {
-    cout << "Early TD" << endl;
+
     op_param_ptr_->t_r[Leg_num] = optimized_flight_time;
     op_param_ptr_->t_th[Leg_num] = optimized_flight_time;
 
@@ -345,7 +345,7 @@ void TrajectoryOptimization<T>::Polynomial_Trajectory(int Leg_num)
   //*********************************************** late TD *******************************************************************/
   else if (optimized_flight_time > t_des_TD)
   {
-    cout << "Late TD" << endl;
+
     op_param_ptr_->t_r[Leg_num] = optimized_flight_time - t_des_TD;
     op_param_ptr_->t_th[Leg_num] = t_des_TD;
 

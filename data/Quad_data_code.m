@@ -97,18 +97,18 @@ for i = 1:1:4
 end
 sgtitle('r tracking ','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'latex');
 
-% figure(2)
-% for i = 1:1:4
-%     subplot(2,2,i);
-%     plot(t,dr_des{i},'b-','LineWidth', lw);
-%     hold on
-%     plot(t,dr_act{i},'r-','LineWidth',lw);
-%     grid on;
-%     legend('ref','act','FontName','Times New Roman','location','northeast','FontSize',fl,'Interpreter', 'latex')
-%     ylabel('$\dot{r}$ (m/s)','FontName','Times New Roman','FontSize', Faxis,'Interpreter', 'latex'); % y축 레이블
-% end
-% sgtitle('$\dot{r}$ tracking ','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'latex');
-% 
+figure(2)
+for i = 1:1:4
+    subplot(2,2,i);
+    plot(t,dr_des{i},'b-','LineWidth', lw);
+    hold on
+    plot(t,dr_act{i},'r-','LineWidth',lw);
+    grid on;
+    legend('ref','act','FontName','Times New Roman','location','northeast','FontSize',fl,'Interpreter', 'latex')
+    ylabel('$\dot{r}$ (m/s)','FontName','Times New Roman','FontSize', Faxis,'Interpreter', 'latex'); % y축 레이블
+end
+sgtitle('$\dot{r}$ tracking ','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'latex');
+
 figure(3)
 for i = 1:1:4
     subplot(2,2,i);
@@ -147,41 +147,41 @@ sgtitle('ERROR ','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'lat
 
 
 
-% figure(5)
-% for i = 1:1:4
-%     subplot(2,2,i)
-%     plot(t,tau_HAA{i},'b-','LineWidth', lw);
-%     hold on
-%     plot(t,tau_HFE{i},'r-','LineWidth', lw); 
-%     hold on
-%     plot(t,tau_KFE{i},'g-','LineWidth', lw);
-%     grid on
-%     legend('HAA','HFE','KFE','FontName','Times New Roman','location','northeast','FontSize',fl,'Interpreter', 'latex')
-%     ylabel('$\tau$ (rad/s)','FontName','Times New Roman','FontSize', Faxis,'Interpreter', 'latex'); % y축 레이블
-% end
-% sgtitle('Actual Torque ','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'latex');
-% 
-% figure(6)
-% for i = 1:1:4
-%     subplot(2,2,i)
-%     plot(t,phase{i},'b-','LineWidth', lw);
-%     hold on
-%     plot(t,event{i},'r-','LineWidth', lw); 
-%     grid on
-%     legend('phase','event','FontName','Times New Roman','location','northeast','FontSize',fl,'Interpreter', 'latex')
-%     ylabel('status','FontName','Times New Roman','FontSize', Faxis,'Interpreter', 'latex'); % y축 레이블
-% end
-% sgtitle('Status','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'latex');
-% 
-% figure(7)
-% for i = 1:1:4
-%     subplot(2,2,i)
-%     plot(t,touch{i},'b-','LineWidth', lw);
-%     grid on;
-%     legend('touch','event','FontName','Times New Roman','location','northeast','FontSize',fl,'Interpreter', 'latex')
-%     ylabel('N','FontName','Times New Roman','FontSize', Faxis,'Interpreter', 'latex'); % y축 레이블
-% end
-% sgtitle('Touch Sensor','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'latex');
+figure(5)
+for i = 1:1:4
+    subplot(2,2,i)
+    plot(t,tau_HAA{i},'b-','LineWidth', lw);
+    hold on
+    plot(t,tau_HFE{i},'r-','LineWidth', lw); 
+    hold on
+    plot(t,tau_KFE{i},'g-','LineWidth', lw);
+    grid on
+    legend('HAA','HFE','KFE','FontName','Times New Roman','location','northeast','FontSize',fl,'Interpreter', 'latex')
+    ylabel('$\tau$ (rad/s)','FontName','Times New Roman','FontSize', Faxis,'Interpreter', 'latex'); % y축 레이블
+end
+sgtitle('Actual Torque ','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'latex');
+
+figure(6)
+for i = 1:1:4
+    subplot(2,2,i)
+    plot(t,phase{i},'b-','LineWidth', lw);
+    hold on
+    plot(t,event{i},'r-','LineWidth', lw); 
+    grid on
+    legend('phase','event','FontName','Times New Roman','location','northeast','FontSize',fl,'Interpreter', 'latex')
+    ylabel('status','FontName','Times New Roman','FontSize', Faxis,'Interpreter', 'latex'); % y축 레이블
+end
+sgtitle('Status','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'latex');
+
+figure(7)
+for i = 1:1:4
+    subplot(2,2,i)
+    plot(t,touch{i},'b-','LineWidth', lw);
+    grid on;
+    legend('touch','event','FontName','Times New Roman','location','northeast','FontSize',fl,'Interpreter', 'latex')
+    ylabel('N','FontName','Times New Roman','FontSize', Faxis,'Interpreter', 'latex'); % y축 레이블
+end
+sgtitle('Touch Sensor','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'latex');
 
 % figure(8)
 % for i = 1:1:4
@@ -245,7 +245,7 @@ sgtitle('ERROR ','FontName','Times New Roman','FontSize',sgT,'Interpreter', 'lat
 % 
 
 
-setFigurePositions(6);
+setFigurePositions(4);
 
 
 

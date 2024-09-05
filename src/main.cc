@@ -449,7 +449,7 @@ void PhysicsLoop(mj::Simulate& sim) {
             bool bIsPerturbOn = false;
             fsm.phase_update(d);
             traj_opt.Flight_traj_generate(d);
-            traj_generator.QLSLIP_Trajectory(0.4, 0.5, d);
+            traj_generator.QLSLIP_Trajectory(0.4, 0.01, d);
             fsm.FSM_control();
             apply_joint_control(d);
 
@@ -499,7 +499,7 @@ void PhysicsLoop(mj::Simulate& sim) {
             bool bIsPerturbOn = false;
             fsm.phase_update(d);
             traj_opt.Flight_traj_generate(d);
-            traj_generator.QLSLIP_Trajectory(0.4, 0.5, d);
+            traj_generator.QLSLIP_Trajectory(0.4, 0.01, d);
             fsm.FSM_control();
             apply_joint_control(d);
 

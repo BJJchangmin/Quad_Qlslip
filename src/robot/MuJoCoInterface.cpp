@@ -8,9 +8,10 @@ MuJoCoInterface<T>::MuJoCoInterface(mj::Simulate * sim, RobotLeg<T> robot)
   : sim_(sim), robot_(robot)
 {
   sim->run = false;
-  sim_->ui0_enable = true;
-  sim_->ui1_enable = true;
+  sim_->ui0_enable = false;
+  sim_->ui1_enable = false;
   sim_->pending_.load_key = true;
+  sim_->fullscreen = true;
 
   actuator_cmd_ptr_ = std::make_shared<MuJoCoActuatorCommand>();
 }
