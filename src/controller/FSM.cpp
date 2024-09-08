@@ -55,13 +55,13 @@ void FSM<T>::phase_update(mjData * d)
     {
 
       start_[i] = 1;
-      if (start_[0] == 1 && start_[3] == 1)
+      if (start_[0] == 1 && start_[1] == 1)
       {
         /**
-         * * 조건문에 만족하는 경우는 한 step 밖에 없기에 한번만 실행됨
+         * * galloping 이다.
          * @brief 시작할 때 나머지 다리 두개를 Swing Leg로 지정해주기 위해서 설계
-         * @param i: 0, 3 -> Stance LEG (3*i)
-         * @param i: 1, 2 -> Swing LEG (i+1)
+         * @param i: 0, 1 -> Stance LEG (i)
+         * @param i: 2, 3 -> Swing LEG (i+2)
          * todo : Optimization 실행시켜줘야함 그 부분을 뭘로 할지 고민해봐야함
          * ! 문제가 될 여지가 있는 param은 밑에 기록해둠
          */
@@ -69,33 +69,33 @@ void FSM<T>::phase_update(mjData * d)
 
         for (size_t i = 0; i < 2; i++)
         {
-          Touch_down_state(3*i);
-          start_[i+1] = 1;
-          td_param_ptr_->t_TD[i+1] = 0;
+          Touch_down_state(i);
+          start_[i+2] = 1;
+          td_param_ptr_->t_TD[i+2] = 0;
 
-          lo_param_ptr_->r_LO[i+1] = robot_.foot_pos_rw_act_local_[i+1][0];
-          lo_param_ptr_->dr_LO[i+1] = robot_.foot_vel_rw_act_local_[i+1][0];
-          lo_param_ptr_->th_LO[i+1] = robot_.foot_pos_rw_act_local_[i+1][1];
-          lo_param_ptr_->dth_LO[i+1] = robot_.foot_vel_rw_act_local_[i+1][1];
-          lo_param_ptr_->t_LO[i+1] = time_;
+          lo_param_ptr_->r_LO[i+2] = robot_.foot_pos_rw_act_local_[i+2][0];
+          lo_param_ptr_->dr_LO[i+2] = robot_.foot_vel_rw_act_local_[i+2][0];
+          lo_param_ptr_->th_LO[i+2] = robot_.foot_pos_rw_act_local_[i+2][1];
+          lo_param_ptr_->dth_LO[i+2] = robot_.foot_vel_rw_act_local_[i+2][1];
+          lo_param_ptr_->t_LO[i+2] = time_;
 
           //? t_stance가 굉장히 짧을 수 있음. 어떤 값을 사용해야하나?
-          lo_param_ptr_->t_stance[i+1] =  10*(lo_param_ptr_->t_LO[i+1] - td_param_ptr_->t_TD[i+1]);
+          lo_param_ptr_->t_stance[i+2] =  10*(lo_param_ptr_->t_LO[i+2] - td_param_ptr_->t_TD[i+2]);
 
           //? L_O 속도 어떤 값을 사용해야하나? 떨어 질 때 속도를 부호 바꿔서 사용? 생각해봐야함
-          lo_param_ptr_->V_y_LO[i+1] = 0.6;
+          lo_param_ptr_->V_y_LO[i+2] = 0.6;
 
-          td_param_ptr_->r_TD[i+1] = td_param_ptr_->r_TD[3*i];
-          td_param_ptr_->dr_TD[i+1] = td_param_ptr_->dr_TD[3*i];
-          td_param_ptr_->th_TD[i+1] = td_param_ptr_->th_TD[3*i];
-          td_param_ptr_->dth_TD[i+1] = td_param_ptr_->dth_TD[3*i];
+          td_param_ptr_->r_TD[i+2] = td_param_ptr_->r_TD[i];
+          td_param_ptr_->dr_TD[i+2] = td_param_ptr_->dr_TD[i];
+          td_param_ptr_->th_TD[i+2] = td_param_ptr_->th_TD[i];
+          td_param_ptr_->dth_TD[i+2] = td_param_ptr_->dth_TD[i];
 
-          traj_opt_.state_update(i+1);
-          traj_opt_.Desired_Touch_Down_state(i+1);
-          traj_opt_.Desired_Flight_Time(i+1);
+          traj_opt_.state_update(i+2);
+          traj_opt_.Desired_Touch_Down_state(i+2);
+          traj_opt_.Desired_Flight_Time(i+2);
 
-          traj_opt_.Radial_Optimization(i+1);
-          traj_opt_.Angular_Optimization(i+1);
+          traj_opt_.Radial_Optimization(i+2);
+          traj_opt_.Angular_Optimization(i+2);
 
         }
       }
