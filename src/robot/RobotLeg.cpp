@@ -23,8 +23,9 @@ void RobotLeg<T>::get_sensor_data(mjData * data)
 
      for(size_t j = 0; j < 3; j++)
      {
+       //! qpos and qvel is different number
        joint_pos_act_[i][j] = data->qpos[7 + 3*i + j];
-       joint_vel_act_[i][j] = data->qvel[7 + 3*i + j];
+       joint_vel_act_[i][j] = data->qvel[7 + 3*i + j -1];
 
        foot_grf_world_[i][j] = data->sensordata[19 + 4*i + j];
 
@@ -111,6 +112,7 @@ void RobotLeg<T>::forward_kinematics_rotating()
     foot_vel_rw_act_local_[i][1] = foot_vel_rw_act_local_[i][1] / foot_pos_rw_act_local_[i][0];
 
   }
+
 }
 
 
