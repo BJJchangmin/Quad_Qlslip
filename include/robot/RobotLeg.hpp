@@ -91,6 +91,7 @@ public:
   //************************************* CONSTANTS ************************************************
   static constexpr size_t k_num_joint = 3;     // num of leg joints
   static constexpr size_t k_num_dof_body = 6;  // num of body DoF
+  static constexpr size_t k_num_dof_leg = 4;   // num of leg DoF
 
   //************************************* METHODS **************************************************
   void get_sensor_data(mjData * data);
