@@ -64,7 +64,9 @@
     <light diffuse=".5 .5 .5" pos="0 0 3" dir="0 0 -1"/>
     <body name="trunk" pos="0 0 0.4" euler="-1.57 0 0">
       <inertial pos="0 0 0" euler="0 0 0" mass="28" diaginertia="0.1619 1.1622 1.0325"/>
-      <freejoint/>
+      <joint name='slide_x' type='slide' axis='1 0 0'/>
+      <joint name='slide_y' type='slide' axis='0 -1 0'/>
+      <joint name='hinge_pitch' type='hinge' axis='0 0 1'/>
       <site type="box" name="imu" pos="0 0 0" size="0.1 0.05 0.05" rgba="0 0.5 0 0.0" />
 
       <geom type="mesh" mesh="trunk" material="gray" class="visual" />
@@ -270,7 +272,7 @@
 
   <keyframe>
     <!-- <key name="home" qpos="0. 0. 0.7 -0.9999 0.9999 0. 0. 0. 0.7854 1.5708 0. 0.7854 1.5708 0. 0.7854 1.5708 0. 0.7854 1.5708" /> -->
-    <key name="home" qpos="0. 0. 0.41 -0.9999 0.9999 0. 0. 0. 0.6655 1.2870 0. 0.6655 1.2870 0. 0.5562 1.8546 0. 0.5562 1.8546" />
+    <key name="home" qpos="0. 0.1 0.5 0. 0.6655 1.2870 0. 0.6655 1.2870 0. 0.5562 1.8546 0. 0.5562 1.8546" />
     <!-- <key name="home" qpos="0. 0. 0.5 -0.9999 0.9999 0. 0. 0. 0.6636 1.132 0. 0.57854 1.5708 0. 0.57854 1.5708 0. 0.57854 1.5708" /> -->
 
   </keyframe>
