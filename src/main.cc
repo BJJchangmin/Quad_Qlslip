@@ -105,6 +105,9 @@ mjtNum* ctrlnoise = nullptr;
 
 using Seconds = std::chrono::duration<double>;
 
+double r_ref = 0.4;
+double v_ref = 0.5;
+
 
 //---------------------------------------- plugin handling -----------------------------------------
 
@@ -450,7 +453,7 @@ void PhysicsLoop(mj::Simulate& sim) {
             bool bIsPerturbOn = false;
             fsm.phase_update(d);
             traj_opt.Flight_traj_generate(d);
-            traj_generator.QLSLIP_Trajectory(0.4, 0.5, d);
+            traj_generator.QLSLIP_Trajectory(r_ref, v_ref, d);
             fsm.FSM_control();
             apply_joint_control(d);
 
@@ -500,7 +503,7 @@ void PhysicsLoop(mj::Simulate& sim) {
             bool bIsPerturbOn = false;
             fsm.phase_update(d);
             traj_opt.Flight_traj_generate(d);
-            traj_generator.QLSLIP_Trajectory(0.4, 0.5, d);
+            traj_generator.QLSLIP_Trajectory(r_ref, v_ref, d);
             fsm.FSM_control();
             apply_joint_control(d);
 
