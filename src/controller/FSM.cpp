@@ -42,7 +42,7 @@ void FSM<T>::phase_update(mjData * d)
 
   time_ = d->time;
 
-  for(size_t i = 0; i < 4; i++)
+  for(size_t i = 0; i < robot_.k_num_dof_leg; i++)
   {
     for(size_t j = 0; j < threshold_size_-2 ; j++)
     {
@@ -194,7 +194,7 @@ void FSM<T>::FSM_control()
   * @param phase_: 0: Stance, 1: Flight
   */
 
-  for(size_t i = 0; i < 4; i++)
+  for(size_t i = 0; i < robot_.k_num_dof_leg; i++)
   {
     if (phase_[i] == 1 )
     {

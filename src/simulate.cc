@@ -2686,8 +2686,11 @@ void Simulate::RenderLoop() {
       // this->cam.lookat[0] += 0.001;
       // this->cam.lookat[1] = 0.0;
       // this->cam.lookat[2] = 0.15;
+
       //* Perturbation *//
       this->opt.flags[mjVIS_PERTFORCE] = true;
+      this->opt.flags[mjVIS_CONTACTFORCE] = true;
+
       //* ************************************************************************************** *//
 
 

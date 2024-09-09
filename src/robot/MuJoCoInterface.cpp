@@ -9,7 +9,7 @@ MuJoCoInterface<T>::MuJoCoInterface(mj::Simulate * sim, RobotLeg<T> robot)
 {
   sim->run = false;
   sim_->ui0_enable = false;
-  sim_->ui1_enable = false;
+  sim_->ui1_enable = true;
   sim_->pending_.load_key = true;
   sim_->fullscreen = true;
 

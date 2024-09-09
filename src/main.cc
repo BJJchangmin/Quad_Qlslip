@@ -303,7 +303,7 @@ void apply_joint_control(mjData * d)
   d->qpos[9] = 0;
   d->qpos[12] = 0;
 
-  for (size_t i = 0; i < 4; i++)
+  for (size_t i = 0; i < robot.k_num_dof_leg; i++)
   {
     for (size_t j = 1; j < 3; j++)
     {

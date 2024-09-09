@@ -15,10 +15,10 @@ FlightControl<T>::FlightControl(RobotLeg<T> & robot) : robot_(robot)
     error_pos_[i] = Vec2<T>::Zero();
     error_vel_[i] = Vec2<T>::Zero();
 
-    kp_r_[i] = 20*400;
-    kd_r_[i] = 15*10;
-    kp_th_[i] =10*200;
-    kd_th_[i] = 10*10;
+    kp_r_[i] = 20*2000;
+    kd_r_[i] = 15*30;
+    kp_th_[i] =10*600;
+    kd_th_[i] = 10*40;
 
     force_rw_flight_des_[i] = Vec2<T>::Zero();
 

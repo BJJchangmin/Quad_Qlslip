@@ -56,6 +56,7 @@ CompensationControl<T>::CompensationControl(RobotLeg<T> & robot) : robot_(robot)
     inertia_decoupling_joint_des_[i].setZero();
     inertia_modulation_joint_des_[i].setZero();
     compensation_joint_des_[i].setZero();
+
   }
 }
 
