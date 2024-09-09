@@ -301,10 +301,10 @@ mjModel* LoadModel(const char* file, mj::Simulate& sim) {
 void apply_joint_control(mjData * d)
 {
   //! qpos and qvel is different number
-  d->qpos[3] = 0;
-  d->qpos[6] = 0;
-  d->qpos[9] = 0;
-  d->qpos[12] = 0;
+  d->qpos[2] = 0;
+  d->qpos[5] = 0;
+  d->qpos[8] = 0;
+  d->qpos[11] = 0;
 
   for (size_t i = 0; i < robot.k_num_dof_leg; i++)
   {
