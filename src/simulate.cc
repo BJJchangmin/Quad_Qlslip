@@ -2680,7 +2680,7 @@ void Simulate::RenderLoop() {
       this->cam.trackbodyid = 0;
       this->cam.distance = 2;
       this->cam.azimuth = -90.0;
-      this->cam.elevation = -1;
+      this->cam.elevation = 0;
       // this->cam.distance = 3.0;
       // this->cam.lookat[0] = d_->qvel[0];
       // this->cam.lookat[0] += 0.001;
@@ -2690,6 +2690,7 @@ void Simulate::RenderLoop() {
       //* Perturbation *//
       this->opt.flags[mjVIS_PERTFORCE] = true;
       this->opt.flags[mjVIS_CONTACTFORCE] = true;
+      this->opt.flags[mjVIS_CONTACTPOINT] = true;
 
       //* ************************************************************************************** *//
 

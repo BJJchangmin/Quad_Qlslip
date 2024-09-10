@@ -16,7 +16,7 @@ FSM<T>::FSM(RobotLeg<T> & robot, CompensationControl<T> & comp_ctrl, FlightContr
   lo_param_ptr_ = nullptr;
   td_param_ptr_ = nullptr;
 
-  touch_threshold_ = 5;
+  touch_threshold_ = 15;
 
   threshold_size_ = 15;
 

@@ -88,7 +88,7 @@
             <joint name="KFE_FL" class="knee" pos="0.0893 0 0.17929"/>
             <geom type="mesh" mesh="shank_FL" material="white" contype="1" conaffinity="0" group="2" />
 
-            <site type="sphere" name="foot_FL" pos="-0.151 0.02 0.2" size="0.03" rgba="0. 0.5 0 0.0" />
+            <site type="sphere" name="foot_FL" pos="-0.151 0.02 0.2" size="0.05" rgba="0. 0.5 0 0.0" />
           </body>
         </body>
       </body>
@@ -111,7 +111,7 @@
             <joint name="KFE_FR" class="knee" pos="0.0893 0 -0.17929"/>
             <geom type="mesh" mesh="shank_FR" material="white" contype="1" conaffinity="0" group="2" />
 
-            <site type="sphere" name="foot_FR" pos="-0.151 0.02 -0.2" size="0.03" rgba="0. 0.5 0 0.0" />
+            <site type="sphere" name="foot_FR" pos="-0.151 0.02 -0.2" size="0.05" rgba="0. 0.5 0 0.0" />
           </body>
         </body>
       </body>
@@ -133,7 +133,7 @@
             <joint name="KFE_RL" class="knee" pos="-0.57067 0 0.17929"/>
             <geom type="mesh" mesh="shank_RL" material="white" contype="1" conaffinity="0" group="2" />
 
-            <site type="sphere" name="foot_RL" pos="-0.811 0.02 0.2" size="0.03" rgba="0. 0.5 0 0.0" />
+            <site type="sphere" name="foot_RL" pos="-0.811 0.02 0.2" size="0.05" rgba="0. 0.5 0 0.0" />
           </body>
         </body>
       </body>
@@ -155,7 +155,7 @@
             <joint name="KFE_RR" class="knee" pos="-0.57067 0 -0.17929"/>
             <geom type="mesh" mesh="shank_RR" material="white" contype="1" conaffinity="0" group="2" />
 
-            <site type="sphere" name="foot_RR" pos="-0.811 0.02 -0.2" size="0.03" rgba="0. 0.5 0 0." />
+            <site type="sphere" name="foot_RR" pos="-0.811 0.02 -0.2" size="0.05" rgba="0. 0.5 0 0." />
           </body>
         </body>
       </body>
