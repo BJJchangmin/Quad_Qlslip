@@ -54,7 +54,6 @@ void TrackingController<T>::RW_posPD_control()
 
   }
 
-
 }
 
 template <typename T>

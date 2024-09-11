@@ -105,9 +105,6 @@ mjtNum* ctrlnoise = nullptr;
 
 using Seconds = std::chrono::duration<double>;
 
-double r_ref = 0.4;
-double v_ref = 0.5;
-
 
 //---------------------------------------- plugin handling -----------------------------------------
 
@@ -317,6 +314,31 @@ void apply_joint_control(mjData * d)
 
 }
 
+void YCM_controller()
+{
+
+  //! Custom Controller
+  // * **************************************************************************************** *//
+  //* ***** GENERATE DESIRED JOINT COMMAND AND APPLY CONTROL INPUT FOR SIMULATION***** *//
+
+  //* Parameter
+  bool bIsPerturbOn = false;
+  double r_init = 0.3;
+  double r_ref = 0.4;
+  double v_ref = 1;
+
+  // traj_generator.initial_trotting(r_init,d->time,0.5);
+  // track_ctrl.RW_posPD_control();
+
+  // * Controller Function
+  fsm.phase_update(d);
+  traj_opt.Flight_traj_generate(d);
+  traj_generator.QLSLIP_Trajectory(r_ref, v_ref, d);
+  fsm.FSM_control();
+  apply_joint_control(d);
+
+}
+
 //* ******************************************************************************************** *//
 
 // simulate in background thread (while rendering in main thread)
@@ -447,36 +469,22 @@ void PhysicsLoop(mj::Simulate& sim) {
             syncSim = d->time;
             sim.speed_changed = false;
 
-            // * **************************************************************************************** *//
-            // TODO: Data logging 함수에다가 포인터들 넣어줘야한다. 그리고 optimization에 time 넣어줘야함
-            //* ***** GENERATE DESIRED JOINT COMMAND AND APPLY CONTROL INPUT FOR SIMULATION***** *//
-            bool bIsPerturbOn = false;
-            fsm.phase_update(d);
-            traj_opt.Flight_traj_generate(d);
-            traj_generator.QLSLIP_Trajectory(r_ref, v_ref, d);
-            fsm.FSM_control();
-            apply_joint_control(d);
-
-
 
             // run single step, let next iteration deal with timing
+            //! Controller Location
+            YCM_controller();
             mj_step(m, d);
             stepped = true;
-
+            //* ******** READ SENSOR DATA AND CONDUCT CALCULATOIN FOR STATE ESTIMATION ********* *//
             robot.get_sensor_data(d);
             robot.bi_kinematic_transform();
             robot.forward_kinematics_rotating();
-            //* ******************************************************************************** *//
-            // TODO: Make this sequence as a function
-            //* ******** READ SENSOR DATA AND CONDUCT CALCULATOIN FOR STATE ESTIMATION ********* *//
-
-
+            //************ Data logging *************/
             if (loop_iter % data_logger.get_logging_freq() == 0)
             {
               data_logger.save_data(m, d);
             }
-            loop_iter++;
-
+             loop_iter++;
 
           }
 
@@ -497,26 +505,16 @@ void PhysicsLoop(mj::Simulate& sim) {
                 measured = true;
               }
 
-            // * **************************************************************************************** *//
-            // TODO: Data logging 함수에다가 포인터들 넣어줘야한다. 그리고 optimization에 time 넣어줘야함
-            //* ***** GENERATE DESIRED JOINT COMMAND AND APPLY CONTROL INPUT FOR SIMULATION***** *//
-            bool bIsPerturbOn = false;
-            fsm.phase_update(d);
-            traj_opt.Flight_traj_generate(d);
-            traj_generator.QLSLIP_Trajectory(r_ref, v_ref, d);
-            fsm.FSM_control();
-            apply_joint_control(d);
-
             // run single step, let next iteration deal with timing
+            //! Controller Location
+            YCM_controller();
             mj_step(m, d);
             stepped = true;
-            //* ******************************************************************************** *//
-            // TODO: Make this sequence as a function
             //* ******** READ SENSOR DATA AND CONDUCT CALCULATOIN FOR STATE ESTIMATION ********* *//
             robot.get_sensor_data(d);
             robot.bi_kinematic_transform();
             robot.forward_kinematics_rotating();
-
+            //************ Data logging *************/
             if (loop_iter % data_logger.get_logging_freq() == 0)
             {
               data_logger.save_data(m, d);

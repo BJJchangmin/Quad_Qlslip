@@ -60,6 +60,7 @@ class MotionTrajectory
     void squat(T time);
     void stance_test();
     void QLSLIP_Trajectory(T r_ref, T v_ref, mjData * d);
+    void initial_trotting(T r_init,T time_,T freq);
 
 
 };

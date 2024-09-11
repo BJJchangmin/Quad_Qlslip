@@ -15,10 +15,10 @@ FlightControl<T>::FlightControl(RobotLeg<T> & robot) : robot_(robot)
     error_pos_[i] = Vec2<T>::Zero();
     error_vel_[i] = Vec2<T>::Zero();
 
-    kp_r_[i] = 20*15000;
+    kp_r_[i] = 20*50000;
     kd_r_[i] = 15*6000;
     kp_th_[i] =10*10000;
-    kd_th_[i] = 10*700;
+    kd_th_[i] = 10*400;
 
     force_rw_flight_des_[i] = Vec2<T>::Zero();
 
@@ -38,7 +38,6 @@ void FlightControl<T>::th_control(int Leg_num)
   error_vel_[Leg_num][1] = foot_traj_ptr_->foot_vel_rw_des_[Leg_num][1] - robot_.foot_vel_rw_act_local_[Leg_num][1];
 
   force_rw_flight_des_[Leg_num][1] = kp_th_[Leg_num] * error_pos_[Leg_num][1] + kd_th_[Leg_num] * error_vel_[Leg_num][1];
-
 
 }
 
@@ -66,8 +65,8 @@ void FlightControl<T>::flight_control(int Leg_num)
    */
   th_control(Leg_num);
   r_control(Leg_num);
-
-
+  // cout << "force_rw_flight_des_[Leg_num][0] : " << force_rw_flight_des_[1][0] << endl;
+  // cout << "force_rw_flight_des_[Leg_num][1] : " << force_rw_flight_des_[1][1] << endl;
   robot_.inverse_static_rotating(force_rw_flight_des_[Leg_num], Leg_num);
 
 }

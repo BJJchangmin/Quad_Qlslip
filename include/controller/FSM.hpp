@@ -25,6 +25,7 @@ class FSM
     Eigen::VectorXd touch_[4];
     T phase_[4]; // 0: Stance, 1: Flight
     T event_[4]; // mean Touch down or Lift off
+    int loop_iter;
 
     std::shared_ptr<typename TrajectoryOptimization<T>::LO_param> lo_param_ptr_;
     std::shared_ptr<typename TrajectoryOptimization<T>::TD_param> td_param_ptr_;

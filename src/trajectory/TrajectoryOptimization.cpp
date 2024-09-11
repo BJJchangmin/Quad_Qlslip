@@ -97,7 +97,7 @@ void TrajectoryOptimization<T>::Desired_Touch_Down_state(int Leg_num)
   // T th_r = 0;
 
   // desired top
-  op_param_ptr_->r_des_top[Leg_num] = 0.35;
+  op_param_ptr_->r_des_top[Leg_num] = 0.25;
   op_param_ptr_->th_des_top[Leg_num] = 0;
 
   op_param_ptr_-> h_1[Leg_num] = 1.2;

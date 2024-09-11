@@ -19,6 +19,7 @@ FSM<T>::FSM(RobotLeg<T> & robot, CompensationControl<T> & comp_ctrl, FlightContr
   touch_threshold_ = 15;
 
   threshold_size_ = 15;
+  loop_iter = 0;
 
   for (size_t i = 0; i < 4; i++)
   {
@@ -42,13 +43,18 @@ void FSM<T>::phase_update(mjData * d)
 
   time_ = d->time;
 
+
   for(size_t i = 0; i < robot_.k_num_dof_leg; i++)
   {
     for(size_t j = 0; j < threshold_size_-2 ; j++)
     {
       touch_[i][j+1] = touch_[i][j];
     }
-    touch_[i][0] = robot_.foot_contact_[i];
+    if (loop_iter % 15 == 0)
+    {
+      touch_[i][0] = robot_.foot_contact_[i];
+    }
+
 
     //******************************************* Free Faling Start Check ****************************************** */
     if (touch_[i][0] > touch_threshold_ && start_[i] == 0 )
@@ -115,7 +121,7 @@ void FSM<T>::phase_update(mjData * d)
         touch_[i][3] > touch_threshold_ && touch_[i][4] > touch_threshold_ && touch_[i][5] > touch_threshold_ &&
         touch_[i][6] > touch_threshold_ && touch_[i][7] > touch_threshold_ && touch_[i][8] > touch_threshold_ &&
         touch_[i][9] > touch_threshold_ && touch_[i][10] > touch_threshold_ && touch_[i][11] > touch_threshold_ &&
-        touch_[i][12] > touch_threshold_ && touch_[i][13] > touch_threshold_  )
+        touch_[i][12] > touch_threshold_ && touch_[i][13] > touch_threshold_ )
         {
           event_[i] = 4;
           Lift_off_state(i);
@@ -151,7 +157,7 @@ void FSM<T>::phase_update(mjData * d)
   // std::cout<<"robot_.phase in FSM "<< robot_.phase_[0] <<std::endl;
   // std::cout<<"robot_.event in FSM "<< robot_.event_[0] <<std::endl;
 
-
+  loop_iter++;
 }
 
 template <typename T>
@@ -193,6 +199,7 @@ void FSM<T>::FSM_control()
   * @brief FSM Control. Phase에 따라 제어기가 선택된다.
   * @param phase_: 0: Stance, 1: Flight
   */
+
 
   for(size_t i = 0; i < robot_.k_num_dof_leg; i++)
   {
