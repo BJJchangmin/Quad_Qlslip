@@ -88,6 +88,29 @@ void MotionTrajectory<T>::QLSLIP_Trajectory(T r_ref, T v_ref, mjData * d)
   }
 }
 
+template <typename T>
+void MotionTrajectory<T>::initial_trotting(T r_init ,T time_, T freq)
+{
+  /**
+   * * 시작전에 trotting을 하다가 우송이형 알고리즘으로 넘어가기 위함
+   * @brief Initial Trotting
+   * @param FL,RR(0,3) 3*i
+   * @param FR,RL(1,2) i+1
+   */
+
+  for (size_t i = 0; i < 2; i++)
+  {
+    //* FL,RR */
+    foot_traj_ptr_->foot_pos_rw_des_[3*i][0] = r_init + 0.1*sin(2*M_PI*freq*time_);
+    foot_traj_ptr_->foot_pos_rw_des_[3*i][1] = M_PI / 2;
+
+    //* FR,RL */
+    foot_traj_ptr_->foot_pos_rw_des_[i+1][0] = r_init - 0.1*sin(2*M_PI*freq*time_);
+    foot_traj_ptr_->foot_pos_rw_des_[i+1][1] = M_PI / 2;
+
+  }
+}
+
 
 template <typename T>
 std::shared_ptr<typename MotionTrajectory<T>::DesiredFootTrajectory> MotionTrajectory<T>::get_foot_traj_ptr()
