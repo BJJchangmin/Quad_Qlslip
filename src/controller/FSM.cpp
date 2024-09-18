@@ -16,7 +16,7 @@ FSM<T>::FSM(RobotLeg<T> & robot, CompensationControl<T> & comp_ctrl, FlightContr
   lo_param_ptr_ = nullptr;
   td_param_ptr_ = nullptr;
 
-  touch_threshold_ = 15;
+  touch_threshold_ = 50;
 
   threshold_size_ = 15;
   loop_iter = 0;
@@ -50,7 +50,7 @@ void FSM<T>::phase_update(mjData * d)
     {
       touch_[i][j+1] = touch_[i][j];
     }
-    if (loop_iter % 15 == 0)
+    if (loop_iter % 1 == 0)
     {
       touch_[i][0] = robot_.foot_contact_[i];
     }
@@ -174,8 +174,11 @@ void FSM<T>::Lift_off_state(int Leg_num)
   lo_param_ptr_->t_LO[Leg_num] = time_;
 
   lo_param_ptr_->t_stance[Leg_num] = lo_param_ptr_->t_LO[Leg_num] - td_param_ptr_->t_TD[Leg_num];
-  lo_param_ptr_->V_y_LO[Leg_num] = lo_param_ptr_->dr_LO[Leg_num]*sin(lo_param_ptr_->th_LO[Leg_num]) -
-    lo_param_ptr_->r_LO[Leg_num]*lo_param_ptr_->dth_LO[Leg_num]*cos(lo_param_ptr_->th_LO[Leg_num]);
+  // lo_param_ptr_->V_y_LO[Leg_num] = lo_param_ptr_->dr_LO[Leg_num]*sin(lo_param_ptr_->th_LO[Leg_num]) -
+  //   lo_param_ptr_->r_LO[Leg_num]*lo_param_ptr_->dth_LO[Leg_num]*cos(lo_param_ptr_->th_LO[Leg_num]);
+
+  lo_param_ptr_->V_y_LO[Leg_num] = robot_.hip_v_vel_[Leg_num];
+  cout << "V_y_LO: " << lo_param_ptr_->V_y_LO[0] << endl;
 
 }
 

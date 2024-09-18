@@ -15,10 +15,10 @@ FlightControl<T>::FlightControl(RobotLeg<T> & robot) : robot_(robot)
     error_pos_[i] = Vec2<T>::Zero();
     error_vel_[i] = Vec2<T>::Zero();
 
-    kp_r_[i] = 20*50000;
-    kd_r_[i] = 15*6000;
-    kp_th_[i] =10*10000;
-    kd_th_[i] = 10*400;
+    kp_r_[i] = 20*200;
+    kd_r_[i] = 15*5;
+    kp_th_[i] =10*90;
+    kd_th_[i] = 10*1;
 
     force_rw_flight_des_[i] = Vec2<T>::Zero();
 
@@ -52,7 +52,7 @@ void FlightControl<T>::r_control(int Leg_num)
   error_pos_[Leg_num][0] = foot_traj_ptr_->foot_pos_rw_des_[Leg_num][0] - robot_.foot_pos_rw_act_local_[Leg_num][0];
   error_vel_[Leg_num][0] = foot_traj_ptr_->foot_vel_rw_des_[Leg_num][0] - robot_.foot_vel_rw_act_local_[Leg_num][0];
 
-  force_rw_flight_des_[Leg_num][0] = kp_r_[Leg_num] * error_pos_[Leg_num][0] + kd_r_[Leg_num] * error_vel_[Leg_num][0];
+  force_rw_flight_des_[Leg_num][0] = kp_r_[Leg_num] * error_pos_[Leg_num][0];
 
 
 }

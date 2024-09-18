@@ -89,7 +89,7 @@ void TrajectoryOptimization<T>::Desired_Touch_Down_state(int Leg_num)
   T x_1=2*b+a*e_1;
   T x_2=2*b+a*e_2;
 
-  // T st_time=2*(-(th_TD)/dth_ref);
+  // T st_time=2*(-(td_param_ptr_->th_TD[Leg_num])/dth_ref[Leg_num]);
   T st_time = lo_param_ptr_->t_stance[Leg_num];
 
   T th_r = (2 * dth_ref[Leg_num]) * (((e_2 -e_1) + (e_1*exp(e_1*st_time) - e_2*exp(e_2*st_time))+
@@ -100,17 +100,18 @@ void TrajectoryOptimization<T>::Desired_Touch_Down_state(int Leg_num)
   op_param_ptr_->r_des_top[Leg_num] = 0.25;
   op_param_ptr_->th_des_top[Leg_num] = 0;
 
-  op_param_ptr_-> h_1[Leg_num] = 1.2;
+  op_param_ptr_-> h_1[Leg_num] = 1.6;
   op_param_ptr_-> u[Leg_num] = op_param_ptr_-> h_1[Leg_num] * ((-th_r/2)- lo_param_ptr_->th_LO[Leg_num]) +
     th_r;
 
-
-  op_param_ptr_->r_des_TD[Leg_num] = r_ref[Leg_num];
+  op_param_ptr_->r_des_TD[Leg_num] = 0.4;
+  // op_param_ptr_->r_des_TD[Leg_num] = r_ref[Leg_num];
   op_param_ptr_->th_des_TD[Leg_num] = lo_param_ptr_->th_LO[Leg_num] + op_param_ptr_->u[Leg_num];
 
   T t_b = st_time/2;
 
   op_param_ptr_->dr_des_TD[Leg_num] = (alpha*(m*g/k)*tan(alpha*t_b));
+  //std::cout << "dr_des_TD : " << op_param_ptr_->dr_des_TD[1] << std::endl;
   op_param_ptr_->dth_des_TD[Leg_num] = dth_ref[Leg_num];
 
   op_param_ptr_->ddr_des_TD[Leg_num] = -g;
@@ -125,7 +126,7 @@ void TrajectoryOptimization<T>::Desired_Flight_Time(int Leg_num)
    * @brief 여기 input은 Desired Touch Down state에서 계산한 값들을 가져와서 사용한다.
    */
   T g = 9.81;
-  op_param_ptr_->t_flight_des[Leg_num] = 2*lo_param_ptr_->V_y_LO[Leg_num]/g;
+  op_param_ptr_->t_flight_des[Leg_num] = 1*2*lo_param_ptr_->V_y_LO[Leg_num]/g;
 
 }
 
@@ -206,10 +207,10 @@ void TrajectoryOptimization<T>::Radial_Optimization(int Leg_num)
   // cout << "r_LO : " << lo_param_ptr_->r_LO[1] << endl;
 
   // ! constraint의 변수의 상한 및 하한을 정해준다.
-  DM l_r = DM::vertcat({lo_param_ptr_->r_LO[Leg_num], 0,  0.38, op_param_ptr_->r_des_TD[Leg_num] ,
-    op_param_ptr_->dr_des_TD[Leg_num], -100, -100,0,  0,  -10      ,  0.35}); // 제약 조건 순서에 맞게 설정
-  DM u_r = DM::vertcat({lo_param_ptr_->r_LO[Leg_num], 0,   0.4, op_param_ptr_->r_des_TD[Leg_num] ,
-    op_param_ptr_->dr_des_TD[Leg_num], 100, 100,0.3, 0,  op_param_ptr_->ddr_des_TD[Leg_num],  0.35}); // 제약 조건 순서에 맞게 설정
+  DM l_r = DM::vertcat({0.4, 0,  0.35, op_param_ptr_->r_des_TD[Leg_num] ,
+    op_param_ptr_->dr_des_TD[Leg_num], -5, -5,0,  0,  -10      ,  0.35}); // 제약 조건 순서에 맞게 설정
+  DM u_r = DM::vertcat({0.4, 0,   0.35, op_param_ptr_->r_des_TD[Leg_num] ,
+    op_param_ptr_->dr_des_TD[Leg_num], 5, 5,0.3, 0,  op_param_ptr_->ddr_des_TD[Leg_num],  0.35}); // 제약 조건 순서에 맞게 설정
 
   // 문제 해결
   std::map<std::string, DM> arg;
