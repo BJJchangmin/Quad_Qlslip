@@ -113,9 +113,11 @@ void DataLogging<T>::save_data(const mjModel* m, mjData* d)
   else
   {
 
-    fout_[4] << d->time; // time
-
-
+    fout_[4] << d->sensordata[34] << ","; // x velocity of the trunk
+    fout_[4] << d->sensordata[35] << ","; // y velocity of the trunk
+    fout_[4] << d->sensordata[36] << ","; // z velocity of the trunk
+    fout_[4] << d->sensordata[38] << ","; // y position of the trunk
+    fout_[4] << d->sensordata[39]; // z position of the trunk
     // ! Don't remove the newline
     fout_[4] << endl;
   }
@@ -154,7 +156,8 @@ void DataLogging<T>::init_data()
   }
   else
   {
-    fout_[4] << "time" << std::endl;
+    fout_[4] << "trunk_x_vel, trunk_y_vel, trunk_z_vel, ";
+    fout_[4] << "trunk_y_pos, trunk_z_pos " << std::endl;
   }
 
 }
