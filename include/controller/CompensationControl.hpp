@@ -35,6 +35,13 @@ class CompensationControl
     T dth_m_old[4], dth_b_old[4], ddth_m_old[4], ddth_b_old[4];
     T ddth_m[4], ddth_b[4]; // motor acceleration
 
+    Vec3<T> body_com;
+    Vec3<T> foot_pos[4];
+    Vec3<T> vec_body2foot[4];
+    Vec2<T> body_weight;
+    Mat2<T> cal_Mat[2];
+    Vec2<T> r_grf[4];
+
     Vec2<T> gravity_compensation_joint_des_[4];
     Vec2<T> coriollis_compensation_joint_des_[4];
     Vec2<T> inertia_decoupling_joint_des_[4];
@@ -52,7 +59,7 @@ class CompensationControl
     void Coriollis_compensation(int Leg_num);
     void Inertia_Decoupling(int Leg_num);
     void Inertia_modulation(int Leg_num);
-    void Trunk_mass_compensation(int Leg_num);
+    void Trunk_mass_compensation(mjData * d);
 
     void compensation_control(int Leg_num);
 

@@ -138,13 +138,92 @@ void CompensationControl<T>::Inertia_modulation(int Leg_num)
 }
 
 template <typename T>
-void CompensationControl<T>::Trunk_mass_compensation(int Leg_num)
+void CompensationControl<T>::Trunk_mass_compensation(mjData * d)
 {
   /**
    * @brief Trunk mass compensation
    * todo: Trunk Mass compensation 할 때 contact 되는 다리가 달라지면  compensatio이 잘 안될텐데
-   *! check 해보기
+   * @param i=0,1,2,3 (FL,FR,RL,RR)
+   * *r_grf가 어떤 조건에도 만족하지 않으면 0이 되어야 하기 때문에 0으로 초기화 해야함
+   *
    */
+
+  Vec2<T> result[2];
+
+  body_com << d->xipos[0], d->xipos[1], d->xipos[2];
+
+  body_weight << 9.81*43, 0;
+
+  for (int i = 0; i < 4; i++)
+  {
+    r_grf[i] << 0, 0;
+    foot_pos[i] << d->site_xpos[3+2*i], d->site_xpos[3+2*i + 1], d->site_xpos[3+2*i + 2];
+    vec_body2foot[i] = body_com - foot_pos[i];
+  }
+
+  cal_Mat[0] << 1, 1, vec_body2foot[0][0], -vec_body2foot[3][0];
+  cal_Mat[1] << 1, 1, vec_body2foot[1][0], -vec_body2foot[2][0];
+
+
+  //* 4점 지지
+  if (robot_.phase_[0] == 1 && robot_.phase_[1] == 1 &&
+      robot_.phase_[2] == 1 && robot_.phase_[3] == 1)
+  {
+
+    result[0] = cal_Mat[0].inverse()*body_weight/2;
+    result[1] = cal_Mat[1].inverse()*body_weight/2;
+
+    r_grf[0] << result[0][0], 0;
+    r_grf[1] << result[1][0], 0;
+    r_grf[2] << result[1][1], 0;
+    r_grf[3] << result[0][1], 0;
+
+  }
+
+  //* 2점 지지
+  if (robot_.phase_[0] == 1 && robot_.phase_[3] == 1)
+  {
+    result[0] = cal_Mat[0].inverse()*body_weight;
+    r_grf[0] << result[0][0], 0;
+    r_grf[3] << result[0][1], 0;
+
+    r_grf[1] << 0, 0;
+    r_grf[2] << 0, 0;
+
+    cout << "Trunk compensation FL , RR" << endl;
+
+  }
+  else if (robot_.phase_[1]==1 && robot_.phase_[2] == 1)
+  {
+    result[1] = cal_Mat[1].inverse()*body_weight;
+    r_grf[1] << result[1][0], 0;
+    r_grf[2] << result[1][1], 0;
+
+    r_grf[0] << 0, 0;
+    r_grf[3] << 0, 0;
+
+    cout << "Trunk compensation FR , RL" << endl;
+
+  }
+
+
+
+
+  for (int i = 0; i < 4; i++)
+  {
+    //* Flight phase는 무조건 0으로 들어가게끔 setting
+    // if (robot_.phase_[i] == 2)
+    // {
+    //   r_grf[i] << 0, 0;
+    // }
+
+    Trunk_mass_compensation_joint_des_[i] = robot_.jacbRW[i].transpose() * r_grf[i];
+    robot_.joint_torque_des_[i][1] += Trunk_mass_compensation_joint_des_[i][0] + Trunk_mass_compensation_joint_des_[i][1];
+    robot_.joint_torque_des_[i][2] += Trunk_mass_compensation_joint_des_[i][1];
+
+  }
+
+
 
 }
 

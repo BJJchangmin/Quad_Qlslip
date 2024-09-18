@@ -305,6 +305,7 @@ void apply_joint_control(mjData * d)
 
   for (size_t i = 0; i < robot.k_num_dof_leg; i++)
   {
+
     for (size_t j = 1; j < 3; j++)
     {
       d->ctrl[3*i+j] = robot.joint_torque_des_[i][j];
@@ -313,6 +314,7 @@ void apply_joint_control(mjData * d)
   }
 
 }
+
 
 void YCM_controller()
 {
@@ -325,16 +327,20 @@ void YCM_controller()
   bool bIsPerturbOn = false;
   double r_init = 0.3;
   double r_ref = 0.4;
-  double v_ref = 1;
+  double v_ref = 1.5;
 
-  // traj_generator.initial_trotting(r_init,d->time,0.5);
+  // std::cout << "com : " << d->subtree_com[0] << std::endl;
+
+  fsm.phase_update(d);
+
+  // traj_generator.initial_trotting(r_init,d->time,1);
   // track_ctrl.RW_posPD_control();
 
   // * Controller Function
-  fsm.phase_update(d);
   traj_opt.Flight_traj_generate(d);
   traj_generator.QLSLIP_Trajectory(r_ref, v_ref, d);
   fsm.FSM_control();
+  comp_ctrl.Trunk_mass_compensation(d);
   apply_joint_control(d);
 
 }
