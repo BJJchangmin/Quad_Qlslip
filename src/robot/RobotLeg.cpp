@@ -19,6 +19,7 @@ void RobotLeg<T>::get_sensor_data(mjData * data)
   for (size_t i = 0; i < 4; i++)
   {
     foot_contact_[i] = data->sensordata[18 + 4*i];
+    hip_v_vel_[i] = data->sensordata[73+ 3*i];
 
 
      for(size_t j = 0; j < 3; j++)
