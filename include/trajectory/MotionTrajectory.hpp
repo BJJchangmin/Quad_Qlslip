@@ -39,6 +39,9 @@ class MotionTrajectory
         T th_optimized_flight_[4];
         T dth_optimized_flight_[4];
 
+        T r_bezier_flight_[4];
+        T th_bezier_flight_[4];
+
     };
 
     struct DesiredJointTrajectory

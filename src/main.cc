@@ -38,6 +38,7 @@
 #include "data_logging.hpp"
 #include "CompensationControl.hpp"
 #include "TrajectoryOptimization.hpp"
+#include "BezierTrajectory.hpp"
 #include "StanceForceControl.hpp"
 #include "FlightControl.hpp"
 #include "FSM.hpp"
@@ -78,6 +79,7 @@ MotionTrajectory<float> traj_generator(robot);            // motion trajectory
 DataLogging<float> data_logger(robot);         // data logger
 CompensationControl<float> comp_ctrl(robot);   // compensation controller
 TrajectoryOptimization<float> traj_opt(robot);  // trajectory optimization
+BezierTrajectory<float> bezier_traj(robot);    // bezier trajectory
 StanceForceControl<float> stance_ctrl(robot);  // stance force controller
 FlightControl<float> flight_ctrl(robot);       // flight controller
 FSM<float> fsm(robot,comp_ctrl,flight_ctrl,stance_ctrl, traj_opt);  // finite state machine
@@ -337,7 +339,8 @@ void YCM_controller()
   // track_ctrl.RW_posPD_control();
 
   // * Controller Function
-  traj_opt.Flight_traj_generate(d);
+  // traj_opt.Flight_traj_generate(d);
+  bezier_traj.Flight_traj_generate(d);
   traj_generator.QLSLIP_Trajectory(r_ref, v_ref, d);
   fsm.FSM_control();
   comp_ctrl.Trunk_mass_compensation(d);
@@ -663,6 +666,8 @@ int main(int argc, char** argv) {
   fsm.get_optimization_pointer(lo_param_ptr, td_param_ptr);
   data_logger.set_traj_ptr(foot_traj_ptr, joint_traj_ptr);
   data_logger.set_op_param_ptr(op_param_ptr, lo_param_ptr, td_param_ptr);
+  bezier_traj.get_traj_pointer(foot_traj_ptr);
+  bezier_traj.get_optimization_pointer(op_param_ptr, lo_param_ptr, td_param_ptr);
 
 
 

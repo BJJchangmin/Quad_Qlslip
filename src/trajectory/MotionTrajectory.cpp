@@ -71,11 +71,8 @@ void MotionTrajectory<T>::QLSLIP_Trajectory(T r_ref, T v_ref, mjData * d)
     // ****************************************** Flight Control ****************************************** */
     else if (robot_.phase_[i] == 2)
     {
-      foot_traj_ptr_->foot_pos_rw_des_[i][0] = foot_traj_ptr_->r_optimized_flight_[i];
-      foot_traj_ptr_->foot_pos_rw_des_[i][1] = foot_traj_ptr_->th_optimized_flight_[i];
-
-      foot_traj_ptr_->foot_vel_rw_des_[i][0] = foot_traj_ptr_->dr_optimized_flight_[i];
-      foot_traj_ptr_->foot_vel_rw_des_[i][1] = foot_traj_ptr_->dth_optimized_flight_[i];
+      foot_traj_ptr_->foot_pos_rw_des_[i][0] = foot_traj_ptr_->r_bezier_flight_[i];
+      foot_traj_ptr_->foot_pos_rw_des_[i][1] = foot_traj_ptr_->th_bezier_flight_[i];
     }
     // ****************************************** Joint Control ****************************************** */
     else

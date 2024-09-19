@@ -78,6 +78,7 @@ void FSM<T>::phase_update(mjData * d)
           Touch_down_state(3*i);
           start_[i+1] = 1;
           td_param_ptr_->t_TD[i+1] = 0;
+          period_[i+1] = 0;
 
           lo_param_ptr_->r_LO[i+1] = robot_.foot_pos_rw_act_local_[i+1][0];
           lo_param_ptr_->dr_LO[i+1] = robot_.foot_vel_rw_act_local_[i+1][0];
@@ -123,8 +124,8 @@ void FSM<T>::phase_update(mjData * d)
         touch_[i][9] > touch_threshold_ && touch_[i][10] > touch_threshold_ && touch_[i][11] > touch_threshold_ &&
         touch_[i][12] > touch_threshold_ && touch_[i][13] > touch_threshold_ )
         {
-          event_[i] = 4;
-          Lift_off_state(i);
+          // event_[i] = 4;
+          //Lift_off_state(i);
         }
       else if (touch_[i][0] > touch_threshold_ && touch_[i][1] <= touch_threshold_ && touch_[i][2] <= touch_threshold_ &&
         touch_[i][3] <= touch_threshold_ && touch_[i][4] <= touch_threshold_ && touch_[i][5] <= touch_threshold_ &&
@@ -135,17 +136,28 @@ void FSM<T>::phase_update(mjData * d)
 
           event_[i] = 3;
           Touch_down_state(i);
+          // todo 3.75는 trajectory에서 가져옴. 나중에 변수화 해줘야함
+          period_[i] = 1*abs(td_param_ptr_->th_TD[i] -M_PI/2)*0.1/3.75;
+          //cout << "period: " << period_[0] << endl;
         }
 
 
 
       //********************************************** Phase Check ***************************************** */
-      if (time_ >= td_param_ptr_->t_TD[i] && td_param_ptr_->t_TD[i] > lo_param_ptr_->t_LO[i] )
+      if (time_ - td_param_ptr_->t_TD[i] < period_[i]  && td_param_ptr_->t_TD[i] > lo_param_ptr_->t_LO[i] )
       {
+        cout << "i: " << i <<", " << time_ - td_param_ptr_->t_TD[i] <<", "<< period_[i] <<endl;
         phase_[i] = 1;
       }
-      else if (time_ >= lo_param_ptr_->t_LO[i] && lo_param_ptr_->t_LO[i] > td_param_ptr_->t_TD[i])
+      else if (time_ - td_param_ptr_->t_TD[i] == period_[i])
       {
+
+        event_[i] = 4;
+        Lift_off_state(i);
+      }
+      else if (time_ - td_param_ptr_->t_TD[i] > period_[i] && lo_param_ptr_->t_LO[i] > td_param_ptr_->t_TD[i])
+      {
+        cout << "i" << i << endl;
         phase_[i] = 2;
       }
 
