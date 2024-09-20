@@ -82,7 +82,7 @@ TrajectoryOptimization<float> traj_opt(robot);  // trajectory optimization
 BezierTrajectory<float> bezier_traj(robot);    // bezier trajectory
 StanceForceControl<float> stance_ctrl(robot);  // stance force controller
 FlightControl<float> flight_ctrl(robot);       // flight controller
-FSM<float> fsm(robot,comp_ctrl,flight_ctrl,stance_ctrl, traj_opt);  // finite state machine
+FSM<float> fsm(robot,comp_ctrl,flight_ctrl,stance_ctrl, traj_opt, bezier_traj);  // finite state machine
 
 
 

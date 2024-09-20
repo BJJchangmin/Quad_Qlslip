@@ -8,6 +8,7 @@
 #include "StanceForceControl.hpp"
 #include "FlightControl.hpp"
 #include "TrajectoryOptimization.hpp"
+#include "BezierTrajectory.hpp"
 
 
 template <typename T>
@@ -19,11 +20,11 @@ class FSM
     FlightControl<T> & flight_ctrl_;
     StanceForceControl<T> & stance_ctrl_;
     TrajectoryOptimization<T> & traj_opt_;
-
+    BezierTrajectory<T> & bezier_traj_;
 
     T touch_threshold_, start_[4], threshold_size_, time_;
     Eigen::VectorXd touch_[4];
-    T phase_[4]; // 0: Stance, 1: Flight
+    Vec2<T> phase_[4]; // 0: Stance, 1: Flight
     T event_[4]; // mean Touch down or Lift off
     T period_[4];
     int loop_iter;
@@ -35,7 +36,8 @@ class FSM
 
   public:
     explicit FSM(RobotLeg<T> & robot, CompensationControl<T> & comp_ctrl, FlightControl<T> & flight_ctrl,
-                 StanceForceControl<T> & stance_ctrl, TrajectoryOptimization<T> & traj_opt);
+                 StanceForceControl<T> & stance_ctrl, TrajectoryOptimization<T> & traj_opt,
+                 BezierTrajectory<T> & bezier_traj);
 
     void phase_update(mjData * d);
     void Lift_off_state(int Leg_num);

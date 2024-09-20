@@ -108,11 +108,12 @@ void BezierTrajectory<T>::Desired_Flight_Time(int Leg_num)
    * todo 이거 V_y_LO는 Trunk y방향 속도롤 해보기. 그러며 다리에 대해서 같을 듯
    */
   T g = 9.81;
-  op_param_ptr_->t_flight_des[Leg_num] = 1*2*lo_param_ptr_->V_y_LO[Leg_num]/g;
+  // cout << "V_y_LO: " << lo_param_ptr_->V_y_LO[0] << endl;
+  op_param_ptr_->t_flight_des[Leg_num] = abs(1*2*lo_param_ptr_->V_y_LO[Leg_num]/g);
 }
 
 template <typename T>
-void Bezier_Trajectory(int Leg_num, T time_)
+void BezierTrajectory<T>::Bezier_Trajectory(int Leg_num, T time_)
 {
   /**
    * * Bezier Trajectory를 계산하는 곳

@@ -9,9 +9,9 @@ using namespace std;
 
 template <typename T>
 FSM<T>::FSM(RobotLeg<T> & robot, CompensationControl<T> & comp_ctrl, FlightControl<T> & flight_ctrl,
-             StanceForceControl<T> & stance_ctrl, TrajectoryOptimization<T> & traj_opt)
+             StanceForceControl<T> & stance_ctrl, TrajectoryOptimization<T> & traj_opt, BezierTrajectory<T> & bezier_traj)
 : robot_(robot), comp_ctrl_(comp_ctrl), flight_ctrl_(flight_ctrl),
-  stance_ctrl_(stance_ctrl), traj_opt_(traj_opt)
+  stance_ctrl_(stance_ctrl), traj_opt_(traj_opt), bezier_traj_(bezier_traj)
 {
   lo_param_ptr_ = nullptr;
   td_param_ptr_ = nullptr;
@@ -27,7 +27,8 @@ FSM<T>::FSM(RobotLeg<T> & robot, CompensationControl<T> & comp_ctrl, FlightContr
     touch_[i].setZero();
 
     start_[i] = 0;
-    phase_[i] = 0;
+    phase_[i][0] = 0;
+    phase_[i][1] = 0; // old value
     event_[i] = 0;
   }
 }
@@ -90,19 +91,16 @@ void FSM<T>::phase_update(mjData * d)
           lo_param_ptr_->t_stance[i+1] =  10*(lo_param_ptr_->t_LO[i+1] - td_param_ptr_->t_TD[i+1]);
 
           //? L_O 속도 어떤 값을 사용해야하나? 떨어 질 때 속도를 부호 바꿔서 사용? 생각해봐야함
-          lo_param_ptr_->V_y_LO[i+1] = 0.6;
+          lo_param_ptr_->V_y_LO[i+1] = -0.1;
 
           td_param_ptr_->r_TD[i+1] = td_param_ptr_->r_TD[3*i];
           td_param_ptr_->dr_TD[i+1] = td_param_ptr_->dr_TD[3*i];
           td_param_ptr_->th_TD[i+1] = td_param_ptr_->th_TD[3*i];
           td_param_ptr_->dth_TD[i+1] = td_param_ptr_->dth_TD[3*i];
 
-          traj_opt_.state_update(i+1);
-          traj_opt_.Desired_Touch_Down_state(i+1);
-          traj_opt_.Desired_Flight_Time(i+1);
-
-          traj_opt_.Radial_Optimization(i+1);
-          traj_opt_.Angular_Optimization(i+1);
+          bezier_traj_.state_update(i+1);
+          bezier_traj_.Desired_Touch_Down_state(i+1);
+          bezier_traj_.Desired_Flight_Time(i+1);
 
         }
       }
@@ -122,12 +120,12 @@ void FSM<T>::phase_update(mjData * d)
         touch_[i][3] > touch_threshold_ && touch_[i][4] > touch_threshold_ && touch_[i][5] > touch_threshold_ &&
         touch_[i][6] > touch_threshold_ && touch_[i][7] > touch_threshold_ && touch_[i][8] > touch_threshold_ &&
         touch_[i][9] > touch_threshold_ && touch_[i][10] > touch_threshold_ && touch_[i][11] > touch_threshold_ &&
-        touch_[i][12] > touch_threshold_ && touch_[i][13] > touch_threshold_ )
+        touch_[i][12] > touch_threshold_ && touch_[i][13] > touch_threshold_ && touch_[i][14] > touch_threshold_ )
         {
           // event_[i] = 4;
           //Lift_off_state(i);
         }
-      else if (touch_[i][0] > touch_threshold_ && touch_[i][1] <= touch_threshold_ && touch_[i][2] <= touch_threshold_ &&
+      if (touch_[i][0] > touch_threshold_ && touch_[i][1] <= touch_threshold_ && touch_[i][2] <= touch_threshold_ &&
         touch_[i][3] <= touch_threshold_ && touch_[i][4] <= touch_threshold_ && touch_[i][5] <= touch_threshold_ &&
         touch_[i][6] <= touch_threshold_ && touch_[i][7] <= touch_threshold_ && touch_[i][8] <= touch_threshold_ &&
         touch_[i][9] <= touch_threshold_ && touch_[i][10] <= touch_threshold_ && touch_[i][11] <= touch_threshold_ &&
@@ -137,32 +135,47 @@ void FSM<T>::phase_update(mjData * d)
           event_[i] = 3;
           Touch_down_state(i);
           // todo 3.75는 trajectory에서 가져옴. 나중에 변수화 해줘야함
-          period_[i] = 1*abs(td_param_ptr_->th_TD[i] -M_PI/2)*0.1/3.75;
+          period_[i] = 1*abs(td_param_ptr_->th_TD[i] -M_PI/2)*2/3.75;
+          // period_[i] = 0.05;
+          // cout << "0 : " <<td_param_ptr_->t_TD[0] << endl;
+          // cout << "3 : " <<td_param_ptr_->t_TD[3] << endl;
           //cout << "period: " << period_[0] << endl;
         }
 
 
 
       //********************************************** Phase Check ***************************************** */
-      if (time_ - td_param_ptr_->t_TD[i] < period_[i]  && td_param_ptr_->t_TD[i] > lo_param_ptr_->t_LO[i] )
+      // cout << td_param_ptr_->t_TD[0] << endl;
+      if (time_ - td_param_ptr_->t_TD[i] <= period_[i])
       {
-        cout << "i: " << i <<", " << time_ - td_param_ptr_->t_TD[i] <<", "<< period_[i] <<endl;
-        phase_[i] = 1;
+        phase_[i][0] = 1;
+        // cout<< "phase: stance" << endl;
       }
-      else if (time_ - td_param_ptr_->t_TD[i] == period_[i])
+      else if (time_ - td_param_ptr_->t_TD[i] > period_[i])
       {
+        // cout << "i" << i << endl;
+        // cout << "time : "<< time_ << endl;
+        phase_[i][0] = 2;
+        // cout<< "phase: flight" << endl;
+      }
+      else
+      {
+        cout << "else" << endl;
+      }
 
+      if (phase_[i][0] == 2 && phase_[i][1] == 1)
+      {
         event_[i] = 4;
         Lift_off_state(i);
-      }
-      else if (time_ - td_param_ptr_->t_TD[i] > period_[i] && lo_param_ptr_->t_LO[i] > td_param_ptr_->t_TD[i])
-      {
-        cout << "i" << i << endl;
-        phase_[i] = 2;
+        cout << "Lift off" << endl;
       }
 
+      // cout << "Leg : " << 0 <<", " << time_ - td_param_ptr_->t_TD[0] <<", "<< period_[0] <<endl;
+      // cout << "Phase_Leg_ " << 0 <<": "<<phase_[0][0] << endl;
+
     }
-    robot_.phase_[i] = phase_[i];
+    phase_[i][1] = phase_[i][0];
+    robot_.phase_[i] = phase_[i][0];
     robot_.event_[i]= event_[i];
 
   }
@@ -218,12 +231,12 @@ void FSM<T>::FSM_control()
 
   for(size_t i = 0; i < robot_.k_num_dof_leg; i++)
   {
-    if (phase_[i] == 1 )
+    if (phase_[i][0] == 1 )
     {
       stance_ctrl_.stance_control(i);
       comp_ctrl_.compensation_control(i); // Phase에 상관없이 실행되어야함.
     }
-    else if (phase_[i] == 2)
+    else if (phase_[i][0] == 2)
     {
       flight_ctrl_.flight_control(i);
       comp_ctrl_.compensation_control(i); // Phase에 상관없이 실행되어야함.
