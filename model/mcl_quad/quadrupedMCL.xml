@@ -9,7 +9,7 @@
   <default>
     <default class="quadrupedMCL">
       <geom friction="0.6" margin="0.001" condim="1"/>
-      <joint axis="0 0 -1" armature="0.08" damping="2" stiffness="0" frictionloss="1"/>
+      <joint axis="0 0 -1" armature="0.1" damping="2" stiffness="0" frictionloss="1"/>
       <!-- <motor ctrlrange="-0.7 0.7" gear="100"/> -->
 
       <default class="abduction">

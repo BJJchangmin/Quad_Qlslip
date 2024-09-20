@@ -116,7 +116,8 @@ void FSM<T>::phase_update(mjData * d)
     {
       //*************************************** TD LO Check ***************************************** */
       event_[i] = 0;
-      period_[i] = 0.1;
+      period_[i] = 0.07;
+      // period_[i] = 1*abs(td_param_ptr_->th_TD[i] -M_PI/2)*0.02/2.5;
 
       if (touch_[i][0] <= touch_threshold_ && touch_[i][1] > touch_threshold_ && touch_[i][2] > touch_threshold_ &&
         touch_[i][3] > touch_threshold_ && touch_[i][4] > touch_threshold_ && touch_[i][5] > touch_threshold_ &&

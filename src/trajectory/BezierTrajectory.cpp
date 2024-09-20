@@ -110,7 +110,7 @@ void BezierTrajectory<T>::Desired_Flight_Time(int Leg_num)
    */
   T g = 9.81;
   // cout << "V_y_LO: " << lo_param_ptr_->V_y_LO[0] << endl;
-  op_param_ptr_->t_flight_des[Leg_num] = abs(1*2*lo_param_ptr_->V_y_LO[Leg_num]/g);
+  op_param_ptr_->t_flight_des[Leg_num] = abs(1*2*lo_param_ptr_->V_y_LO[Leg_num]/g)*1;
 }
 
 template <typename T>
