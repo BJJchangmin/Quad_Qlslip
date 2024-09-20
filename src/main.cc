@@ -305,15 +305,23 @@ void apply_joint_control(mjData * d)
   d->qpos[8] = 0;
   d->qpos[11] = 0;
 
-  for (size_t i = 0; i < robot.k_num_dof_leg; i++)
+  for (size_t i = 0; i < 2; i++)
   {
 
     for (size_t j = 1; j < 3; j++)
     {
       d->ctrl[3*i+j] = robot.joint_torque_des_[i][j];
+      // d->ctrl[3*(i+2)+j] = robot.joint_torque_des_[i+2][j];
+      d->ctrl[3*(i+2)+j] = 0;
     }
 
   }
+  d->qpos[9]  = d->qpos[6];
+  d->qpos[10] = d->qpos[7];
+  d->qpos[12] = d->qpos[3];
+  d->qpos[13] = d->qpos[4];
+
+
 
 }
 

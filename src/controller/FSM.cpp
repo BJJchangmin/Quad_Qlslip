@@ -134,53 +134,87 @@ void FSM<T>::phase_update(mjData * d)
 
           event_[i] = 3;
           Touch_down_state(i);
-          // todo 3.75는 trajectory에서 가져옴. 나중에 변수화 해줘야함
-          period_[i] = 1*abs(td_param_ptr_->th_TD[i] -M_PI/2)*2/3.75;
-          // period_[i] = 0.05;
-          // cout << "0 : " <<td_param_ptr_->t_TD[0] << endl;
-          // cout << "3 : " <<td_param_ptr_->t_TD[3] << endl;
-          //cout << "period: " << period_[0] << endl;
+
+
         }
-
-
 
       //********************************************** Phase Check ***************************************** */
       // cout << td_param_ptr_->t_TD[0] << endl;
-      if (time_ - td_param_ptr_->t_TD[i] <= period_[i])
-      {
-        phase_[i][0] = 1;
-        // cout<< "phase: stance" << endl;
-      }
-      else if (time_ - td_param_ptr_->t_TD[i] > period_[i])
-      {
-        // cout << "i" << i << endl;
-        // cout << "time : "<< time_ << endl;
-        phase_[i][0] = 2;
-        // cout<< "phase: flight" << endl;
-      }
-      else
-      {
-        cout << "else" << endl;
-      }
+      // if (time_ - td_param_ptr_->t_TD[i] <= period_[i])
+      // {
+      //   phase_[i][0] = 1;
+      //   // cout<< "phase: stance" << endl;
+      // }
+      // else if (time_ - td_param_ptr_->t_TD[i] > period_[i])
+      // {
+      //   // cout << "i" << i << endl;
+      //   // cout << "time : "<< time_ << endl;
+      //   phase_[i][0] = 2;
+      //   // cout<< "phase: flight" << endl;
+      // }
+      // else
+      // {
+      //   cout << "else" << endl;
+      // }
 
-      if (phase_[i][0] == 2 && phase_[i][1] == 1)
-      {
-        event_[i] = 4;
-        Lift_off_state(i);
-        cout << "Lift off" << endl;
-      }
+      // if (phase_[i][0] == 2 && phase_[i][1] == 1)
+      // {
+      //   event_[i] = 4;
+      //   Lift_off_state(i);
+      //   cout << "Lift off" << endl;
+      // }
 
       // cout << "Leg : " << 0 <<", " << time_ - td_param_ptr_->t_TD[0] <<", "<< period_[0] <<endl;
       // cout << "Phase_Leg_ " << 0 <<": "<<phase_[0][0] << endl;
 
     }
-    phase_[i][1] = phase_[i][0];
-    robot_.phase_[i] = phase_[i][0];
-    robot_.event_[i]= event_[i];
-
   }
   // std::cout<<"robot_.phase in FSM "<< robot_.phase_[0] <<std::endl;
   // std::cout<<"robot_.event in FSM "<< robot_.event_[0] <<std::endl;
+
+  //************************************ 2족처럼 Phase 맞춰주기 위한 과정 ******************************* */
+  if(start_[0] == 1 && start_[1] == 1)
+  {
+    //* 경우의 수 2개 뿐 FL이 TD일 때 , FR이 TD 일 때
+    // todo 3.75는 trajectory에서 가져옴. 나중에 변수화 해줘야함
+    //period_[i] = 1*abs(td_param_ptr_->th_TD[i] -M_PI/2)*2/3.75;
+    if(event_[0] == 3 && phase_[1][0] == 1)
+    {
+      //* FL -> TD, FR -> LO
+      event_[1] = 4;
+      Lift_off_state(1);
+    }
+    else if(event_[1] == 3 && phase_[0][0] == 1)
+    {
+      //* FR -> TD, FL -> LO
+      event_[0] = 4;
+      Lift_off_state(0);
+    }
+
+    for(size_t i = 0; i < 2; i++)
+    {
+      if(time_ >= td_param_ptr_->t_TD[i] && td_param_ptr_->t_TD[i] > lo_param_ptr_->t_LO[i] )
+      {
+        phase_[i][0] = 1;
+      }
+      else if(time_ >= lo_param_ptr_->t_LO[i] && lo_param_ptr_->t_LO[i] > td_param_ptr_->t_TD[i] )
+      {
+        phase_[i][0] = 2;
+      }
+
+    }
+
+  }
+
+
+
+
+  for(size_t i = 0; i < robot_.k_num_dof_leg; i++)
+  {
+    phase_[i][1] = phase_[i][0];
+    robot_.phase_[i] = phase_[i][0];
+    robot_.event_[i]= event_[i];
+  }
 
   loop_iter++;
 }

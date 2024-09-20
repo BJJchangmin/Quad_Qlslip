@@ -72,18 +72,19 @@ void BezierTrajectory<T>::Desired_Touch_Down_state(int Leg_num)
 
   // T st_time=2*(-(td_param_ptr_->th_TD[Leg_num])/dth_ref[Leg_num]);
   T st_time = lo_param_ptr_->t_stance[Leg_num];
+  // T st_time = 0.1;
 
-  T th_r = (2 * dth_ref[Leg_num]) * (((e_2 -e_1) + (e_1*exp(e_1*st_time) - e_2*exp(e_2*st_time))+
+  op_param_ptr_->th_r[Leg_num] = (2 * dth_ref[Leg_num]) * (((e_2 -e_1) + (e_1*exp(e_1*st_time) - e_2*exp(e_2*st_time))+
   a*(exp(e_1*st_time) - exp(e_2 * st_time)))/(e_1*e_2*(exp(e_1*st_time)-exp(e_2*st_time))));
   // T th_r = 0;
 
   // desired top
-  op_param_ptr_->r_des_top[Leg_num] = 0.25;
+  op_param_ptr_->r_des_top[Leg_num] = 0.3;
   op_param_ptr_->th_des_top[Leg_num] = 0;
 
   op_param_ptr_-> h_1[Leg_num] = 1.6;
-  op_param_ptr_-> u[Leg_num] = op_param_ptr_-> h_1[Leg_num] * ((-th_r/2)- lo_param_ptr_->th_LO[Leg_num]) +
-    th_r;
+  op_param_ptr_-> u[Leg_num] = op_param_ptr_-> h_1[Leg_num] * ((-op_param_ptr_->th_r[Leg_num]/2)- lo_param_ptr_->th_LO[Leg_num]) +
+    op_param_ptr_->th_r[Leg_num];
 
   op_param_ptr_->r_des_TD[Leg_num] = 0.4;
   // op_param_ptr_->r_des_TD[Leg_num] = r_ref[Leg_num];

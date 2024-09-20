@@ -32,7 +32,7 @@ public:
      * ! 위에는 input parameter 아래는 output parameter
      * !h_1이 뭔데? simulink에서는 1.6
      */
-    T  h_1[4], u[4];
+    T  h_1[4], u[4], th_r[4];
     T r_des_top[4], r_des_TD[4], dr_des_TD[4], ddr_des_TD[4], th_des_top[4], th_des_TD[4], dth_des_TD[4];
     /**
      * @brief Desired Flight Time
