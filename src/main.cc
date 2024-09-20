@@ -305,23 +305,35 @@ void apply_joint_control(mjData * d)
   d->qpos[8] = 0;
   d->qpos[11] = 0;
 
+  d->qpos[9]  = d->qpos[6];
+  d->qpos[10] = d->qpos[7];
+  d->qpos[12] = d->qpos[3];
+  d->qpos[13] = d->qpos[4];
+
   for (size_t i = 0; i < 2; i++)
   {
 
     for (size_t j = 1; j < 3; j++)
     {
       d->ctrl[3*i+j] = robot.joint_torque_des_[i][j];
-      // d->ctrl[3*(i+2)+j] = robot.joint_torque_des_[i+2][j];
+      // d->ctrl[3*(i+2)+j] = robot.joint_torque_des_[i][j];
       d->ctrl[3*(i+2)+j] = 0;
+
     }
 
   }
-  d->qpos[9]  = d->qpos[6];
-  d->qpos[10] = d->qpos[7];
-  d->qpos[12] = d->qpos[3];
-  d->qpos[13] = d->qpos[4];
+
+  // d->ctrl[7] = 5000*(d->qpos[6] - d->qpos[9]) + 200*(d->qvel[6] - d->qvel[9]);
+  // d->ctrl[8] = 5000*(d->qpos[7] - d->qpos[10]) + 200*(d->qvel[7] - d->qvel[10]);
+  // d->ctrl[10]= 5000*(d->qpos[3] - d->qpos[12]) + 200*(d->qvel[3] - d->qvel[12]);
+  // d->ctrl[11]= 5000*(d->qpos[4] - d->qpos[13]) + 200*(d->qvel[4] - d->qvel[13]);
 
 
+
+  // d->qvel[9]  = d->qvel[6];
+  // d->qvel[10] = d->qvel[7];
+  // d->qvel[12] = d->qvel[3];
+  // d->qvel[13] = d->qvel[4];
 
 }
 
@@ -337,7 +349,7 @@ void YCM_controller()
   bool bIsPerturbOn = false;
   double r_init = 0.3;
   double r_ref = 0.4;
-  double v_ref = 1.5;
+  double v_ref = 1.0;
 
   // std::cout << "com : " << d->subtree_com[0] << std::endl;
 

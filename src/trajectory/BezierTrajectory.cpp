@@ -70,8 +70,8 @@ void BezierTrajectory<T>::Desired_Touch_Down_state(int Leg_num)
   T x_1=2*b+a*e_1;
   T x_2=2*b+a*e_2;
 
-  // T st_time=2*(-(td_param_ptr_->th_TD[Leg_num])/dth_ref[Leg_num]);
-  T st_time = lo_param_ptr_->t_stance[Leg_num];
+  T st_time=2*(-(td_param_ptr_->th_TD[Leg_num])/dth_ref[Leg_num]);
+  // T st_time = lo_param_ptr_->t_stance[Leg_num];
   // T st_time = 0.1;
 
   op_param_ptr_->th_r[Leg_num] = (2 * dth_ref[Leg_num]) * (((e_2 -e_1) + (e_1*exp(e_1*st_time) - e_2*exp(e_2*st_time))+

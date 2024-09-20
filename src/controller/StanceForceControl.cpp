@@ -53,7 +53,8 @@ void StanceForceControl<T>::spring_force_control(int Leg_num)
   error_pos_[Leg_num][0] = foot_traj_ptr_->foot_pos_rw_des_[Leg_num][0] - robot_.foot_pos_rw_act_local_[Leg_num][0];
 
   force_rw_stance_des_[Leg_num][0] = spring_K_[Leg_num] * error_pos_[Leg_num][0] -(robot_.M_d_R)*(1/(2*tan(thbr_[Leg_num]/2)))*dthbr_[Leg_num]*dr_[Leg_num]+
-    (robot_.M_d_R + robot_.thigh_mass_[Leg_num]+robot_.shank_mass_[Leg_num] +500 )*g;
+    (robot_.M_d_R + robot_.thigh_mass_[Leg_num]+robot_.shank_mass_[Leg_num] + 32)*g;
+  // main에서 가만히 있는 다리 ctrl로 안넣어줄때는 32
 
   // force_rw_stance_des_[Leg_num][0] = spring_K_[Leg_num] * error_pos_[Leg_num][0];
 
