@@ -16,7 +16,7 @@ FSM<T>::FSM(RobotLeg<T> & robot, CompensationControl<T> & comp_ctrl, FlightContr
   lo_param_ptr_ = nullptr;
   td_param_ptr_ = nullptr;
 
-  touch_threshold_ = 50;
+  touch_threshold_ = 20;
 
   threshold_size_ = 15;
   loop_iter = 0;
@@ -30,6 +30,7 @@ FSM<T>::FSM(RobotLeg<T> & robot, CompensationControl<T> & comp_ctrl, FlightContr
     phase_[i][0] = 0;
     phase_[i][1] = 0; // old value
     event_[i] = 0;
+    swing_lock_[i] = false;
   }
 }
 
@@ -62,48 +63,48 @@ void FSM<T>::phase_update(mjData * d)
     {
 
       start_[i] = 1;
-      if (start_[0] == 1 && start_[3] == 1)
-      {
-        /**
-         * * galloping 이다.
-         * @brief 시작할 때 나머지 다리 두개를 Swing Leg로 지정해주기 위해서 설계
-         * @param i: 0, 1 -> Stance LEG (3*i)
-         * @param i: 2, 3 -> Swing LEG (i+1)
-         * todo : Optimization 실행시켜줘야함 그 부분을 뭘로 할지 고민해봐야함
-         * ! 문제가 될 여지가 있는 param은 밑에 기록해둠
-         */
+      // if (start_[0] == 1 && start_[3] == 1)
+      // {
+      //   /**
+      //    * * galloping 이다.
+      //    * @brief 시작할 때 나머지 다리 두개를 Swing Leg로 지정해주기 위해서 설계
+      //    * @param i: 0, 1 -> Stance LEG (3*i)
+      //    * @param i: 2, 3 -> Swing LEG (i+1)
+      //    * todo : Optimization 실행시켜줘야함 그 부분을 뭘로 할지 고민해봐야함
+      //    * ! 문제가 될 여지가 있는 param은 밑에 기록해둠
+      //    */
 
 
-        for (size_t i = 0; i < 2; i++)
-        {
-          Touch_down_state(3*i);
-          start_[i+1] = 1;
-          td_param_ptr_->t_TD[i+1] = 0;
-          period_[i+1] = 0;
+      //   for (size_t i = 0; i < 2; i++)
+      //   {
+      //     Touch_down_state(3*i);
+      //     start_[i+1] = 1;
+      //     td_param_ptr_->t_TD[i+1] = 0;
+      //     period_[i+1] = 0;
 
-          lo_param_ptr_->r_LO[i+1] = robot_.foot_pos_rw_act_local_[i+1][0];
-          lo_param_ptr_->dr_LO[i+1] = robot_.foot_vel_rw_act_local_[i+1][0];
-          lo_param_ptr_->th_LO[i+1] = robot_.foot_pos_rw_act_local_[i+1][1];
-          lo_param_ptr_->dth_LO[i+1] = robot_.foot_vel_rw_act_local_[i+1][1];
-          lo_param_ptr_->t_LO[i+1] = time_;
+      //     lo_param_ptr_->r_LO[i+1] = robot_.foot_pos_rw_act_local_[i+1][0];
+      //     lo_param_ptr_->dr_LO[i+1] = robot_.foot_vel_rw_act_local_[i+1][0];
+      //     lo_param_ptr_->th_LO[i+1] = robot_.foot_pos_rw_act_local_[i+1][1];
+      //     lo_param_ptr_->dth_LO[i+1] = robot_.foot_vel_rw_act_local_[i+1][1];
+      //     lo_param_ptr_->t_LO[i+1] = time_;
 
-          //? t_stance가 굉장히 짧을 수 있음. 어떤 값을 사용해야하나?
-          lo_param_ptr_->t_stance[i+1] =  10*(lo_param_ptr_->t_LO[i+1] - td_param_ptr_->t_TD[i+1]);
+      //     //? t_stance가 굉장히 짧을 수 있음. 어떤 값을 사용해야하나?
+      //     lo_param_ptr_->t_stance[i+1] =  10*(lo_param_ptr_->t_LO[i+1] - td_param_ptr_->t_TD[i+1]);
 
-          //? L_O 속도 어떤 값을 사용해야하나? 떨어 질 때 속도를 부호 바꿔서 사용? 생각해봐야함
-          lo_param_ptr_->V_y_LO[i+1] = -0.1;
+      //     //? L_O 속도 어떤 값을 사용해야하나? 떨어 질 때 속도를 부호 바꿔서 사용? 생각해봐야함
+      //     lo_param_ptr_->V_y_LO[i+1] = -0.1;
 
-          td_param_ptr_->r_TD[i+1] = td_param_ptr_->r_TD[3*i];
-          td_param_ptr_->dr_TD[i+1] = td_param_ptr_->dr_TD[3*i];
-          td_param_ptr_->th_TD[i+1] = td_param_ptr_->th_TD[3*i];
-          td_param_ptr_->dth_TD[i+1] = td_param_ptr_->dth_TD[3*i];
+      //     td_param_ptr_->r_TD[i+1] = td_param_ptr_->r_TD[3*i];
+      //     td_param_ptr_->dr_TD[i+1] = td_param_ptr_->dr_TD[3*i];
+      //     td_param_ptr_->th_TD[i+1] = td_param_ptr_->th_TD[3*i];
+      //     td_param_ptr_->dth_TD[i+1] = td_param_ptr_->dth_TD[3*i];
 
-          bezier_traj_.state_update(i+1);
-          bezier_traj_.Desired_Touch_Down_state(i+1);
-          bezier_traj_.Desired_Flight_Time(i+1);
+      //     bezier_traj_.state_update(i+1);
+      //     bezier_traj_.Desired_Touch_Down_state(i+1);
+      //     bezier_traj_.Desired_Flight_Time(i+1);
 
-        }
-      }
+      //   }
+      // }
     }
     else if (touch_[i][0] < touch_threshold_ && start_[i] == 0)
     {
@@ -115,6 +116,7 @@ void FSM<T>::phase_update(mjData * d)
     {
       //*************************************** TD LO Check ***************************************** */
       event_[i] = 0;
+      period_[i] = 0.1;
 
       if (touch_[i][0] <= touch_threshold_ && touch_[i][1] > touch_threshold_ && touch_[i][2] > touch_threshold_ &&
         touch_[i][3] > touch_threshold_ && touch_[i][4] > touch_threshold_ && touch_[i][5] > touch_threshold_ &&
@@ -131,11 +133,15 @@ void FSM<T>::phase_update(mjData * d)
         touch_[i][9] <= touch_threshold_ && touch_[i][10] <= touch_threshold_ && touch_[i][11] <= touch_threshold_ &&
         touch_[i][12] <= touch_threshold_ && touch_[i][13] <= touch_threshold_ && touch_[i][14] <= touch_threshold_ )
         {
-
-          event_[i] = 3;
-          Touch_down_state(i);
-
-
+          if (swing_lock_[i] == false)
+          {
+            event_[i] = 3;
+            Touch_down_state(i);
+          }
+          else if (swing_lock_[i] == true)
+          {
+            //* Noting happen
+          }
         }
 
       //********************************************** Phase Check ***************************************** */
@@ -173,11 +179,12 @@ void FSM<T>::phase_update(mjData * d)
   // std::cout<<"robot_.event in FSM "<< robot_.event_[0] <<std::endl;
 
   //************************************ 2족처럼 Phase 맞춰주기 위한 과정 ******************************* */
-  if(start_[0] == 1 && start_[1] == 1)
+  if(start_[0] == 1 || start_[1] == 1)
   {
     //* 경우의 수 2개 뿐 FL이 TD일 때 , FR이 TD 일 때
     // todo 3.75는 trajectory에서 가져옴. 나중에 변수화 해줘야함
-    //period_[i] = 1*abs(td_param_ptr_->th_TD[i] -M_PI/2)*2/3.75;
+    //! period 결정 위에서 해줄게~~
+    // period_[i] = 1*abs(td_param_ptr_->th_TD[i] -M_PI/2)/3.75;
     if(event_[0] == 3 && phase_[1][0] == 1)
     {
       //* FL -> TD, FR -> LO
@@ -200,6 +207,14 @@ void FSM<T>::phase_update(mjData * d)
       else if(time_ >= lo_param_ptr_->t_LO[i] && lo_param_ptr_->t_LO[i] > td_param_ptr_->t_TD[i] )
       {
         phase_[i][0] = 2;
+        if (time_ - lo_param_ptr_->t_LO[i] <= period_[i])
+        {
+          swing_lock_[i] = true;
+        }
+        else
+        {
+          swing_lock_[i] = false;
+        }
       }
 
     }

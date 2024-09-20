@@ -27,6 +27,7 @@ class FSM
     Vec2<T> phase_[4]; // 0: Stance, 1: Flight
     T event_[4]; // mean Touch down or Lift off
     T period_[4];
+    bool swing_lock_[4];
     int loop_iter;
 
     std::shared_ptr<typename TrajectoryOptimization<T>::LO_param> lo_param_ptr_;
