@@ -190,7 +190,7 @@ void CompensationControl<T>::Trunk_mass_compensation(mjData * d)
     r_grf[1] << 0, 0;
     r_grf[2] << 0, 0;
 
-    cout << "Trunk compensation FL , RR" << endl;
+    // cout << "Trunk compensation FL , RR" << endl;
 
   }
   else if (robot_.phase_[1]==1 && robot_.phase_[2] == 1)
@@ -202,11 +202,9 @@ void CompensationControl<T>::Trunk_mass_compensation(mjData * d)
     r_grf[0] << 0, 0;
     r_grf[3] << 0, 0;
 
-    cout << "Trunk compensation FR , RL" << endl;
+    // cout << "Trunk compensation FR , RL" << endl;
 
   }
-
-
 
 
   for (int i = 0; i < 4; i++)
@@ -217,7 +215,8 @@ void CompensationControl<T>::Trunk_mass_compensation(mjData * d)
     //   r_grf[i] << 0, 0;
     // }
 
-    Trunk_mass_compensation_joint_des_[i] = robot_.jacbRW[i].transpose() * r_grf[i];
+    Trunk_mass_compensation_joint_des_[i] = robot_.jacbRW[i].transpose() * r_grf[i]/cos(M_PI/2-robot_.joint_pos_bi_act_[i][1]);
+    // Trunk_mass_compensation_joint_des_[i] = robot_.jacbRW[i].transpose() * r_grf[i];
     robot_.joint_torque_des_[i][1] += Trunk_mass_compensation_joint_des_[i][0] + Trunk_mass_compensation_joint_des_[i][1];
     robot_.joint_torque_des_[i][2] += Trunk_mass_compensation_joint_des_[i][1];
 
