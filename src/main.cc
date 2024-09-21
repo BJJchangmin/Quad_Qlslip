@@ -71,7 +71,7 @@ const int kErrorLength = 1024;          // load error string length
 //* ******************************** MY CONSTANTS & OBJECT DECLARATION ************************* *//
 //* ******************************************************************************************** *//
 
-const double sim_end_time = 15.0;       // simulation end time (seconds)
+const double sim_end_time = 10.0;       // simulation end time (seconds)
 unsigned int loop_iter = 0;             // loop iteration counter
 RobotLeg<float> robot = buildMclQuad<float>();  // robot model
 TrackingController<float> track_ctrl(robot);     // tracking controller
@@ -349,7 +349,35 @@ void YCM_controller()
   bool bIsPerturbOn = false;
   double r_init = 0.3;
   double r_ref = 0.4;
-  double v_ref = 1.0;
+  double v_ref;
+  double t = d->time;
+  double t1 = 3; // 3
+  double t2 = 6; // 6
+  double t3 = 9;
+  double t4 = 12;
+  double v_1 = 0.5;
+  double v_2 = 0.85;
+  double v_3 = 1.2;
+  if ((0 <= t) & (t < t1))
+  {
+    v_ref = v_1;  // 0.2
+  }
+  else if ((t1 <= t) && (t < t2))
+  {
+    v_ref = (v_2-v_1)*t/(t2-t1)+(v_2-(v_2-v_1)*t2/(t2-t1));  // 0.25
+  }
+  else if (t2 <= t && t < t3)
+  {
+    v_ref = v_2;
+  }
+  else if (t3 <= t && t < t4)
+  {
+    v_ref = (v_3-v_2)*t/(t4-t3)+(v_3-(v_3-v_2)*t4/(t4-t3));
+  }
+  else
+  {
+    v_ref = v_3;
+  }
 
   // std::cout << "com : " << d->subtree_com[0] << std::endl;
 

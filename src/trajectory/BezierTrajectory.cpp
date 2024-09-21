@@ -70,7 +70,7 @@ void BezierTrajectory<T>::Desired_Touch_Down_state(int Leg_num)
   T x_1=2*b+a*e_1;
   T x_2=2*b+a*e_2;
 
-  T st_time=2*(-(td_param_ptr_->th_TD[Leg_num])/dth_ref[Leg_num]);
+  T st_time=abs(2*(-(td_param_ptr_->th_TD[Leg_num])/dth_ref[Leg_num]));
   // T st_time = lo_param_ptr_->t_stance[Leg_num];
   // T st_time = 0.1;
 
@@ -79,10 +79,12 @@ void BezierTrajectory<T>::Desired_Touch_Down_state(int Leg_num)
   // T th_r = 0;
 
   // desired top
-  op_param_ptr_->r_des_top[Leg_num] = 0.3;
+  op_param_ptr_->r_des_top[Leg_num] = 0.32;
   op_param_ptr_->th_des_top[Leg_num] = 0;
 
-  op_param_ptr_-> h_1[Leg_num] = 1.6;
+
+
+  op_param_ptr_-> h_1[Leg_num] = 1.5;
   op_param_ptr_-> u[Leg_num] = op_param_ptr_-> h_1[Leg_num] * ((-op_param_ptr_->th_r[Leg_num]/2)- lo_param_ptr_->th_LO[Leg_num]) +
     op_param_ptr_->th_r[Leg_num];
 
@@ -110,7 +112,7 @@ void BezierTrajectory<T>::Desired_Flight_Time(int Leg_num)
    */
   T g = 9.81;
   // cout << "V_y_LO: " << lo_param_ptr_->V_y_LO[0] << endl;
-  op_param_ptr_->t_flight_des[Leg_num] = abs(1*2*lo_param_ptr_->V_y_LO[Leg_num]/g)*1;
+  op_param_ptr_->t_flight_des[Leg_num] = abs(1*2*lo_param_ptr_->V_y_LO[Leg_num]/g)*2;
 }
 
 template <typename T>
@@ -145,13 +147,20 @@ void BezierTrajectory<T>::Bezier_Trajectory(int Leg_num, T time_)
 
     RW_Bezier[Leg_num][0] = sqrt(pow(bx_2[Leg_num],2) + pow(by_2[Leg_num],2));
     RW_Bezier[Leg_num][1] = atan2(bx_2[Leg_num],by_2[Leg_num]);
+    // cout << "p1 : " << p1[0][0] << endl;
+    // cout << "r_des_top : " << op_param_ptr_->r_des_top[0] << endl;
+    // cout <<" th_des_TD : " << op_param_ptr_->th_des_TD[0] << endl;
+    // cout << "p2 : " << p2[0][0] << endl;
+    // cout << "in period : " << RW_Bezier[0][0] << endl;
 
   }
   else
   {
+    // cout << "No period : " << RW_Bezier[Leg_num][0] << endl;
     RW_Bezier[Leg_num][0] = op_param_ptr_->r_des_TD[Leg_num];
     RW_Bezier[Leg_num][1] = op_param_ptr_->th_des_TD[Leg_num];
   }
+  // cout << "RW_Bezier[Leg_num][0] : " << RW_Bezier[Leg_num][0] << endl;
 
   foot_traj_ptr_->r_bezier_flight_[Leg_num] = RW_Bezier[Leg_num][0];
   foot_traj_ptr_->th_bezier_flight_[Leg_num] = RW_Bezier[Leg_num][1] + M_PI/2;

@@ -2,7 +2,7 @@
   <!-- <compiler angle="radian" meshdir="assets/meshes/" autolimits="true"/> -->
   <compiler angle="radian" meshdir="assets/meshes/"/>
 
-  <option timestep="0.001" integrator="RK4" gravity = "0 0 -9.81" cone="elliptic" impratio="100">
+  <option timestep="0.002" integrator="RK4" gravity = "0 0 -9.81" cone="elliptic" impratio="100">
     <flag sensornoise="enable" energy="enable" contact="enable" />
   </option>
 

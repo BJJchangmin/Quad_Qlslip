@@ -18,10 +18,15 @@ FlightControl<T>::FlightControl(RobotLeg<T> & robot) : robot_(robot)
     error_vel_[i] = Vec2<T>::Zero();
     error_vel_old_[i] = Vec2<T>::Zero();
 
-    kp_r_[i] = 20*400;
-    kd_r_[i] = 15*5;
-    kp_th_[i] =10*75;
-    kd_th_[i] = 1.1;
+    kp_r_[i] = 20*600;
+    kd_r_[i] = 120;
+    kp_th_[i] =10*150;
+    kd_th_[i] = 30;
+
+    // kp_r_[i] = 20*400;
+    // kd_r_[i] = 2;
+    // kp_th_[i] =10*75;
+    // kd_th_[i] = 1.1;
 
     force_rw_flight_des_[i] = Vec2<T>::Zero();
 
@@ -39,7 +44,6 @@ void FlightControl<T>::th_control(int Leg_num)
   error_vel_old_[Leg_num][1] = error_vel_[Leg_num][1];
   error_pos_old_[Leg_num][1] = error_pos_[Leg_num][1];
   error_pos_[Leg_num][1] = foot_traj_ptr_->foot_pos_rw_des_[Leg_num][1] - robot_.foot_pos_rw_act_local_[Leg_num][1];
-  // error_vel_[Leg_num][1] = foot_traj_ptr_->foot_vel_rw_des_[Leg_num][1] - robot_.foot_vel_rw_act_local_[Leg_num][1];
 
   error_vel_[Leg_num][1] = tustin_derivative(error_pos_[Leg_num][1], error_pos_old_[Leg_num][1], error_vel_[Leg_num][1], error_vel_old_[Leg_num][1], 50);
 
@@ -53,12 +57,13 @@ void FlightControl<T>::r_control(int Leg_num)
   /**
    * @brief r direction Control in Flight phase
    */
-
-
+  error_vel_old_[Leg_num][0] = error_vel_[Leg_num][0];
+  error_pos_old_[Leg_num][0] = error_pos_[Leg_num][0];
   error_pos_[Leg_num][0] = foot_traj_ptr_->foot_pos_rw_des_[Leg_num][0] - robot_.foot_pos_rw_act_local_[Leg_num][0];
-  error_vel_[Leg_num][0] = foot_traj_ptr_->foot_vel_rw_des_[Leg_num][0] - robot_.foot_vel_rw_act_local_[Leg_num][0];
 
-  force_rw_flight_des_[Leg_num][0] = kp_r_[Leg_num] * error_pos_[Leg_num][0];
+  error_vel_[Leg_num][0] = tustin_derivative(error_pos_[Leg_num][0], error_pos_old_[Leg_num][0], error_vel_[Leg_num][0], error_vel_old_[Leg_num][0], 50);
+
+  force_rw_flight_des_[Leg_num][0] = kp_r_[Leg_num] * error_pos_[Leg_num][0] + kd_r_[Leg_num] * error_vel_[Leg_num][0];
 
 
 }
