@@ -2689,7 +2689,7 @@ void Simulate::RenderLoop() {
 
       //* Perturbation *//
       this->opt.flags[mjVIS_PERTFORCE] = true;
-      this->opt.flags[mjVIS_CONTACTFORCE] = true;
+      this->opt.flags[mjVIS_CONTACTFORCE] = false;
       this->opt.flags[mjVIS_CONTACTPOINT] = true;
 
       //* ************************************************************************************** *//

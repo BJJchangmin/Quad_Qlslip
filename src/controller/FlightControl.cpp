@@ -20,8 +20,8 @@ FlightControl<T>::FlightControl(RobotLeg<T> & robot) : robot_(robot)
 
     kp_r_[i] = 20*600;
     kd_r_[i] = 120;
-    kp_th_[i] =10*150;
-    kd_th_[i] = 30;
+    kp_th_[i] =10*300;
+    kd_th_[i] = 50;
 
     // kp_r_[i] = 20*400;
     // kd_r_[i] = 2;

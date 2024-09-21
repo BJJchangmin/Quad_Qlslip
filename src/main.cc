@@ -71,7 +71,7 @@ const int kErrorLength = 1024;          // load error string length
 //* ******************************** MY CONSTANTS & OBJECT DECLARATION ************************* *//
 //* ******************************************************************************************** *//
 
-const double sim_end_time = 10.0;       // simulation end time (seconds)
+const double sim_end_time = 11.0;       // simulation end time (seconds)
 unsigned int loop_iter = 0;             // loop iteration counter
 RobotLeg<float> robot = buildMclQuad<float>();  // robot model
 TrackingController<float> track_ctrl(robot);     // tracking controller
@@ -323,18 +323,6 @@ void apply_joint_control(mjData * d)
 
   }
 
-  // d->ctrl[7] = 5000*(d->qpos[6] - d->qpos[9]) + 200*(d->qvel[6] - d->qvel[9]);
-  // d->ctrl[8] = 5000*(d->qpos[7] - d->qpos[10]) + 200*(d->qvel[7] - d->qvel[10]);
-  // d->ctrl[10]= 5000*(d->qpos[3] - d->qpos[12]) + 200*(d->qvel[3] - d->qvel[12]);
-  // d->ctrl[11]= 5000*(d->qpos[4] - d->qpos[13]) + 200*(d->qvel[4] - d->qvel[13]);
-
-
-
-  // d->qvel[9]  = d->qvel[6];
-  // d->qvel[10] = d->qvel[7];
-  // d->qvel[12] = d->qvel[3];
-  // d->qvel[13] = d->qvel[4];
-
 }
 
 
@@ -346,7 +334,7 @@ void YCM_controller()
   //* ***** GENERATE DESIRED JOINT COMMAND AND APPLY CONTROL INPUT FOR SIMULATION***** *//
 
   //* Parameter
-  bool bIsPerturbOn = false;
+  bool bIsPerturbOn = true;
   double r_init = 0.3;
   double r_ref = 0.4;
   double v_ref;
@@ -355,9 +343,16 @@ void YCM_controller()
   double t2 = 6; // 6
   double t3 = 9;
   double t4 = 12;
-  double v_1 = 0.5;
-  double v_2 = 0.85;
-  double v_3 = 1.2;
+
+
+  //*************** Velocity Trans ***************/
+
+  // double v_1 = 0.5;
+  // double v_2 = 0.85;
+  // double v_3 = 1.2;
+  double v_1 = 0.7;
+  double v_2 = 0.7;
+  double v_3 = 0.7 ;
   if ((0 <= t) & (t < t1))
   {
     v_ref = v_1;  // 0.2
@@ -377,6 +372,16 @@ void YCM_controller()
   else
   {
     v_ref = v_3;
+  }
+
+  //******************Perturbation ***********************/
+  if (bIsPerturbOn)
+  {
+    if(d->time >= 2.706 && d->time <= 2.78)
+    {
+      std::cout << "Perturbation" << std::endl;
+      d->xfrc_applied[2*6] = 500;
+    }
   }
 
   // std::cout << "com : " << d->subtree_com[0] << std::endl;
@@ -511,7 +516,17 @@ void PhysicsLoop(mj::Simulate& sim) {
           }
 
           // requested slow-down factor
-          double slowdown = 100 / sim.percentRealTime[sim.real_time_index];
+          // double slowdown = 100 / sim.percentRealTime[sim.real_time_index];
+
+          double slowdown;
+          if (d->time >= 2.7 && d->time <= 3.5)  // 0.7 ~ 0.704
+          {
+            slowdown = 20;  // x-direction force
+          }
+          else
+          {
+            slowdown = 1;
+          }
 
 
           // misalignment condition: distance from target sim time is bigger than syncmisalign
