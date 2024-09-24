@@ -305,20 +305,14 @@ void apply_joint_control(mjData * d)
   d->qpos[8] = 0;
   d->qpos[11] = 0;
 
-  d->qpos[9]  = d->qpos[6];
-  d->qpos[10] = d->qpos[7];
-  d->qpos[12] = d->qpos[3];
-  d->qpos[13] = d->qpos[4];
 
-  for (size_t i = 0; i < 2; i++)
+
+  for (size_t i = 0; i < 4; i++)
   {
 
     for (size_t j = 1; j < 3; j++)
     {
       d->ctrl[3*i+j] = robot.joint_torque_des_[i][j];
-      // d->ctrl[3*(i+2)+j] = robot.joint_torque_des_[i][j];
-      d->ctrl[3*(i+2)+j] = 0;
-
     }
 
   }
@@ -334,7 +328,7 @@ void YCM_controller()
   //* ***** GENERATE DESIRED JOINT COMMAND AND APPLY CONTROL INPUT FOR SIMULATION***** *//
 
   //* Parameter
-  bool bIsPerturbOn = true;
+  bool bIsPerturbOn = false;
   double r_init = 0.3;
   double r_ref = 0.4;
   double v_ref;
@@ -350,9 +344,9 @@ void YCM_controller()
   // double v_1 = 0.5;
   // double v_2 = 0.85;
   // double v_3 = 1.2;
-  double v_1 = 0.7;
-  double v_2 = 0.7;
-  double v_3 = 0.7 ;
+  double v_1 = 0.5;
+  double v_2 = 0.5;
+  double v_3 = 0.5;
   if ((0 <= t) & (t < t1))
   {
     v_ref = v_1;  // 0.2
@@ -516,17 +510,17 @@ void PhysicsLoop(mj::Simulate& sim) {
           }
 
           // requested slow-down factor
-          // double slowdown = 100 / sim.percentRealTime[sim.real_time_index];
+          double slowdown = 100 / sim.percentRealTime[sim.real_time_index];
 
-          double slowdown;
-          if (d->time >= 2.7 && d->time <= 3.5)  // 0.7 ~ 0.704
-          {
-            slowdown = 20;  // x-direction force
-          }
-          else
-          {
-            slowdown = 1;
-          }
+          // double slowdown;
+          // if (d->time >= 2.7 && d->time <= 3.5)  // 0.7 ~ 0.704
+          // {
+          //   slowdown = 20;  // x-direction force
+          // }
+          // else
+          // {
+          //   slowdown = 1;
+          // }
 
 
           // misalignment condition: distance from target sim time is bigger than syncmisalign

@@ -63,6 +63,7 @@ void FSM<T>::phase_update(mjData * d)
     {
 
       start_[i] = 1;
+      phase_[i][0] = 2;
       // if (start_[0] == 1 && start_[3] == 1)
       // {
       //   /**
@@ -116,7 +117,7 @@ void FSM<T>::phase_update(mjData * d)
     {
       //*************************************** TD LO Check ***************************************** */
       event_[i] = 0;
-      period_[i] = 0.01;
+      period_[i] = 0.05;
       // period_[i] = 1*abs(td_param_ptr_->th_TD[i] -M_PI/2)*0.2/2.5;
 
       if (touch_[i][0] <= touch_threshold_ && touch_[i][1] > touch_threshold_ && touch_[i][2] > touch_threshold_ &&
@@ -134,7 +135,7 @@ void FSM<T>::phase_update(mjData * d)
         touch_[i][9] <= touch_threshold_ && touch_[i][10] <= touch_threshold_ && touch_[i][11] <= touch_threshold_ &&
         touch_[i][12] <= touch_threshold_ && touch_[i][13] <= touch_threshold_ && touch_[i][14] <= touch_threshold_ )
         {
-          if (swing_lock_[i] == false)
+          if (swing_lock_[i] == false && phase_[i][0] == 2)
           {
             event_[i] = 3;
             Touch_down_state(i);
@@ -178,7 +179,8 @@ void FSM<T>::phase_update(mjData * d)
   }
   // std::cout<<"robot_.phase in FSM "<< robot_.phase_[0] <<std::endl;
   // std::cout<<"robot_.event in FSM "<< robot_.event_[0] <<std::endl;
-
+  cout << "up_Phase_0: " << phase_[0][0] << "  event_0: " << event_[0] << endl;
+  cout << "Phase_1: " << phase_[1][0] << "  event_1: " << event_[1] << endl;
   //************************************ 2족처럼 Phase 맞춰주기 위한 과정 ******************************* */
   if(start_[0] == 1 || start_[1] == 1)
   {
@@ -219,9 +221,54 @@ void FSM<T>::phase_update(mjData * d)
       }
 
     }
+    // cout << "time: " << time_ << "  t_LO :" << lo_param_ptr_->t_LO[1] << "  t_TD : " << td_param_ptr_->t_TD[1] << " swing_lock" << swing_lock_[1] << endl;
+    cout << "Down_Phase_0: " << phase_[0][0] << "  event_0: " << event_[0] << endl;
+    cout << "Phase_1: " << phase_[1][0] << "  event_1: " << event_[1] << endl;
 
   }
 
+  if(start_[2] == 1 || start_[3] == 1)
+  {
+    //* 경우의 수 2개 뿐 RL이 TD일 때 , RR이 TD 일 때
+    // todo 3.75는 trajectory에서 가져옴. 나중에 변수화 해줘야함
+    //! period 결정 위에서 해줄게~~
+    // period_[i] = 1*abs(td_param_ptr_->th_TD[i] -M_PI/2)/3.75;
+    if(event_[2] == 3 && phase_[3][0] == 1)
+    {
+      //* RL -> TD, RR -> LO
+      event_[3] = 4;
+      Lift_off_state(3);
+    }
+    else if(event_[3] == 3 && phase_[2][0] == 1)
+    {
+      //* FR -> TD, FL -> LO
+      event_[2] = 4;
+      Lift_off_state(2);
+    }
+
+    for(size_t i = 2; i < 4; i++)
+    {
+
+      if(time_ >= td_param_ptr_->t_TD[i] && td_param_ptr_->t_TD[i] > lo_param_ptr_->t_LO[i] )
+      {
+        phase_[i][0] = 1;
+      }
+      else if(time_ >= lo_param_ptr_->t_LO[i] && lo_param_ptr_->t_LO[i] > td_param_ptr_->t_TD[i] )
+      {
+        phase_[i][0] = 2;
+        if (time_ - lo_param_ptr_->t_LO[i] <= period_[i])
+        {
+          swing_lock_[i] = true;
+        }
+        else
+        {
+          swing_lock_[i] = false;
+        }
+      }
+
+    }
+
+  }
 
 
 
