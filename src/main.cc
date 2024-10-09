@@ -92,6 +92,7 @@ std::shared_ptr<MotionTrajectory<float>::DesiredJointTrajectory> joint_traj_ptr;
 std::shared_ptr<TrajectoryOptimization<float>::LO_param> lo_param_ptr;
 std::shared_ptr<TrajectoryOptimization<float>::TD_param> td_param_ptr;
 std::shared_ptr<TrajectoryOptimization<float>::Optimization_param> op_param_ptr;
+std::shared_ptr<FSM<float>::PCV> pcv_ptr;
 
 
 //* ******************************************************************************************** *//
@@ -305,14 +306,19 @@ void apply_joint_control(mjData * d)
   d->qpos[8] = 0;
   d->qpos[11] = 0;
 
+  d->qpos[9]  = d->qpos[6];
+  d->qpos[10] = d->qpos[7];
+  d->qpos[12] = d->qpos[3];
+  d->qpos[13] = d->qpos[4];
 
 
-  for (size_t i = 0; i < 4; i++)
+  for (size_t i = 0; i < 2; i++)
   {
 
     for (size_t j = 1; j < 3; j++)
     {
       d->ctrl[3*i+j] = robot.joint_torque_des_[i][j];
+      d->ctrl[3*(i+2)+j] = 0;
     }
 
   }
@@ -383,6 +389,7 @@ void YCM_controller()
   fsm.phase_update(d);
 
   // traj_generator.initial_trotting(r_init,d->time,1);
+  // traj_generator.stance_test();
   // track_ctrl.RW_posPD_control();
 
   // * Controller Function
@@ -390,7 +397,7 @@ void YCM_controller()
   bezier_traj.Flight_traj_generate(d);
   traj_generator.QLSLIP_Trajectory(r_ref, v_ref, d);
   fsm.FSM_control();
-  comp_ctrl.Trunk_mass_compensation(d);
+  comp_ctrl.Trunk_mass_compensation(d); //! 2족 상태로 해놨기에 4족으로 볼 때 되돌려야함
   apply_joint_control(d);
 
 }
@@ -711,6 +718,7 @@ int main(int argc, char** argv) {
   lo_param_ptr = traj_opt.get_lo_param_ptr();
   td_param_ptr = traj_opt.get_td_param_ptr();
   op_param_ptr = traj_opt.get_op_param_ptr();
+  pcv_ptr = fsm.get_pcv_ptr();
 
 
   //* ****************************************************************************************** *//
@@ -721,8 +729,10 @@ int main(int argc, char** argv) {
   stance_ctrl.get_traj_pointer(foot_traj_ptr);
   flight_ctrl.get_traj_pointer(foot_traj_ptr);
   fsm.get_optimization_pointer(lo_param_ptr, td_param_ptr);
+  fsm.get_traj_pointer(foot_traj_ptr);
   data_logger.set_traj_ptr(foot_traj_ptr, joint_traj_ptr);
   data_logger.set_op_param_ptr(op_param_ptr, lo_param_ptr, td_param_ptr);
+  data_logger.set_pcv_ptr(pcv_ptr);
   bezier_traj.get_traj_pointer(foot_traj_ptr);
   bezier_traj.get_optimization_pointer(op_param_ptr, lo_param_ptr, td_param_ptr);
 

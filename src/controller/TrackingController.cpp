@@ -15,7 +15,7 @@ TrackingController<T>::TrackingController(RobotLeg<T> & robot) : robot_(robot)
   for (size_t i = 0; i < 4; i++)
   {
 
-    kp_[i] << 0,5000;
+    kp_[i] << 0,1000;
     kd_[i] << 1000,500;
 
     force_rw_des_[i] = Vec2<T>::Zero();

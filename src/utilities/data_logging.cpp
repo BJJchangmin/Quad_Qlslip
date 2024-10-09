@@ -21,6 +21,7 @@ DataLogging<T>::DataLogging(RobotLeg<T> & robot_)
   op_param_ptr_ = nullptr;
   lo_param_ptr_ = nullptr;
   td_param_ptr_ = nullptr;
+  pcv_ptr_ = nullptr;
 
 
   for (int i = 0; i < 5; i++)
@@ -95,7 +96,9 @@ void DataLogging<T>::save_data(const mjModel* m, mjData* d)
       fout_[i] << lo_param_ptr_->dr_LO[i] << ",";  // dr_LO
       fout_[i] << lo_param_ptr_->th_LO[i] << ",";  // th_LO
       fout_[i] << lo_param_ptr_->dth_LO[i] << ",";  // dth_LO
-      fout_[i] << lo_param_ptr_->t_LO[i];  // t_LO
+      fout_[i] << lo_param_ptr_->t_LO[i] << ",";  // t_LO
+      fout_[i] << pcv_ptr_->Des_Phase[i] << ","; // Desired Phase
+      fout_[i] << pcv_ptr_->GAP[i]; // In PCV Ratio GAP
 
       // ! Don't remove the newline
       fout_[i] << endl;
@@ -145,7 +148,8 @@ void DataLogging<T>::init_data()
       fout_[i] << "phase, event, touch ";
       fout_[i] << "r_des_TD, dr_des_TD, th_des_TD, dth_des_TD, t_flight_des, ";
       fout_[i] << "r_TD, dr_TD, th_TD, dth_TD, t_TD, ";
-      fout_[i] << "r_LO, dr_LO, th_LO, dth_LO, t_LO " << std::endl;
+      fout_[i] << "r_LO, dr_LO, th_LO, dth_LO, t_LO, ";
+      fout_[i] << "Des_phase, phase_GAP " << std::endl;
     }
   }
   //************************************Trunk Data ********************************************** */
@@ -180,6 +184,12 @@ void DataLogging<T>::set_op_param_ptr(
   op_param_ptr_ = op_param_ptr;
   lo_param_ptr_ = lo_param_ptr;
   td_param_ptr_ = td_param_ptr;
+}
+
+template <typename T>
+void DataLogging<T>::set_pcv_ptr(std::shared_ptr<typename FSM<T>::PCV> pcv_ptr)
+{
+  pcv_ptr_ = pcv_ptr;
 }
 
 

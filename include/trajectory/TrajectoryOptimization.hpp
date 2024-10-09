@@ -65,7 +65,7 @@ public:
 
   struct TD_param
   {
-    T r_TD[4], dr_TD[4], th_TD[4], dth_TD[4], t_TD[4];
+    T r_TD[4], dr_TD[4], th_TD[4], dth_TD[4], t_TD[4], stance_Period[4];
   };
 
   void get_traj_pointer(std::shared_ptr<typename MotionTrajectory<T>::DesiredFootTrajectory> foot_traj_ptr);

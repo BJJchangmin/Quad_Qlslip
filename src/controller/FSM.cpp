@@ -15,6 +15,8 @@ FSM<T>::FSM(RobotLeg<T> & robot, CompensationControl<T> & comp_ctrl, FlightContr
 {
   lo_param_ptr_ = nullptr;
   td_param_ptr_ = nullptr;
+  foot_traj_ptr_ = nullptr;
+  pcv_ptr_ = std::make_shared<PCV>();
 
   touch_threshold_ = 20;
 
@@ -63,7 +65,7 @@ void FSM<T>::phase_update(mjData * d)
     {
 
       start_[i] = 1;
-      phase_[i][0] = 2;
+      swing_lock_phase_[i] = 1;
       // if (start_[0] == 1 && start_[3] == 1)
       // {
       //   /**
@@ -117,7 +119,7 @@ void FSM<T>::phase_update(mjData * d)
     {
       //*************************************** TD LO Check ***************************************** */
       event_[i] = 0;
-      period_[i] = 0.05;
+      swing_lock_period_[i] = 0.05;
       // period_[i] = 1*abs(td_param_ptr_->th_TD[i] -M_PI/2)*0.2/2.5;
 
       if (touch_[i][0] <= touch_threshold_ && touch_[i][1] > touch_threshold_ && touch_[i][2] > touch_threshold_ &&
@@ -135,10 +137,12 @@ void FSM<T>::phase_update(mjData * d)
         touch_[i][9] <= touch_threshold_ && touch_[i][10] <= touch_threshold_ && touch_[i][11] <= touch_threshold_ &&
         touch_[i][12] <= touch_threshold_ && touch_[i][13] <= touch_threshold_ && touch_[i][14] <= touch_threshold_ )
         {
-          if (swing_lock_[i] == false && phase_[i][0] == 2)
+          if (swing_lock_[i] == false && swing_lock_phase_[i] == 1)
           {
             event_[i] = 3;
             Touch_down_state(i);
+            //** PCV_Control */
+            PCV_control(i);
           }
           else if (swing_lock_[i] == true)
           {
@@ -146,71 +150,60 @@ void FSM<T>::phase_update(mjData * d)
           }
         }
 
-      //********************************************** Phase Check ***************************************** */
-      // cout << td_param_ptr_->t_TD[0] << endl;
-      // if (time_ - td_param_ptr_->t_TD[i] <= period_[i])
-      // {
-      //   phase_[i][0] = 1;
-      //   // cout<< "phase: stance" << endl;
-      // }
-      // else if (time_ - td_param_ptr_->t_TD[i] > period_[i])
-      // {
-      //   // cout << "i" << i << endl;
-      //   // cout << "time : "<< time_ << endl;
-      //   phase_[i][0] = 2;
-      //   // cout<< "phase: flight" << endl;
-      // }
-      // else
-      // {
-      //   cout << "else" << endl;
-      // }
-
-      // if (phase_[i][0] == 2 && phase_[i][1] == 1)
-      // {
-      //   event_[i] = 4;
-      //   Lift_off_state(i);
-      //   cout << "Lift off" << endl;
-      // }
-
-      // cout << "Leg : " << 0 <<", " << time_ - td_param_ptr_->t_TD[0] <<", "<< period_[0] <<endl;
-      // cout << "Phase_Leg_ " << 0 <<": "<<phase_[0][0] << endl;
 
     }
   }
-  // std::cout<<"robot_.phase in FSM "<< robot_.phase_[0] <<std::endl;
-  // std::cout<<"robot_.event in FSM "<< robot_.event_[0] <<std::endl;
-  cout << "up_Phase_0: " << phase_[0][0] << "  event_0: " << event_[0] << endl;
-  cout << "Phase_1: " << phase_[1][0] << "  event_1: " << event_[1] << endl;
   //************************************ 2족처럼 Phase 맞춰주기 위한 과정 ******************************* */
   if(start_[0] == 1 || start_[1] == 1)
   {
-    //* 경우의 수 2개 뿐 FL이 TD일 때 , FR이 TD 일 때
-    // todo 3.75는 trajectory에서 가져옴. 나중에 변수화 해줘야함
-    //! period 결정 위에서 해줄게~~
-    // period_[i] = 1*abs(td_param_ptr_->th_TD[i] -M_PI/2)/3.75;
-    if(event_[0] == 3 && phase_[1][0] == 1)
-    {
-      //* FL -> TD, FR -> LO
-      event_[1] = 4;
-      Lift_off_state(1);
-    }
-    else if(event_[1] == 3 && phase_[0][0] == 1)
-    {
-      //* FR -> TD, FL -> LO
-      event_[0] = 4;
-      Lift_off_state(0);
-    }
-
     for(size_t i = 0; i < 2; i++)
     {
       if(time_ >= td_param_ptr_->t_TD[i] && td_param_ptr_->t_TD[i] > lo_param_ptr_->t_LO[i] )
       {
+        //! 여기서 Lift off를 결정해줘야한다. 그런데 다른 다리가 TD 했다는 항도 함께 있어야 하기 때문에 그거 생각해서 짜줘야함. 그럴려면 여기 있어도 되는가?
+        //! 상대 다리가 TD 하면 이 안에 들어와진다. 둘다 이 안에 있을 때 하나 결정해서 LO 시켜서 나가면 됨
         phase_[i][0] = 1;
+        swing_lock_phase_[i] = 0;
+        // cout << i << endl;
+        pcv_ptr_->time[i] = time_ - td_param_ptr_->t_TD[i];
+        pcv_ptr_->Ratio[i] = pcv_ptr_->time[i]/pcv_ptr_->update_Period[i];
+        cout << "Ratio : " << 0 << " : " << pcv_ptr_->Ratio[0] << endl;
+
+        // ? 이러면 한번만 들어와지는게 맞는가? 일단 Event에서 Phase로 바꿈 생각했을 떄는 괜찮을 듯
+        if (pcv_ptr_->Ratio[0] >= 1 && phase_[1][0] == 1 && phase_[0][0] != 2)
+        {
+          event_[0] = 4;
+          Lift_off_state(0);
+          pcv_ptr_->Ratio[0] = .0;
+        }
+        if (pcv_ptr_->Ratio[1] >= 1 && phase_[0][0] == 1 && phase_[1][0] != 2)
+        {
+
+          event_[1] = 4;
+          Lift_off_state(1);
+          pcv_ptr_->Ratio[1] = .0;
+        }
+        if (pcv_ptr_->Ratio[2] >= 1 && phase_[3][0] == 1)
+        {
+          event_[2] = 4;
+          Lift_off_state(2);
+          pcv_ptr_->Ratio[2] = .0;
+        }
+        if (pcv_ptr_->Ratio[3] >= 1 && phase_[2][0] == 1)
+        {
+          event_[3] = 4;
+          Lift_off_state(3);
+          pcv_ptr_->Ratio[3] = .0;
+        }
+
       }
       else if(time_ >= lo_param_ptr_->t_LO[i] && lo_param_ptr_->t_LO[i] > td_param_ptr_->t_TD[i] )
       {
         phase_[i][0] = 2;
-        if (time_ - lo_param_ptr_->t_LO[i] <= period_[i])
+        swing_lock_phase_[i] = 1;
+
+        //* Swing Lock Algorithm */
+        if (time_ - lo_param_ptr_->t_LO[i] <= swing_lock_period_[i])
         {
           swing_lock_[i] = true;
         }
@@ -218,67 +211,29 @@ void FSM<T>::phase_update(mjData * d)
         {
           swing_lock_[i] = false;
         }
-      }
 
-    }
-    // cout << "time: " << time_ << "  t_LO :" << lo_param_ptr_->t_LO[1] << "  t_TD : " << td_param_ptr_->t_TD[1] << " swing_lock" << swing_lock_[1] << endl;
-    cout << "Down_Phase_0: " << phase_[0][0] << "  event_0: " << event_[0] << endl;
-    cout << "Phase_1: " << phase_[1][0] << "  event_1: " << event_[1] << endl;
-
-  }
-
-  if(start_[2] == 1 || start_[3] == 1)
-  {
-    //* 경우의 수 2개 뿐 RL이 TD일 때 , RR이 TD 일 때
-    // todo 3.75는 trajectory에서 가져옴. 나중에 변수화 해줘야함
-    //! period 결정 위에서 해줄게~~
-    // period_[i] = 1*abs(td_param_ptr_->th_TD[i] -M_PI/2)/3.75;
-    if(event_[2] == 3 && phase_[3][0] == 1)
-    {
-      //* RL -> TD, RR -> LO
-      event_[3] = 4;
-      Lift_off_state(3);
-    }
-    else if(event_[3] == 3 && phase_[2][0] == 1)
-    {
-      //* FR -> TD, FL -> LO
-      event_[2] = 4;
-      Lift_off_state(2);
-    }
-
-    for(size_t i = 2; i < 4; i++)
-    {
-
-      if(time_ >= td_param_ptr_->t_TD[i] && td_param_ptr_->t_TD[i] > lo_param_ptr_->t_LO[i] )
-      {
-        phase_[i][0] = 1;
-      }
-      else if(time_ >= lo_param_ptr_->t_LO[i] && lo_param_ptr_->t_LO[i] > td_param_ptr_->t_TD[i] )
-      {
-        phase_[i][0] = 2;
-        if (time_ - lo_param_ptr_->t_LO[i] <= period_[i])
-        {
-          swing_lock_[i] = true;
-        }
-        else
-        {
-          swing_lock_[i] = false;
-        }
       }
 
     }
 
   }
-
-
 
   for(size_t i = 0; i < robot_.k_num_dof_leg; i++)
   {
     phase_[i][1] = phase_[i][0];
     robot_.phase_[i] = phase_[i][0];
     robot_.event_[i]= event_[i];
+
   }
 
+  //! Debugging
+  // cout << "TD : " << 0 << " : " << td_param_ptr_->t_TD[0] << endl;
+  // cout << "GAP : " << 0 << " : " << pcv_ptr_->GAP[0] << endl;
+  // cout << "stance_period : " << 0 << " : " << td_param_ptr_->stance_Period[0] << endl;
+  // cout << "pcv_update_time : " << 0 << " : " << pcv_ptr_->update_Period[0] << endl;
+  // cout << "pcv_time : " << 1 << " : " << pcv_ptr_->time[1] << endl;
+  // cout << "Ratio : " << 1 << " : " << pcv_ptr_->Ratio[1] << endl;
+  // cout << "phase : " << 1 << " : " << phase_[1][0] << endl;
   loop_iter++;
 }
 
@@ -296,11 +251,9 @@ void FSM<T>::Lift_off_state(int Leg_num)
   lo_param_ptr_->t_LO[Leg_num] = time_;
 
   lo_param_ptr_->t_stance[Leg_num] = lo_param_ptr_->t_LO[Leg_num] - td_param_ptr_->t_TD[Leg_num];
-  // lo_param_ptr_->V_y_LO[Leg_num] = lo_param_ptr_->dr_LO[Leg_num]*sin(lo_param_ptr_->th_LO[Leg_num]) -
-  //   lo_param_ptr_->r_LO[Leg_num]*lo_param_ptr_->dth_LO[Leg_num]*cos(lo_param_ptr_->th_LO[Leg_num]);
 
   lo_param_ptr_->V_y_LO[Leg_num] = robot_.hip_v_vel_[Leg_num];
-  cout << "V_y_LO: " << lo_param_ptr_->V_y_LO[0] << endl;
+
 
 }
 
@@ -315,6 +268,8 @@ void FSM<T>::Touch_down_state(int Leg_num)
   td_param_ptr_->th_TD[Leg_num] = robot_.foot_pos_rw_act_local_[Leg_num][1];
   td_param_ptr_->dth_TD[Leg_num] = robot_.foot_vel_rw_act_local_[Leg_num][1];
   td_param_ptr_->t_TD[Leg_num] = time_;
+  td_param_ptr_->stance_Period[Leg_num] = 2*abs((td_param_ptr_->th_TD[Leg_num] -M_PI/2)/foot_traj_ptr_->foot_vel_rw_des_[0][1]);
+
 }
 
 template <typename T>
@@ -339,12 +294,72 @@ void FSM<T>::FSM_control()
       comp_ctrl_.compensation_control(i); // Phase에 상관없이 실행되어야함.
     }
   }
+}
+
+template <typename T>
+void FSM<T>::PCV_control(int Leg_num)
+{
+  /**
+   * * PCV_Conrtol , Location is under the TD Detection
+   * @param FL,FR,RL,RR(0,1,2,3)
+   * ! 각 다리별로 누구 기준으로 해줘야하는지 직접 설정해줘야함
+   * ! 일단 2개의 다리로만 문제를 풀기
+   * todo : matching이 되어야 하는 다리 설정, gain setting, desired phase setting
+   */
+
+  pcv_ptr_->Des_Phase[Leg_num] = 0.5;
+  pcv_ptr_->p1[Leg_num] = 0.0105;
 
 
+  if(Leg_num == 0)
+  {
+    pcv_ptr_->GAP[0] = pcv_ptr_->Ratio[1] - pcv_ptr_->Ratio[0];
+    cout << "GAP : " << Leg_num << " : " << pcv_ptr_->GAP[Leg_num] << endl;
+    cout << "Gap_Rattio : " << Leg_num << " : " << pcv_ptr_->Ratio[1] << " : " << pcv_ptr_->Ratio[0] << endl;
+
+  }
+
+  if(Leg_num == 1)
+  {
+    // cout << "Ratio : " << 0 << " : " << pcv_ptr_->Ratio[1] << endl;
+    // cout << "Ratio : " << 1 << " : " << pcv_ptr_->Ratio[0] << endl;
+
+    pcv_ptr_->GAP[1] = pcv_ptr_->Ratio[0] - pcv_ptr_->Ratio[1];
+    cout << "GAP : " << Leg_num << " : " << pcv_ptr_->GAP[Leg_num] << endl;
+    cout << "Gap_Rattio : " << Leg_num << " : " << pcv_ptr_->Ratio[0] << " : " << pcv_ptr_->Ratio[1] << endl;
+  }
+
+  if(Leg_num == 2)
+  {
+    pcv_ptr_->GAP[2] = pcv_ptr_->Ratio[3] - pcv_ptr_->Ratio[2];
+  }
+
+  if(Leg_num == 3)
+  {
+    pcv_ptr_->GAP[3] = pcv_ptr_->Ratio[2] - pcv_ptr_->Ratio[3];
+  }
+  // cout << "Ratio : " << Leg_num << " : " << pcv_ptr_->Ratio[Leg_num] << endl;
+
+  pcv_ptr_->update_Period[Leg_num] = td_param_ptr_->stance_Period[Leg_num] + pcv_ptr_->p1[Leg_num]*(pcv_ptr_->Des_Phase[Leg_num] - pcv_ptr_->GAP[Leg_num]);
+  // cout << "stance_Period : " << Leg_num << " : " << td_param_ptr_->stance_Period[0] << endl;
+  cout << "update_Period : " << Leg_num << " : " << pcv_ptr_->update_Period[0] << endl;
 
 }
 
 
+
+template <typename T>
+std::shared_ptr<typename FSM<T>::PCV> FSM<T>::get_pcv_ptr()
+{
+  return pcv_ptr_;
+}
+
+
+template <typename T>
+void FSM<T>::get_traj_pointer(std::shared_ptr<typename MotionTrajectory<T>::DesiredFootTrajectory> foot_traj_ptr)
+{
+  foot_traj_ptr_ = foot_traj_ptr;
+}
 
 template <typename T>
 void FSM<T>::get_optimization_pointer(std::shared_ptr<typename TrajectoryOptimization<T>::LO_param> lo_param_ptr,

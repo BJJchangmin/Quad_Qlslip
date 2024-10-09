@@ -16,6 +16,7 @@
 #include "MotionTrajectory.hpp"
 #include "Mclquad.hpp"
 #include "TrajectoryOptimization.hpp"
+#include "FSM.hpp"
 
 
 template <typename T>
@@ -32,6 +33,7 @@ class DataLogging
     std::shared_ptr<typename TrajectoryOptimization<T>::Optimization_param> op_param_ptr_;
     std::shared_ptr<typename TrajectoryOptimization<T>::LO_param> lo_param_ptr_;
     std::shared_ptr<typename TrajectoryOptimization<T>::TD_param> td_param_ptr_;
+    std::shared_ptr<typename FSM<T>::PCV> pcv_ptr_;
 
   public:
     explicit DataLogging(RobotLeg<T> & robot_);
@@ -49,6 +51,7 @@ class DataLogging
       std::shared_ptr<typename TrajectoryOptimization<T>::LO_param> lo_param_ptr,
       std::shared_ptr<typename TrajectoryOptimization<T>::TD_param> td_param_ptr);
 
+    void set_pcv_ptr(std::shared_ptr<typename FSM<T>::PCV> pcv_ptr);
 
     int get_logging_freq();
 
