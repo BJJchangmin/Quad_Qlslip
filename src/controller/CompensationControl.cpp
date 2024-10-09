@@ -150,21 +150,41 @@ void CompensationControl<T>::Trunk_mass_compensation(mjData * d)
 
   Vec2<T> result[2];
 
-  body_com << d->xipos[0], d->xipos[1], d->xipos[2];
+  body_com << d->subtree_com[0], d->subtree_com[1], d->subtree_com[2];
 
   body_weight << 9.81*43, 0;
 
   for (int i = 0; i < 4; i++)
   {
     r_grf[i] << 0, 0;
-    foot_pos[i] << d->site_xpos[3+2*i], d->site_xpos[3+2*i + 1], d->site_xpos[3+2*i + 2];
-    vec_body2foot[i] = body_com - foot_pos[i];
+    foot_pos[i] << d->site_xpos[6+6*i], d->site_xpos[6+6*i + 1], d->site_xpos[6+6*i + 2];
+    vec_body2foot[i] = foot_pos[i] - body_com;
   }
 
-  cal_Mat[0] << 1, 1, vec_body2foot[0][0], -vec_body2foot[3][0];
-  cal_Mat[1] << 1, 1, vec_body2foot[1][0], -vec_body2foot[2][0];
+  if(fmod(d->time, 0.5) == 0)
+  {
+    // cout << d->subtree_com[0] << endl;
+    // cout << d->subtree_com[1] << endl;
+    // cout << d->subtree_com[2] << endl;
+    // cout << foot_pos[1] << endl;
+    // cout << foot_pos[2] << endl;
+    // cout << foot_pos[3] << endl;
+  }
+  // cout <<  << endl;
+  // cout << "0 : "<< foot_pos[0][0]<<", "<< foot_pos[0][1]<< ", "<< foot_pos[0][2] << endl;
+  // cout << "1 : "<< foot_pos[1][0]<<", "<< foot_pos[1][1]<< ", "<< foot_pos[1][2] << endl;
+  // cout << "2 : "<< foot_pos[2][0]<<", "<< foot_pos[2][1]<< ", "<< foot_pos[2][2] << endl;
+  // cout << "3 : "<< foot_pos[3][0]<<", "<< foot_pos[3][1]<< ", "<< foot_pos[3][2] << endl;
 
+  cal_Mat[0] << 1, 1, vec_body2foot[0][0], vec_body2foot[3][0];
+  cal_Mat[1] << 1, 1, vec_body2foot[1][0], vec_body2foot[2][0];
+  robot_.phase_[2] = 1;
+  robot_.phase_[3] = 1;
 
+  // cout << "phase_0 "<< robot_.phase_[0] << endl;
+  // cout << "phase_1 "<< robot_.phase_[1] << endl;
+  // cout << "phase_2 "<< robot_.phase_[2] << endl;
+  // cout << "phase_3 "<< robot_.phase_[3] << endl;
   //* 4점 지지
   if (robot_.phase_[0] == 1 && robot_.phase_[1] == 1 &&
       robot_.phase_[2] == 1 && robot_.phase_[3] == 1)
@@ -177,21 +197,18 @@ void CompensationControl<T>::Trunk_mass_compensation(mjData * d)
     r_grf[1] << result[1][0], 0;
     r_grf[2] << result[1][1], 0;
     r_grf[3] << result[0][1], 0;
-
+    // cout<< "1" << endl;
   }
-
-  //* 2점 지지
-  if (robot_.phase_[0] == 1 && robot_.phase_[3] == 1)
+  else if (robot_.phase_[0] == 1 && robot_.phase_[3] == 1)
   {
+    //* 2점 지지
     result[0] = cal_Mat[0].inverse()*body_weight;
     r_grf[0] << result[0][0], 0;
     r_grf[3] << result[0][1], 0;
 
     r_grf[1] << 0, 0;
     r_grf[2] << 0, 0;
-
-    // cout << "Trunk compensation FL , RR" << endl;
-
+    // cout<< "2" << endl;
   }
   else if (robot_.phase_[1]==1 && robot_.phase_[2] == 1)
   {
@@ -201,11 +218,24 @@ void CompensationControl<T>::Trunk_mass_compensation(mjData * d)
 
     r_grf[0] << 0, 0;
     r_grf[3] << 0, 0;
-
-    // cout << "Trunk compensation FR , RL" << endl;
-
   }
 
+  robot_.phase_[2] == 0;
+  robot_.phase_[3] == 0;
+
+  //* For Debugging
+  // result[0] = cal_Mat[0].inverse()*body_weight/2;
+  // result[1] = cal_Mat[1].inverse()*body_weight/2;
+
+  // r_grf[0] << result[0][0], 0;
+  // r_grf[1] << result[1][0], 0;
+  // r_grf[2] << result[1][1], 0;
+  // r_grf[3] << result[0][1], 0;
+
+  // cout << "0 : "<< r_grf[0][0]<< endl;
+  // cout << "1 : "<< r_grf[1][0]<< endl;
+  // cout << "2 : "<< r_grf[2][0]<< endl;
+  // cout << "3 : "<< r_grf[3][0]<< endl;
 
   for (int i = 0; i < 4; i++)
   {

@@ -2,6 +2,7 @@
 #define Compensation_Control_HPP
 
 #include "RobotLeg.hpp"
+#include <cmath>
 
 template <typename T>
 class CompensationControl
