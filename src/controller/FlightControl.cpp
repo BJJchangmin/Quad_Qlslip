@@ -18,10 +18,7 @@ FlightControl<T>::FlightControl(RobotLeg<T> & robot) : robot_(robot)
     error_vel_[i] = Vec2<T>::Zero();
     error_vel_old_[i] = Vec2<T>::Zero();
 
-    kp_r_[i] = 20*600;
-    kd_r_[i] = 120;
-    kp_th_[i] =10*300;
-    kd_th_[i] = 50;
+
 
     // kp_r_[i] = 20*400;
     // kd_r_[i] = 2;
@@ -31,6 +28,24 @@ FlightControl<T>::FlightControl(RobotLeg<T> & robot) : robot_(robot)
     force_rw_flight_des_[i] = Vec2<T>::Zero();
 
   }
+
+  for(size_t i = 0; i < 2; i++) //0 2
+  {
+    kp_r_[i] = 20*600;
+    kd_r_[i] = 120;
+    kp_th_[i] =10*800;
+    kd_th_[i] = 450;
+  }
+
+  for(size_t i = 0; i < 2; i++) // 1 3
+  {
+    kp_r_[i] = 20*600;
+    kd_r_[i] = 120;
+    kp_th_[i] =10*800;
+    kd_th_[i] = 450;
+  }
+
+
 
 
 }

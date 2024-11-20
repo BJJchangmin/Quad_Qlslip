@@ -70,7 +70,7 @@ void BezierTrajectory<T>::Desired_Touch_Down_state(int Leg_num)
   T x_1=2*b+a*e_1;
   T x_2=2*b+a*e_2;
 
-  T st_time=abs(2*(-(td_param_ptr_->th_TD[Leg_num])/dth_ref[Leg_num]))*0.6;
+  T st_time=abs(2*(-(td_param_ptr_->th_TD[Leg_num])/dth_ref[Leg_num]))*1;
   // T st_time = lo_param_ptr_->t_stance[Leg_num];
   // T st_time = 0.1;
 
@@ -85,12 +85,15 @@ void BezierTrajectory<T>::Desired_Touch_Down_state(int Leg_num)
 
 
   op_param_ptr_-> h_1[Leg_num] = 1.5;
-  op_param_ptr_-> u[Leg_num] = op_param_ptr_-> h_1[Leg_num] * ((-op_param_ptr_->th_r[Leg_num]/2)- lo_param_ptr_->th_LO[Leg_num]) +
-    op_param_ptr_->th_r[Leg_num];
+  op_param_ptr_-> u[Leg_num] = 0.1;
+  // op_param_ptr_-> u[Leg_num] = op_param_ptr_-> h_1[Leg_num] * ((-op_param_ptr_->th_r[Leg_num]/2)- lo_param_ptr_->th_LO[Leg_num]) +
+  //   op_param_ptr_->th_r[Leg_num];
+
 
   op_param_ptr_->r_des_TD[Leg_num] = 0.4;
   // op_param_ptr_->r_des_TD[Leg_num] = r_ref[Leg_num];
-  op_param_ptr_->th_des_TD[Leg_num] = lo_param_ptr_->th_LO[Leg_num] + op_param_ptr_->u[Leg_num];
+  // op_param_ptr_->th_des_TD[Leg_num] = lo_param_ptr_->th_LO[Leg_num] + op_param_ptr_->u[Leg_num];
+  op_param_ptr_->th_des_TD[Leg_num] = 0.2;
 
   T t_b = st_time/2;
 
@@ -112,7 +115,8 @@ void BezierTrajectory<T>::Desired_Flight_Time(int Leg_num)
    */
   T g = 9.81;
   // cout << "V_y_LO: " << lo_param_ptr_->V_y_LO[0] << endl;
-  op_param_ptr_->t_flight_des[Leg_num] = abs(1*2*lo_param_ptr_->V_y_LO[Leg_num]/g)*2;
+  // op_param_ptr_->t_flight_des[Leg_num] = abs(1*2*lo_param_ptr_->V_y_LO[Leg_num]/g)*1;
+  op_param_ptr_->t_flight_des[Leg_num] = 0.035;
 }
 
 template <typename T>

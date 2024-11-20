@@ -119,7 +119,7 @@ void FSM<T>::phase_update(mjData * d)
     {
       //*************************************** TD LO Check ***************************************** */
       event_[i] = 0;
-      swing_lock_period_[i] = 0.05;
+      swing_lock_period_[i] = 0.02;
       // period_[i] = 1*abs(td_param_ptr_->th_TD[i] -M_PI/2)*0.2/2.5;
 
       if (touch_[i][0] <= touch_threshold_ && touch_[i][1] > touch_threshold_ && touch_[i][2] > touch_threshold_ &&
@@ -156,6 +156,7 @@ void FSM<T>::phase_update(mjData * d)
   //************************************ 2족처럼 Phase 맞춰주기 위한 과정 ******************************* */
   if(start_[0] == 1 || start_[1] == 1)
   {
+    liff_off_ratio_ = 1.0;
     for(size_t i = 0; i < 2; i++)
     {
       if(time_ >= td_param_ptr_->t_TD[i] && td_param_ptr_->t_TD[i] > lo_param_ptr_->t_LO[i] )
@@ -164,32 +165,34 @@ void FSM<T>::phase_update(mjData * d)
         //! 상대 다리가 TD 하면 이 안에 들어와진다. 둘다 이 안에 있을 때 하나 결정해서 LO 시켜서 나가면 됨
         phase_[i][0] = 1;
         swing_lock_phase_[i] = 0;
+
         // cout << i << endl;
         pcv_ptr_->time[i] = time_ - td_param_ptr_->t_TD[i];
         pcv_ptr_->Ratio[i] = pcv_ptr_->time[i]/pcv_ptr_->update_Period[i];
-        cout << "Ratio : " << 0 << " : " << pcv_ptr_->Ratio[0] << endl;
+        // cout << "Ratio : " << 0 << " : " << pcv_ptr_->Ratio[0] << endl;
+        // cout << "Ratio : " << 1 << " : " << pcv_ptr_->Ratio[1] << endl;
 
         // ? 이러면 한번만 들어와지는게 맞는가? 일단 Event에서 Phase로 바꿈 생각했을 떄는 괜찮을 듯
-        if (pcv_ptr_->Ratio[0] >= 1 && phase_[1][0] == 1 && phase_[0][0] != 2)
+        if (pcv_ptr_->Ratio[0] >= liff_off_ratio_ && phase_[1][0] == 1 && phase_[0][0] != 2)
         {
           event_[0] = 4;
           Lift_off_state(0);
           pcv_ptr_->Ratio[0] = .0;
         }
-        if (pcv_ptr_->Ratio[1] >= 1 && phase_[0][0] == 1 && phase_[1][0] != 2)
+        if (pcv_ptr_->Ratio[1] >= liff_off_ratio_ && phase_[0][0] == 1 && phase_[1][0] != 2)
         {
 
           event_[1] = 4;
           Lift_off_state(1);
           pcv_ptr_->Ratio[1] = .0;
         }
-        if (pcv_ptr_->Ratio[2] >= 1 && phase_[3][0] == 1)
+        if (pcv_ptr_->Ratio[2] >= liff_off_ratio_ && phase_[3][0] == 1)
         {
           event_[2] = 4;
           Lift_off_state(2);
           pcv_ptr_->Ratio[2] = .0;
         }
-        if (pcv_ptr_->Ratio[3] >= 1 && phase_[2][0] == 1)
+        if (pcv_ptr_->Ratio[3] >= liff_off_ratio_ && phase_[2][0] == 1)
         {
           event_[3] = 4;
           Lift_off_state(3);
@@ -307,15 +310,17 @@ void FSM<T>::PCV_control(int Leg_num)
    * todo : matching이 되어야 하는 다리 설정, gain setting, desired phase setting
    */
 
-  pcv_ptr_->Des_Phase[Leg_num] = 0.5;
-  pcv_ptr_->p1[Leg_num] = 0.0105;
+  pcv_ptr_->Des_Phase[Leg_num] = 0.8;
+  pcv_ptr_->p1[Leg_num] = 0.0;
+
 
 
   if(Leg_num == 0)
   {
     pcv_ptr_->GAP[0] = pcv_ptr_->Ratio[1] - pcv_ptr_->Ratio[0];
-    cout << "GAP : " << Leg_num << " : " << pcv_ptr_->GAP[Leg_num] << endl;
-    cout << "Gap_Rattio : " << Leg_num << " : " << pcv_ptr_->Ratio[1] << " : " << pcv_ptr_->Ratio[0] << endl;
+    // cout << "GAP : " << Leg_num << " : " << pcv_ptr_->GAP[Leg_num] << endl;
+    // cout << "stance_Period : " << Leg_num << " : " << td_param_ptr_->stance_Period[Leg_num] << endl;
+    // cout << "Gap_Rattio : " << Leg_num << " : " << pcv_ptr_->Ratio[1] << " : " << pcv_ptr_->Ratio[0] << endl;
 
   }
 
@@ -325,8 +330,9 @@ void FSM<T>::PCV_control(int Leg_num)
     // cout << "Ratio : " << 1 << " : " << pcv_ptr_->Ratio[0] << endl;
 
     pcv_ptr_->GAP[1] = pcv_ptr_->Ratio[0] - pcv_ptr_->Ratio[1];
-    cout << "GAP : " << Leg_num << " : " << pcv_ptr_->GAP[Leg_num] << endl;
-    cout << "Gap_Rattio : " << Leg_num << " : " << pcv_ptr_->Ratio[0] << " : " << pcv_ptr_->Ratio[1] << endl;
+    // cout << "GAP : " << Leg_num << " : " << pcv_ptr_->GAP[Leg_num] << endl;
+    // cout << "stance_Period : " << Leg_num << " : " << td_param_ptr_->stance_Period[Leg_num] << endl;
+    // cout << "Gap_Rattio : " << Leg_num << " : " << pcv_ptr_->Ratio[0] << " : " << pcv_ptr_->Ratio[1] << endl;
   }
 
   if(Leg_num == 2)
@@ -341,8 +347,8 @@ void FSM<T>::PCV_control(int Leg_num)
   // cout << "Ratio : " << Leg_num << " : " << pcv_ptr_->Ratio[Leg_num] << endl;
 
   pcv_ptr_->update_Period[Leg_num] = td_param_ptr_->stance_Period[Leg_num] + pcv_ptr_->p1[Leg_num]*(pcv_ptr_->Des_Phase[Leg_num] - pcv_ptr_->GAP[Leg_num]);
-  // cout << "stance_Period : " << Leg_num << " : " << td_param_ptr_->stance_Period[0] << endl;
-  cout << "update_Period : " << Leg_num << " : " << pcv_ptr_->update_Period[0] << endl;
+  // cout << "update_Period : " << Leg_num << " : " << pcv_ptr_->update_Period[Leg_num] << endl;
+  // pcv_ptr_->update_Period[Leg_num] = abs(pcv_ptr_->update_Period[Leg_num]);
 
 }
 

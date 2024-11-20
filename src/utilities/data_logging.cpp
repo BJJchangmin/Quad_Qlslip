@@ -98,7 +98,10 @@ void DataLogging<T>::save_data(const mjModel* m, mjData* d)
       fout_[i] << lo_param_ptr_->dth_LO[i] << ",";  // dth_LO
       fout_[i] << lo_param_ptr_->t_LO[i] << ",";  // t_LO
       fout_[i] << pcv_ptr_->Des_Phase[i] << ","; // Desired Phase
-      fout_[i] << pcv_ptr_->GAP[i]; // In PCV Ratio GAP
+      fout_[i] << pcv_ptr_->GAP[i] << ","; // In PCV Ratio GAP
+      fout_[i] << op_param_ptr_->u[i] << ","; // Delta u
+      fout_[i] << pcv_ptr_->update_Period[i] << ","; // update Period
+      fout_[i] << pcv_ptr_->Ratio[i];
 
       // ! Don't remove the newline
       fout_[i] << endl;
@@ -149,7 +152,8 @@ void DataLogging<T>::init_data()
       fout_[i] << "r_des_TD, dr_des_TD, th_des_TD, dth_des_TD, t_flight_des, ";
       fout_[i] << "r_TD, dr_TD, th_TD, dth_TD, t_TD, ";
       fout_[i] << "r_LO, dr_LO, th_LO, dth_LO, t_LO, ";
-      fout_[i] << "Des_phase, phase_GAP " << std::endl;
+      fout_[i] << "Des_phase, phase_GAP, ";
+      fout_[i] << "Delta_u, update_Period, Ratio " << std::endl;
     }
   }
   //************************************Trunk Data ********************************************** */
