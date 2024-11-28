@@ -73,13 +73,16 @@ void MotionTrajectory<T>::QLSLIP_Trajectory(T r_ref, T v_ref, mjData * d)
     {
       foot_traj_ptr_->foot_pos_rw_des_[i][0] = foot_traj_ptr_->r_bezier_flight_[i];
       foot_traj_ptr_->foot_pos_rw_des_[i][1] = foot_traj_ptr_->th_bezier_flight_[i];
+      foot_traj_ptr_->foot_vel_rw_des_[i][1] = dth_ref; // Stance Period 계산 때문에 있는 것
+
+
     }
     // ****************************************** Joint Control ****************************************** */
     else
     {
       foot_traj_ptr_->foot_pos_rw_des_[i][0] = 0.4 ;
       foot_traj_ptr_->foot_pos_rw_des_[i][1] = M_PI / 2 ;
-      foot_traj_ptr_->foot_vel_rw_des_[i][1] =  0.0 ;
+      foot_traj_ptr_->foot_vel_rw_des_[i][1] =  dth_ref ;
     }
 
   }

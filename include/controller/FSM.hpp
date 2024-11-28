@@ -29,6 +29,7 @@ class FSM
     T event_[4]; // mean Touch down or Lift off
     T swing_lock_period_[4];
     T swing_lock_phase_[4];
+    T liff_off_ratio_;
     bool swing_lock_[4];
     int loop_iter;
 
@@ -53,7 +54,7 @@ class FSM
        * @param p1: Feedback Gain
        * @param desired_Phase: Desired한 Phase 이다. 3점 지지는 0.25, 2점 지지는 0.5가 될텐데 기준이 되는 다리로 부터의 차이가 중요함
        */
-      T time[4], Ratio[4], update_Period[4], p1[4], Des_Phase[4], GAP[4];
+      T time[4], Ratio[4], update_Period[4], p1[4], Des_Phase[4], GAP[4], Offset_phase[4], Offset_GAP[4];
     };
 
     std::shared_ptr<PCV> pcv_ptr_;
@@ -64,6 +65,8 @@ class FSM
     void Touch_down_state(int Leg_num);
     void FSM_control();
     void PCV_control(int Leg_num);
+    void Start_PCV_setting(int Leg_num);
+    void End_PCV_setting(int Leg_num);
 
     void get_traj_pointer(std::shared_ptr<typename MotionTrajectory<T>::DesiredFootTrajectory> foot_traj_ptr);
     void get_optimization_pointer(std::shared_ptr<typename TrajectoryOptimization<T>::LO_param> lo_param_ptr,

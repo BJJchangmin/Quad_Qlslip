@@ -63,74 +63,29 @@ void FSM<T>::phase_update(mjData * d)
     //******************************************* Free Faling Start Check ****************************************** */
     if (touch_[i][0] > touch_threshold_ && start_[i] == 0 )
     {
+      //* 시작할 때 딱 한번 들어오는 곳 */
+      //! 여기를 잘 사용하기
 
       start_[i] = 1;
-      swing_lock_phase_[i] = 1;
-      // if (start_[0] == 1 && start_[3] == 1)
-      // {
-      //   /**
-      //    * * galloping 이다.
-      //    * @brief 시작할 때 나머지 다리 두개를 Swing Leg로 지정해주기 위해서 설계
-      //    * @param i: 0, 1 -> Stance LEG (3*i)
-      //    * @param i: 2, 3 -> Swing LEG (i+1)
-      //    * todo : Optimization 실행시켜줘야함 그 부분을 뭘로 할지 고민해봐야함
-      //    * ! 문제가 될 여지가 있는 param은 밑에 기록해둠
-      //    */
+      swing_lock_phase_[i] = 0;
+      Touch_down_state(i);
+      Start_PCV_setting(i);
+      PCV_control(i);
 
-
-      //   for (size_t i = 0; i < 2; i++)
-      //   {
-      //     Touch_down_state(3*i);
-      //     start_[i+1] = 1;
-      //     td_param_ptr_->t_TD[i+1] = 0;
-      //     period_[i+1] = 0;
-
-      //     lo_param_ptr_->r_LO[i+1] = robot_.foot_pos_rw_act_local_[i+1][0];
-      //     lo_param_ptr_->dr_LO[i+1] = robot_.foot_vel_rw_act_local_[i+1][0];
-      //     lo_param_ptr_->th_LO[i+1] = robot_.foot_pos_rw_act_local_[i+1][1];
-      //     lo_param_ptr_->dth_LO[i+1] = robot_.foot_vel_rw_act_local_[i+1][1];
-      //     lo_param_ptr_->t_LO[i+1] = time_;
-
-      //     //? t_stance가 굉장히 짧을 수 있음. 어떤 값을 사용해야하나?
-      //     lo_param_ptr_->t_stance[i+1] =  10*(lo_param_ptr_->t_LO[i+1] - td_param_ptr_->t_TD[i+1]);
-
-      //     //? L_O 속도 어떤 값을 사용해야하나? 떨어 질 때 속도를 부호 바꿔서 사용? 생각해봐야함
-      //     lo_param_ptr_->V_y_LO[i+1] = -0.1;
-
-      //     td_param_ptr_->r_TD[i+1] = td_param_ptr_->r_TD[3*i];
-      //     td_param_ptr_->dr_TD[i+1] = td_param_ptr_->dr_TD[3*i];
-      //     td_param_ptr_->th_TD[i+1] = td_param_ptr_->th_TD[3*i];
-      //     td_param_ptr_->dth_TD[i+1] = td_param_ptr_->dth_TD[3*i];
-
-      //     bezier_traj_.state_update(i+1);
-      //     bezier_traj_.Desired_Touch_Down_state(i+1);
-      //     bezier_traj_.Desired_Flight_Time(i+1);
-
-      //   }
-      // }
     }
     else if (touch_[i][0] < touch_threshold_ && start_[i] == 0)
     {
-      // std::cout<<"start in FSM "<<std::endl;
       start_[i] = 0;
     }
 
     if (start_[i] == 1)
     {
-      //*************************************** TD LO Check ***************************************** */
+      //*************************************** TD Check ***************************************** */
+      //! LO는 시간을 가지고 알고리즘 적으로 처리하고 TD만 판단해준다.
       event_[i] = 0;
       swing_lock_period_[i] = 0.02;
       // period_[i] = 1*abs(td_param_ptr_->th_TD[i] -M_PI/2)*0.2/2.5;
 
-      if (touch_[i][0] <= touch_threshold_ && touch_[i][1] > touch_threshold_ && touch_[i][2] > touch_threshold_ &&
-        touch_[i][3] > touch_threshold_ && touch_[i][4] > touch_threshold_ && touch_[i][5] > touch_threshold_ &&
-        touch_[i][6] > touch_threshold_ && touch_[i][7] > touch_threshold_ && touch_[i][8] > touch_threshold_ &&
-        touch_[i][9] > touch_threshold_ && touch_[i][10] > touch_threshold_ && touch_[i][11] > touch_threshold_ &&
-        touch_[i][12] > touch_threshold_ && touch_[i][13] > touch_threshold_ && touch_[i][14] > touch_threshold_ )
-        {
-          // event_[i] = 4;
-          //Lift_off_state(i);
-        }
       if (touch_[i][0] > touch_threshold_ && touch_[i][1] <= touch_threshold_ && touch_[i][2] <= touch_threshold_ &&
         touch_[i][3] <= touch_threshold_ && touch_[i][4] <= touch_threshold_ && touch_[i][5] <= touch_threshold_ &&
         touch_[i][6] <= touch_threshold_ && touch_[i][7] <= touch_threshold_ && touch_[i][8] <= touch_threshold_ &&
@@ -153,6 +108,7 @@ void FSM<T>::phase_update(mjData * d)
 
     }
   }
+
   //************************************ 2족처럼 Phase 맞춰주기 위한 과정 ******************************* */
   if(start_[0] == 1 || start_[1] == 1)
   {
@@ -166,37 +122,27 @@ void FSM<T>::phase_update(mjData * d)
         phase_[i][0] = 1;
         swing_lock_phase_[i] = 0;
 
-        // cout << i << endl;
         pcv_ptr_->time[i] = time_ - td_param_ptr_->t_TD[i];
-        pcv_ptr_->Ratio[i] = pcv_ptr_->time[i]/pcv_ptr_->update_Period[i];
-        // cout << "Ratio : " << 0 << " : " << pcv_ptr_->Ratio[0] << endl;
-        // cout << "Ratio : " << 1 << " : " << pcv_ptr_->Ratio[1] << endl;
+        pcv_ptr_->Ratio[i] = pcv_ptr_->time[i]/pcv_ptr_->update_Period[i] + pcv_ptr_->Offset_phase[i]; //? Offset을 넣는다면 위치는 여기라고 생각한다. 하지만 첫번째 Touch Down 했을 때만으로 한정짓는다면 어떤 장치가 필요한가?
 
-        // ? 이러면 한번만 들어와지는게 맞는가? 일단 Event에서 Phase로 바꿈 생각했을 떄는 괜찮을 듯
         if (pcv_ptr_->Ratio[0] >= liff_off_ratio_ && phase_[1][0] == 1 && phase_[0][0] != 2)
         {
-          event_[0] = 4;
-          Lift_off_state(0);
-          pcv_ptr_->Ratio[0] = .0;
+
+          cout << "Lift off" << endl;
+          cout << "Ratio : " << 0 << " : " << pcv_ptr_->Ratio[0] << endl;
+          End_PCV_setting(0);
         }
         if (pcv_ptr_->Ratio[1] >= liff_off_ratio_ && phase_[0][0] == 1 && phase_[1][0] != 2)
         {
-
-          event_[1] = 4;
-          Lift_off_state(1);
-          pcv_ptr_->Ratio[1] = .0;
+          End_PCV_setting(1);
         }
         if (pcv_ptr_->Ratio[2] >= liff_off_ratio_ && phase_[3][0] == 1)
         {
-          event_[2] = 4;
-          Lift_off_state(2);
-          pcv_ptr_->Ratio[2] = .0;
+          End_PCV_setting(2);
         }
         if (pcv_ptr_->Ratio[3] >= liff_off_ratio_ && phase_[2][0] == 1)
         {
-          event_[3] = 4;
-          Lift_off_state(3);
-          pcv_ptr_->Ratio[3] = .0;
+          End_PCV_setting(3);
         }
 
       }
@@ -219,6 +165,7 @@ void FSM<T>::phase_update(mjData * d)
 
     }
 
+
   }
 
   for(size_t i = 0; i < robot_.k_num_dof_leg; i++)
@@ -238,6 +185,66 @@ void FSM<T>::phase_update(mjData * d)
   // cout << "Ratio : " << 1 << " : " << pcv_ptr_->Ratio[1] << endl;
   // cout << "phase : " << 1 << " : " << phase_[1][0] << endl;
   loop_iter++;
+}
+
+template <typename T>
+void FSM<T>::PCV_control(int Leg_num)
+{
+  /**
+   * * PCV_Conrtol , Location is under the TD Detection
+   * @param FL,FR,RL,RR(0,1,2,3)
+   * ! 각 다리별로 누구 기준으로 해줘야하는지 직접 설정해줘야함
+   * ! 일단 2개의 다리로만 문제를 풀기
+   * todo : matching이 되어야 하는 다리 설정, gain setting, desired phase setting
+   */
+
+  if(Leg_num == 0) //* FL
+  {
+    pcv_ptr_->GAP[0] = pcv_ptr_->Ratio[1] - pcv_ptr_->Ratio[0] + pcv_ptr_->Offset_GAP[0];
+  }
+
+  if(Leg_num == 1)//* FR
+  {
+    pcv_ptr_->GAP[1] = pcv_ptr_->Ratio[0] - pcv_ptr_->Ratio[1] + pcv_ptr_->Offset_GAP[1];
+  }
+
+  if(Leg_num == 2)//* RL
+  {
+    pcv_ptr_->GAP[2] = pcv_ptr_->Ratio[3] - pcv_ptr_->Ratio[2] + pcv_ptr_->Offset_GAP[2];
+  }
+
+  if(Leg_num == 3)//* RR
+  {
+    pcv_ptr_->GAP[3] = pcv_ptr_->Ratio[2] - pcv_ptr_->Ratio[3] + pcv_ptr_->Offset_GAP[3];
+  }
+
+  pcv_ptr_->update_Period[Leg_num] = td_param_ptr_->stance_Period[Leg_num] + pcv_ptr_->p1[Leg_num]*(pcv_ptr_->Des_Phase[Leg_num] - pcv_ptr_->GAP[Leg_num]);
+
+}
+
+template <typename T>
+void FSM<T>::Start_PCV_setting(int Leg_num)
+{
+  //* PCV Control Setting
+  pcv_ptr_->Des_Phase[Leg_num] = 0.5;
+  pcv_ptr_->p1[Leg_num] = 0.18;
+
+  //* Trotting Gait -> [0,3]세트, [1,2]세트
+  if(Leg_num == 0){pcv_ptr_->Offset_phase[Leg_num]= 0.8; pcv_ptr_->Offset_GAP[Leg_num] = 0.0;}
+  if(Leg_num == 1){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0;}
+  if(Leg_num == 2){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0;}
+  if(Leg_num == 3){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0;}
+
+
+}
+
+template <typename T>
+void FSM<T>::End_PCV_setting(int Leg_num)
+{
+  if(Leg_num == 0){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0; event_[Leg_num] = 4; Lift_off_state(Leg_num); pcv_ptr_->Ratio[Leg_num] = .0;}
+  if(Leg_num == 1){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0; event_[Leg_num] = 4; Lift_off_state(Leg_num); pcv_ptr_->Ratio[Leg_num] = .0;}
+  if(Leg_num == 2){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0; event_[Leg_num] = 4; Lift_off_state(Leg_num); pcv_ptr_->Ratio[Leg_num] = .0;}
+  if(Leg_num == 3){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0; event_[Leg_num] = 4; Lift_off_state(Leg_num); pcv_ptr_->Ratio[Leg_num] = .0;}
 }
 
 template <typename T>
@@ -266,6 +273,7 @@ void FSM<T>::Touch_down_state(int Leg_num)
   /**
    * @brief Update Touch down state
    */
+
   td_param_ptr_->r_TD[Leg_num] = robot_.foot_pos_rw_act_local_[Leg_num][0];
   td_param_ptr_->dr_TD[Leg_num] = robot_.foot_vel_rw_act_local_[Leg_num][0];
   td_param_ptr_->th_TD[Leg_num] = robot_.foot_pos_rw_act_local_[Leg_num][1];
@@ -299,58 +307,7 @@ void FSM<T>::FSM_control()
   }
 }
 
-template <typename T>
-void FSM<T>::PCV_control(int Leg_num)
-{
-  /**
-   * * PCV_Conrtol , Location is under the TD Detection
-   * @param FL,FR,RL,RR(0,1,2,3)
-   * ! 각 다리별로 누구 기준으로 해줘야하는지 직접 설정해줘야함
-   * ! 일단 2개의 다리로만 문제를 풀기
-   * todo : matching이 되어야 하는 다리 설정, gain setting, desired phase setting
-   */
 
-  pcv_ptr_->Des_Phase[Leg_num] = 0.8;
-  pcv_ptr_->p1[Leg_num] = 0.0;
-
-
-
-  if(Leg_num == 0)
-  {
-    pcv_ptr_->GAP[0] = pcv_ptr_->Ratio[1] - pcv_ptr_->Ratio[0];
-    // cout << "GAP : " << Leg_num << " : " << pcv_ptr_->GAP[Leg_num] << endl;
-    // cout << "stance_Period : " << Leg_num << " : " << td_param_ptr_->stance_Period[Leg_num] << endl;
-    // cout << "Gap_Rattio : " << Leg_num << " : " << pcv_ptr_->Ratio[1] << " : " << pcv_ptr_->Ratio[0] << endl;
-
-  }
-
-  if(Leg_num == 1)
-  {
-    // cout << "Ratio : " << 0 << " : " << pcv_ptr_->Ratio[1] << endl;
-    // cout << "Ratio : " << 1 << " : " << pcv_ptr_->Ratio[0] << endl;
-
-    pcv_ptr_->GAP[1] = pcv_ptr_->Ratio[0] - pcv_ptr_->Ratio[1];
-    // cout << "GAP : " << Leg_num << " : " << pcv_ptr_->GAP[Leg_num] << endl;
-    // cout << "stance_Period : " << Leg_num << " : " << td_param_ptr_->stance_Period[Leg_num] << endl;
-    // cout << "Gap_Rattio : " << Leg_num << " : " << pcv_ptr_->Ratio[0] << " : " << pcv_ptr_->Ratio[1] << endl;
-  }
-
-  if(Leg_num == 2)
-  {
-    pcv_ptr_->GAP[2] = pcv_ptr_->Ratio[3] - pcv_ptr_->Ratio[2];
-  }
-
-  if(Leg_num == 3)
-  {
-    pcv_ptr_->GAP[3] = pcv_ptr_->Ratio[2] - pcv_ptr_->Ratio[3];
-  }
-  // cout << "Ratio : " << Leg_num << " : " << pcv_ptr_->Ratio[Leg_num] << endl;
-
-  pcv_ptr_->update_Period[Leg_num] = td_param_ptr_->stance_Period[Leg_num] + pcv_ptr_->p1[Leg_num]*(pcv_ptr_->Des_Phase[Leg_num] - pcv_ptr_->GAP[Leg_num]);
-  // cout << "update_Period : " << Leg_num << " : " << pcv_ptr_->update_Period[Leg_num] << endl;
-  // pcv_ptr_->update_Period[Leg_num] = abs(pcv_ptr_->update_Period[Leg_num]);
-
-}
 
 
 

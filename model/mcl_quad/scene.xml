@@ -14,5 +14,6 @@
   <worldbody>
     <light pos="0 0 1.5" dir="0 0 -1" directional="true"/>
     <geom name="floor" size="0 0 0.05" type="plane" material="groundplane" solref="0.001 1" solimp="0.5 0.55 0.001" friction="0.8 0.1 0.1"/>
+
   </worldbody>
 </mujoco>
