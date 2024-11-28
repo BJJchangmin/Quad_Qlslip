@@ -37,6 +37,7 @@ public:
                                 std::shared_ptr<typename TrajectoryOptimization<T>::TD_param> td_param_ptr);
 
 
+
   void Flight_traj_generate(mjData * d);
   void state_update(int Leg_num);
   void Desired_Touch_Down_state(int Leg_num);

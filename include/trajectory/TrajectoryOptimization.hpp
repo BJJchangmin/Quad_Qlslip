@@ -60,7 +60,7 @@ public:
 
   struct LO_param
   {
-    T r_LO[4], dr_LO[4], th_LO[4], dth_LO[4], t_LO[4], V_y_LO[4], t_stance[4];
+    T r_LO[4], dr_LO[4], th_LO[4], dth_LO[4], t_LO[4], V_y_LO[4], t_stance[4], Des_flight_time[4];
   };
 
   struct TD_param

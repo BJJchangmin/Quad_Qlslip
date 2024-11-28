@@ -112,7 +112,7 @@ void FSM<T>::phase_update(mjData * d)
   //************************************ 2족처럼 Phase 맞춰주기 위한 과정 ******************************* */
   if(start_[0] == 1 || start_[1] == 1)
   {
-    liff_off_ratio_ = 1.0;
+    liff_off_ratio_ = 0.5;
     for(size_t i = 0; i < 2; i++)
     {
       if(time_ >= td_param_ptr_->t_TD[i] && td_param_ptr_->t_TD[i] > lo_param_ptr_->t_LO[i] )
@@ -128,8 +128,6 @@ void FSM<T>::phase_update(mjData * d)
         if (pcv_ptr_->Ratio[0] >= liff_off_ratio_ && phase_[1][0] == 1 && phase_[0][0] != 2)
         {
 
-          cout << "Lift off" << endl;
-          cout << "Ratio : " << 0 << " : " << pcv_ptr_->Ratio[0] << endl;
           End_PCV_setting(0);
         }
         if (pcv_ptr_->Ratio[1] >= liff_off_ratio_ && phase_[0][0] == 1 && phase_[1][0] != 2)
@@ -217,8 +215,11 @@ void FSM<T>::PCV_control(int Leg_num)
   {
     pcv_ptr_->GAP[3] = pcv_ptr_->Ratio[2] - pcv_ptr_->Ratio[3] + pcv_ptr_->Offset_GAP[3];
   }
+  T current_period[4];
+  //! Desired Phase 확인
+  current_period[Leg_num] = td_param_ptr_->stance_Period[Leg_num] + pcv_ptr_->Des_Phase[Leg_num]*td_param_ptr_->stance_Period[Leg_num];
 
-  pcv_ptr_->update_Period[Leg_num] = td_param_ptr_->stance_Period[Leg_num] + pcv_ptr_->p1[Leg_num]*(pcv_ptr_->Des_Phase[Leg_num] - pcv_ptr_->GAP[Leg_num]);
+  pcv_ptr_->update_Period[Leg_num] = current_period[Leg_num] + pcv_ptr_->p1[Leg_num]*(pcv_ptr_->Des_Phase[Leg_num] - pcv_ptr_->GAP[Leg_num]);
 
 }
 
@@ -227,10 +228,11 @@ void FSM<T>::Start_PCV_setting(int Leg_num)
 {
   //* PCV Control Setting
   pcv_ptr_->Des_Phase[Leg_num] = 0.5;
-  pcv_ptr_->p1[Leg_num] = 0.18;
+  pcv_ptr_->p1[Leg_num] = 0.0 ;
+
 
   //* Trotting Gait -> [0,3]세트, [1,2]세트
-  if(Leg_num == 0){pcv_ptr_->Offset_phase[Leg_num]= 0.8; pcv_ptr_->Offset_GAP[Leg_num] = 0.0;}
+  if(Leg_num == 0){pcv_ptr_->Offset_phase[Leg_num]= 0.1; pcv_ptr_->Offset_GAP[Leg_num] = 0.5;}
   if(Leg_num == 1){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0;}
   if(Leg_num == 2){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0;}
   if(Leg_num == 3){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0;}
@@ -245,6 +247,10 @@ void FSM<T>::End_PCV_setting(int Leg_num)
   if(Leg_num == 1){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0; event_[Leg_num] = 4; Lift_off_state(Leg_num); pcv_ptr_->Ratio[Leg_num] = .0;}
   if(Leg_num == 2){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0; event_[Leg_num] = 4; Lift_off_state(Leg_num); pcv_ptr_->Ratio[Leg_num] = .0;}
   if(Leg_num == 3){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0; event_[Leg_num] = 4; Lift_off_state(Leg_num); pcv_ptr_->Ratio[Leg_num] = .0;}
+
+  //! Desired Phase 확인
+  lo_param_ptr_->Des_flight_time[Leg_num] = (1 - pcv_ptr_->Des_Phase[Leg_num])*pcv_ptr_->update_Period[Leg_num];
+
 }
 
 template <typename T>
