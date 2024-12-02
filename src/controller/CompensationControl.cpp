@@ -245,7 +245,7 @@ void CompensationControl<T>::Trunk_mass_compensation(mjData * d)
     //   r_grf[i] << 0, 0;
     // }
 
-    Trunk_mass_compensation_joint_des_[i] = robot_.jacbRW[i].transpose() * r_grf[i]/cos(M_PI/2-robot_.joint_pos_bi_act_[i][1]);
+    Trunk_mass_compensation_joint_des_[i] = 0.5*robot_.jacbRW[i].transpose() * r_grf[i]/cos(M_PI/2-robot_.joint_pos_bi_act_[i][1]);
     // Trunk_mass_compensation_joint_des_[i] = robot_.jacbRW[i].transpose() * r_grf[i];
     robot_.joint_torque_des_[i][1] += Trunk_mass_compensation_joint_des_[i][0] + Trunk_mass_compensation_joint_des_[i][1];
     robot_.joint_torque_des_[i][2] += Trunk_mass_compensation_joint_des_[i][1];

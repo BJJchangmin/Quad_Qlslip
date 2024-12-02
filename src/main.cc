@@ -71,7 +71,7 @@ const int kErrorLength = 1024;          // load error string length
 //* ******************************** MY CONSTANTS & OBJECT DECLARATION ************************* *//
 //* ******************************************************************************************** *//
 
-const double sim_end_time = 11.0;       // simulation end time (seconds)
+const double sim_end_time = 20.0;       // simulation end time (seconds)
 unsigned int loop_iter = 0;             // loop iteration counter
 RobotLeg<float> robot = buildMclQuad<float>();  // robot model
 TrackingController<float> track_ctrl(robot);     // tracking controller
@@ -301,27 +301,22 @@ mjModel* LoadModel(const char* file, mj::Simulate& sim) {
 void apply_joint_control(mjData * d)
 {
   //! qpos and qvel is different number
-  d->qpos[2] = 0;
-  d->qpos[5] = 0;
-  d->qpos[8] = 0;
-  d->qpos[11] = 0;
-
-  d->qpos[9]  = d->qpos[6];
-  d->qpos[10] = d->qpos[7];
-  d->qpos[12] = d->qpos[3];
-  d->qpos[13] = d->qpos[4];
+  d->qpos[3] = 0;
+  d->qpos[6] = 0;
+  d->qpos[9] = 0;
+  d->qpos[12] = 0;
 
 
-  for (size_t i = 0; i < 2; i++)
+  for (size_t i = 0; i < 4; i++)
   {
 
     for (size_t j = 1; j < 3; j++)
     {
       d->ctrl[3*i+j] = robot.joint_torque_des_[i][j];
-      d->ctrl[3*(i+2)+j] = 0;
     }
 
   }
+
 
 }
 

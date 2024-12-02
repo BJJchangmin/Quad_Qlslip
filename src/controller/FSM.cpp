@@ -83,7 +83,7 @@ void FSM<T>::phase_update(mjData * d)
       //*************************************** TD Check ***************************************** */
       //! LO는 시간을 가지고 알고리즘 적으로 처리하고 TD만 판단해준다.
       event_[i] = 0;
-      swing_lock_period_[i] = 0.02;
+      swing_lock_period_[i] = 0.05;
       // period_[i] = 1*abs(td_param_ptr_->th_TD[i] -M_PI/2)*0.2/2.5;
 
       if (touch_[i][0] > touch_threshold_ && touch_[i][1] <= touch_threshold_ && touch_[i][2] <= touch_threshold_ &&
@@ -110,10 +110,10 @@ void FSM<T>::phase_update(mjData * d)
   }
 
   //************************************ 2족처럼 Phase 맞춰주기 위한 과정 ******************************* */
-  if(start_[0] == 1 || start_[1] == 1)
+  if(start_[0] == 1 || start_[1] == 1 || start_[2] == 1 || start_[3] == 1)
   {
-    liff_off_ratio_ = 0.5;
-    for(size_t i = 0; i < 2; i++)
+    liff_off_ratio_ = 0.8;
+    for(size_t i = 0; i < 4; i++)
     {
       if(time_ >= td_param_ptr_->t_TD[i] && td_param_ptr_->t_TD[i] > lo_param_ptr_->t_LO[i] )
       {
@@ -125,20 +125,19 @@ void FSM<T>::phase_update(mjData * d)
         pcv_ptr_->time[i] = time_ - td_param_ptr_->t_TD[i];
         pcv_ptr_->Ratio[i] = pcv_ptr_->time[i]/pcv_ptr_->update_Period[i] + pcv_ptr_->Offset_phase[i]; //? Offset을 넣는다면 위치는 여기라고 생각한다. 하지만 첫번째 Touch Down 했을 때만으로 한정짓는다면 어떤 장치가 필요한가?
 
-        if (pcv_ptr_->Ratio[0] >= liff_off_ratio_ && phase_[1][0] == 1 && phase_[0][0] != 2)
+        if (pcv_ptr_->Ratio[0] >= liff_off_ratio_ && phase_[1][0] == 1  && phase_[2][0] == 1  && phase_[3][0] == 1)
         {
-
           End_PCV_setting(0);
         }
-        if (pcv_ptr_->Ratio[1] >= liff_off_ratio_ && phase_[0][0] == 1 && phase_[1][0] != 2)
+        if (pcv_ptr_->Ratio[1] >= liff_off_ratio_ && phase_[0][0] == 1  && phase_[2][0] == 1  && phase_[3][0] == 1)
         {
           End_PCV_setting(1);
         }
-        if (pcv_ptr_->Ratio[2] >= liff_off_ratio_ && phase_[3][0] == 1)
+        if (pcv_ptr_->Ratio[2] >= liff_off_ratio_ && phase_[0][0] == 1  && phase_[1][0] == 1  && phase_[3][0] == 1)
         {
           End_PCV_setting(2);
         }
-        if (pcv_ptr_->Ratio[3] >= liff_off_ratio_ && phase_[2][0] == 1)
+        if (pcv_ptr_->Ratio[3] >= liff_off_ratio_ && phase_[0][0] == 1  && phase_[1][0] == 1  && phase_[2][0] == 1)
         {
           End_PCV_setting(3);
         }
@@ -174,14 +173,9 @@ void FSM<T>::phase_update(mjData * d)
 
   }
 
+
+
   //! Debugging
-  // cout << "TD : " << 0 << " : " << td_param_ptr_->t_TD[0] << endl;
-  // cout << "GAP : " << 0 << " : " << pcv_ptr_->GAP[0] << endl;
-  // cout << "stance_period : " << 0 << " : " << td_param_ptr_->stance_Period[0] << endl;
-  // cout << "pcv_update_time : " << 0 << " : " << pcv_ptr_->update_Period[0] << endl;
-  // cout << "pcv_time : " << 1 << " : " << pcv_ptr_->time[1] << endl;
-  // cout << "Ratio : " << 1 << " : " << pcv_ptr_->Ratio[1] << endl;
-  // cout << "phase : " << 1 << " : " << phase_[1][0] << endl;
   loop_iter++;
 }
 
@@ -196,30 +190,38 @@ void FSM<T>::PCV_control(int Leg_num)
    * todo : matching이 되어야 하는 다리 설정, gain setting, desired phase setting
    */
 
+  T current_period[4];
+  //* 기준은 FL로 잡는다
+  //* GAP은 전부 FL로 부터 얼마나 떨어져 있는지 계산을 하기 시작함
+  //* Offset GAP은 각 다리의 Desired Phase GAP과 거의 유사한 값을 넣어줘야함. 조그만한 값이라도 넣어줘야함
+  current_period[Leg_num] = td_param_ptr_->stance_Period[Leg_num] + (1 - pcv_ptr_->Des_Phase[Leg_num])*td_param_ptr_->stance_Period[Leg_num];
+
   if(Leg_num == 0) //* FL
   {
     pcv_ptr_->GAP[0] = pcv_ptr_->Ratio[1] - pcv_ptr_->Ratio[0] + pcv_ptr_->Offset_GAP[0];
+    pcv_ptr_->update_Period[Leg_num] = current_period[Leg_num];
   }
 
   if(Leg_num == 1)//* FR
   {
     pcv_ptr_->GAP[1] = pcv_ptr_->Ratio[0] - pcv_ptr_->Ratio[1] + pcv_ptr_->Offset_GAP[1];
+    pcv_ptr_->update_Period[Leg_num] = current_period[Leg_num] + pcv_ptr_->p1[Leg_num]*(pcv_ptr_->Des_Phase[Leg_num] - pcv_ptr_->GAP[Leg_num]);
   }
 
   if(Leg_num == 2)//* RL
   {
-    pcv_ptr_->GAP[2] = pcv_ptr_->Ratio[3] - pcv_ptr_->Ratio[2] + pcv_ptr_->Offset_GAP[2];
+    pcv_ptr_->GAP[2] = pcv_ptr_->Ratio[0] - pcv_ptr_->Ratio[2] + pcv_ptr_->Offset_GAP[2];
+    pcv_ptr_->update_Period[Leg_num] = current_period[Leg_num] + pcv_ptr_->p1[Leg_num]*(pcv_ptr_->Des_Phase[Leg_num] - pcv_ptr_->GAP[Leg_num]);
   }
 
   if(Leg_num == 3)//* RR
   {
-    pcv_ptr_->GAP[3] = pcv_ptr_->Ratio[2] - pcv_ptr_->Ratio[3] + pcv_ptr_->Offset_GAP[3];
+    pcv_ptr_->GAP[3] = pcv_ptr_->Ratio[0] - pcv_ptr_->Ratio[3] + pcv_ptr_->Offset_GAP[3];
+    pcv_ptr_->update_Period[Leg_num] = current_period[Leg_num] + pcv_ptr_->p1[Leg_num]*(pcv_ptr_->Des_Phase[Leg_num] - pcv_ptr_->GAP[Leg_num]);
   }
-  T current_period[4];
-  //! Desired Phase 확인
-  current_period[Leg_num] = td_param_ptr_->stance_Period[Leg_num] + pcv_ptr_->Des_Phase[Leg_num]*td_param_ptr_->stance_Period[Leg_num];
 
-  pcv_ptr_->update_Period[Leg_num] = current_period[Leg_num] + pcv_ptr_->p1[Leg_num]*(pcv_ptr_->Des_Phase[Leg_num] - pcv_ptr_->GAP[Leg_num]);
+
+
 
 }
 
@@ -227,15 +229,18 @@ template <typename T>
 void FSM<T>::Start_PCV_setting(int Leg_num)
 {
   //* PCV Control Setting
-  pcv_ptr_->Des_Phase[Leg_num] = 0.5;
-  pcv_ptr_->p1[Leg_num] = 0.0 ;
+  //! Gait에 따라 다르게 FL 기준으로 다르게 setting 해줘야함
+  pcv_ptr_->Des_Phase[3] = 0.75;
+  pcv_ptr_->Des_Phase[2] = 0.5;
+  pcv_ptr_->Des_Phase[1] = 0.25;
+  pcv_ptr_->p1[Leg_num] = 0.01;
 
 
   //* Trotting Gait -> [0,3]세트, [1,2]세트
-  if(Leg_num == 0){pcv_ptr_->Offset_phase[Leg_num]= 0.1; pcv_ptr_->Offset_GAP[Leg_num] = 0.5;}
-  if(Leg_num == 1){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0;}
-  if(Leg_num == 2){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0;}
-  if(Leg_num == 3){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0;}
+  if(Leg_num == 0){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0;}
+  if(Leg_num == 1){pcv_ptr_->Offset_phase[Leg_num]= 0.25; pcv_ptr_->Offset_GAP[Leg_num] = 0.75;}
+  if(Leg_num == 2){pcv_ptr_->Offset_phase[Leg_num]= 0.50; pcv_ptr_->Offset_GAP[Leg_num] = 0.5;}
+  if(Leg_num == 3){pcv_ptr_->Offset_phase[Leg_num]= 0.75; pcv_ptr_->Offset_GAP[Leg_num] = 0.25;}
 
 
 }
@@ -249,7 +254,8 @@ void FSM<T>::End_PCV_setting(int Leg_num)
   if(Leg_num == 3){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0; event_[Leg_num] = 4; Lift_off_state(Leg_num); pcv_ptr_->Ratio[Leg_num] = .0;}
 
   //! Desired Phase 확인
-  lo_param_ptr_->Des_flight_time[Leg_num] = (1 - pcv_ptr_->Des_Phase[Leg_num])*pcv_ptr_->update_Period[Leg_num];
+  lo_param_ptr_->Des_flight_time[Leg_num] = (1 - liff_off_ratio_)*pcv_ptr_->update_Period[Leg_num]*2;
+  // lo_param_ptr_->Des_flight_time[Leg_num] = pcv_ptr_->Des_Phase[Leg_num]*td_param_ptr_->stance_Period[Leg_num];
 
 }
 
@@ -307,6 +313,7 @@ void FSM<T>::FSM_control()
     }
     else if (phase_[i][0] == 2)
     {
+      // if(i == 3){cout << i << " : " << pcv_ptr_->Ratio[i] << endl;}
       flight_ctrl_.flight_control(i);
       comp_ctrl_.compensation_control(i); // Phase에 상관없이 실행되어야함.
     }
