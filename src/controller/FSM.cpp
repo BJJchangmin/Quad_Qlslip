@@ -22,6 +22,7 @@ FSM<T>::FSM(RobotLeg<T> & robot, CompensationControl<T> & comp_ctrl, FlightContr
 
   threshold_size_ = 15;
   loop_iter = 0;
+  pcv_ptr_->Gait_order = 0;
 
   for (size_t i = 0; i < 4; i++)
   {
@@ -69,6 +70,7 @@ void FSM<T>::phase_update(mjData * d)
       start_[i] = 1;
       swing_lock_phase_[i] = 0;
       Touch_down_state(i);
+      pcv_ptr_->Gait_order = 1;
       Start_PCV_setting(i);
       PCV_control(i);
 
@@ -94,6 +96,11 @@ void FSM<T>::phase_update(mjData * d)
         {
           if (swing_lock_[i] == false && swing_lock_phase_[i] == 1)
           {
+            cout << "Touch Down" << i << endl;
+            if(i == 0){pcv_ptr_->Gait_order = 1;}
+            else if(i == 1){pcv_ptr_->Gait_order = 3;}
+            else if(i == 2){pcv_ptr_->Gait_order = 4;}
+            else if(i == 3){pcv_ptr_->Gait_order = 2;}
             event_[i] = 3;
             Touch_down_state(i);
             //** PCV_Control */
@@ -125,21 +132,22 @@ void FSM<T>::phase_update(mjData * d)
         pcv_ptr_->time[i] = time_ - td_param_ptr_->t_TD[i];
         pcv_ptr_->Ratio[i] = pcv_ptr_->time[i]/pcv_ptr_->update_Period[i] + pcv_ptr_->Offset_phase[i]; //? Offset을 넣는다면 위치는 여기라고 생각한다. 하지만 첫번째 Touch Down 했을 때만으로 한정짓는다면 어떤 장치가 필요한가?
 
-        if (pcv_ptr_->Ratio[0] >= liff_off_ratio_ && phase_[1][0] == 1  && phase_[2][0] == 1  && phase_[3][0] == 1)
+        if (pcv_ptr_->Ratio[3] >= liff_off_ratio_  && phase_[0][0] == 1 && pcv_ptr_->Gait_order == 1)
         {
-          End_PCV_setting(0);
+          End_PCV_setting(3);
         }
-        if (pcv_ptr_->Ratio[1] >= liff_off_ratio_ && phase_[0][0] == 1  && phase_[2][0] == 1  && phase_[3][0] == 1)
+        else if (pcv_ptr_->Ratio[1] >= liff_off_ratio_ && phase_[3][0] == 1  && pcv_ptr_->Gait_order == 2)
         {
           End_PCV_setting(1);
         }
-        if (pcv_ptr_->Ratio[2] >= liff_off_ratio_ && phase_[0][0] == 1  && phase_[1][0] == 1  && phase_[3][0] == 1)
+        else if (pcv_ptr_->Ratio[2] >= liff_off_ratio_ && phase_[1][0] == 1  && pcv_ptr_->Gait_order == 3)
         {
           End_PCV_setting(2);
         }
-        if (pcv_ptr_->Ratio[3] >= liff_off_ratio_ && phase_[0][0] == 1  && phase_[1][0] == 1  && phase_[2][0] == 1)
+        else if (pcv_ptr_->Ratio[0] >= liff_off_ratio_ && phase_[2][0] == 1  && pcv_ptr_->Gait_order == 4)
         {
-          End_PCV_setting(3);
+          cout << "Hello" << endl;
+          End_PCV_setting(0);
         }
 
       }
@@ -147,6 +155,7 @@ void FSM<T>::phase_update(mjData * d)
       {
         phase_[i][0] = 2;
         swing_lock_phase_[i] = 1;
+
 
         //* Swing Lock Algorithm */
         if (time_ - lo_param_ptr_->t_LO[i] <= swing_lock_period_[i])
@@ -174,7 +183,7 @@ void FSM<T>::phase_update(mjData * d)
   }
 
 
-
+  // cout << pcv_ptr_->Gait_order << endl;
   //! Debugging
   loop_iter++;
 }
@@ -187,7 +196,7 @@ void FSM<T>::PCV_control(int Leg_num)
    * @param FL,FR,RL,RR(0,1,2,3)
    * ! 각 다리별로 누구 기준으로 해줘야하는지 직접 설정해줘야함
    * ! 일단 2개의 다리로만 문제를 풀기
-   * todo : matching이 되어야 하는 다리 설정, gain setting, desired phase setting
+   * todo : matching이 되어야 하는 다리 설정, gain  setting, desired phase setting
    */
 
   T current_period[4];
@@ -216,6 +225,7 @@ void FSM<T>::PCV_control(int Leg_num)
 
   if(Leg_num == 3)//* RR
   {
+    // RR이 TouchDown 했을 때, Ratio[3] = 0에서 시작
     pcv_ptr_->GAP[3] = pcv_ptr_->Ratio[0] - pcv_ptr_->Ratio[3] + pcv_ptr_->Offset_GAP[3];
     pcv_ptr_->update_Period[Leg_num] = current_period[Leg_num] + pcv_ptr_->p1[Leg_num]*(pcv_ptr_->Des_Phase[Leg_num] - pcv_ptr_->GAP[Leg_num]);
   }
@@ -230,17 +240,18 @@ void FSM<T>::Start_PCV_setting(int Leg_num)
 {
   //* PCV Control Setting
   //! Gait에 따라 다르게 FL 기준으로 다르게 setting 해줘야함
-  pcv_ptr_->Des_Phase[3] = 0.75;
-  pcv_ptr_->Des_Phase[2] = 0.5;
-  pcv_ptr_->Des_Phase[1] = 0.25;
-  pcv_ptr_->p1[Leg_num] = 0.01;
+  //! 생각 잘 해봐야하는게 Des Phase와 Offset_Phase는 알고리즘상 반대가 되어야하는게 맞다.
+  pcv_ptr_->Des_Phase[3] = 0.25;
+  pcv_ptr_->Des_Phase[2] = 0.75;
+  pcv_ptr_->Des_Phase[1] = 0.50;
+  pcv_ptr_->p1[Leg_num] = 0.9;
 
 
   //* Trotting Gait -> [0,3]세트, [1,2]세트
   if(Leg_num == 0){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0;}
-  if(Leg_num == 1){pcv_ptr_->Offset_phase[Leg_num]= 0.25; pcv_ptr_->Offset_GAP[Leg_num] = 0.75;}
-  if(Leg_num == 2){pcv_ptr_->Offset_phase[Leg_num]= 0.50; pcv_ptr_->Offset_GAP[Leg_num] = 0.5;}
-  if(Leg_num == 3){pcv_ptr_->Offset_phase[Leg_num]= 0.75; pcv_ptr_->Offset_GAP[Leg_num] = 0.25;}
+  if(Leg_num == 1){pcv_ptr_->Offset_phase[Leg_num]= 0.5; pcv_ptr_->Offset_GAP[Leg_num] = 0.5;}
+  if(Leg_num == 2){pcv_ptr_->Offset_phase[Leg_num]= 0.25; pcv_ptr_->Offset_GAP[Leg_num] = 0.25;}
+  if(Leg_num == 3){pcv_ptr_->Offset_phase[Leg_num]= 0.75; pcv_ptr_->Offset_GAP[Leg_num] = 0.75;}
 
 
 }
@@ -254,7 +265,7 @@ void FSM<T>::End_PCV_setting(int Leg_num)
   if(Leg_num == 3){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0; event_[Leg_num] = 4; Lift_off_state(Leg_num); pcv_ptr_->Ratio[Leg_num] = .0;}
 
   //! Desired Phase 확인
-  lo_param_ptr_->Des_flight_time[Leg_num] = (1 - liff_off_ratio_)*pcv_ptr_->update_Period[Leg_num]*2;
+  lo_param_ptr_->Des_flight_time[Leg_num] = (1 - liff_off_ratio_)*pcv_ptr_->update_Period[Leg_num]*1;
   // lo_param_ptr_->Des_flight_time[Leg_num] = pcv_ptr_->Des_Phase[Leg_num]*td_param_ptr_->stance_Period[Leg_num];
 
 }
@@ -313,7 +324,6 @@ void FSM<T>::FSM_control()
     }
     else if (phase_[i][0] == 2)
     {
-      // if(i == 3){cout << i << " : " << pcv_ptr_->Ratio[i] << endl;}
       flight_ctrl_.flight_control(i);
       comp_ctrl_.compensation_control(i); // Phase에 상관없이 실행되어야함.
     }

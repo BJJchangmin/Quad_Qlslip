@@ -24,10 +24,23 @@ void RobotLeg<T>::get_sensor_data(mjData * data)
 
      for(size_t j = 0; j < 3; j++)
      {
-       joint_pos_act_[i][j] = data->qpos[3 + 3*i + j];
-       joint_vel_act_[i][j] = data->qvel[3 + 3*i + j];
+        // //* Trunk 2DOF
+        // joint_pos_act_[i][j] = data->qpos[2 + 3*i + j];
+        // joint_vel_act_[i][j] = data->qvel[2 + 3*i + j];
 
-       foot_grf_world_[i][j] = data->sensordata[19 + 4*i + j];
+        // //* Trunk 3DOF
+        // joint_pos_act_[i][j] = data->qpos[3 + 3*i + j];
+        // joint_vel_act_[i][j] = data->qvel[3 + 3*i + j];
+
+        // //* Trunk 4DOF
+        // joint_pos_act_[i][j] = data->qpos[4 + 3*i + j];
+        // joint_vel_act_[i][j] = data->qvel[4 + 3*i + j];
+
+        //* Trunk 6DOF
+        joint_pos_act_[i][j] = data->qpos[7 + 3*i + j];
+        joint_vel_act_[i][j] = data->qvel[6 + 3*i + j];
+
+        foot_grf_world_[i][j] = data->sensordata[19 + 4*i + j];
 
      }
 

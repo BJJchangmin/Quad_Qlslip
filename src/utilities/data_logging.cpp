@@ -165,7 +165,7 @@ void DataLogging<T>::init_data()
   else
   {
     fout_[4] << "trunk_x_vel, trunk_y_vel, trunk_z_vel, ";
-    fout_[4] << "trunk_y_pos, trunk_z_pos " << std::endl;
+    fout_[4] << "trunk_y_pos, trunk_z_pos" << std::endl;
   }
 
 }

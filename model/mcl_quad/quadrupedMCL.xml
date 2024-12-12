@@ -9,7 +9,7 @@
   <default>
     <default class="quadrupedMCL">
       <geom friction="0.6" margin="0.001" condim="1"/>
-      <joint axis="0 0 -1" armature="0.1" damping="2" stiffness="0" frictionloss="1"/>
+      <joint axis="0 0 -1" armature="0.19" damping="2" stiffness="0" frictionloss="1"/>
       <!-- <motor ctrlrange="-0.7 0.7" gear="100"/> -->
 
       <default class="abduction">
@@ -64,8 +64,11 @@
     <light diffuse=".5 .5 .5" pos="0 0 3" dir="0 0 -1"/>
     <body name="trunk" pos="0 0 0.4" euler="-1.57 0 0">
       <inertial pos="0 0 0" euler="0 0 0" mass="28" diaginertia="0.1619 1.1622 1.0325"/>
-      <joint name='slide_x' type='slide' axis='1 0 0'/>
+      <!-- <joint name='slide_x' type='slide' axis='1 0 0'/>
       <joint name='slide_y' type='slide' axis='0 -1 0'/>
+      <joint name='roll' type='hinge' axis='1 0 0' range='-0.2 0.2'/>
+      <joint name='pitch' type='hinge' axis='0 0 1' range='-0.2 0.2'/> -->
+      <freejoint/>
       <site type="box" name="imu" pos="0 0 0" size="0.1 0.05 0.05" rgba="0 0.5 0 0.0" />
 
       <geom type="mesh" mesh="trunk" material="gray" class="visual" />
@@ -278,7 +281,19 @@
     <!-- <key name="home" qpos="0. 0. 0.5 -0.9999 0.9999 0. 0. 0. 0.6636 1.132 0. 0.57854 1.5708 0. 0.57854 1.5708 0. 0.57854 1.5708" /> -->
 
     <!-- 4발접지 시작-->
-    <key name="home" qpos="0. -0.01 0. 0.9447 1.2870 0. 0.9971 1.2870 0. 0.9971 1.2870 0. 0.9447 1.2870" />
+    <!-- Trunk 2DOF -->
+    <!-- <key name="home" qpos="0. -0.01 0. 0.9971 1.2870 0. 0.9447 1.2870 0. 0.9447 1.2870 0. 0.9971 1.2870" /> -->
+
+    <!-- Trunk 3DOF -->
+    <!-- <key name="home" qpos="0. -0.01 0. 0. 0.9971 1.2870 0. 0.9447 1.2870 0. 0.9447 1.2870 0. 0.9971 1.2870" /> -->
+
+    <!-- Trunk 4DOF -->
+    <!-- <key name="home" qpos="0. -0.01 0. 0. 0. 0.9971 1.2870 0. 0.9447 1.2870 0. 0.9447 1.2870 0. 0.9971 1.2870" /> -->
+
+    <!-- Trunk 6DOF -->
+    <key name="home" qpos="0. 0. 0.3936 -0.9999 0.9999 0. 0. 0. 0.9971 1.2870 0. 0.9447 1.2870 0. 0.9447 1.2870 0. 0.9971 1.2870" />
+
+
 
   </keyframe>
 </mujoco>

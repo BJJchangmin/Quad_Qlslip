@@ -71,7 +71,7 @@ const int kErrorLength = 1024;          // load error string length
 //* ******************************** MY CONSTANTS & OBJECT DECLARATION ************************* *//
 //* ******************************************************************************************** *//
 
-const double sim_end_time = 20.0;       // simulation end time (seconds)
+extern const double sim_end_time = 12.0;       // simulation end time (seconds)
 unsigned int loop_iter = 0;             // loop iteration counter
 RobotLeg<float> robot = buildMclQuad<float>();  // robot model
 TrackingController<float> track_ctrl(robot);     // tracking controller
@@ -301,10 +301,29 @@ mjModel* LoadModel(const char* file, mj::Simulate& sim) {
 void apply_joint_control(mjData * d)
 {
   //! qpos and qvel is different number
-  d->qpos[3] = 0;
-  d->qpos[6] = 0;
-  d->qpos[9] = 0;
-  d->qpos[12] = 0;
+  //* Trunk 6DOF
+  d->qpos[7] = 0;
+  d->qpos[10] = 0;
+  d->qpos[13] = 0;
+  d->qpos[16] = 0;
+
+  // //* Trunk 4DOF
+  // d->qpos[4] = 0;
+  // d->qpos[7] = 0;
+  // d->qpos[10] = 0;
+  // d->qpos[13] = 0;
+
+  // //* Trunk 3DOF
+  // d->qpos[3] = 0;
+  // d->qpos[6] = 0;
+  // d->qpos[9] = 0;
+  // d->qpos[12] = 0;
+
+  // //* Trunk 2DOF
+  // d->qpos[2] = 0;
+  // d->qpos[5] = 0;
+  // d->qpos[8] = 0;
+  // d->qpos[11] = 0;
 
 
   for (size_t i = 0; i < 4; i++)
@@ -345,9 +364,9 @@ void YCM_controller()
   // double v_1 = 0.5;
   // double v_2 = 0.85;
   // double v_3 = 1.2;
-  double v_1 = 0.5;
-  double v_2 = 0.5;
-  double v_3 = 0.5;
+  double v_1 = 0.2;
+  double v_2 = 0.2;
+  double v_3 = 0.2;
   if ((0 <= t) & (t < t1))
   {
     v_ref = v_1;  // 0.2

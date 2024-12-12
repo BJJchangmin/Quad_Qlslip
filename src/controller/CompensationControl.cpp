@@ -34,6 +34,8 @@ CompensationControl<T>::CompensationControl(RobotLeg<T> & robot) : robot_(robot)
   I_m = I1_zz + m2*l*l+m1*l1_c*l1_c;
   I_b = I2_zz + m2*l2_c*l2_c;
 
+  comp_state = 0;
+
   // Calculate for motor accelelration
   for (int i = 0; i < 4; i++)
   {
@@ -149,10 +151,12 @@ void CompensationControl<T>::Trunk_mass_compensation(mjData * d)
    */
 
   Vec2<T> result[2];
+  Vec3<T> result_3;
 
   body_com << d->subtree_com[0], d->subtree_com[1], d->subtree_com[2];
 
   body_weight << 9.81*43, 0;
+  body_weight3 << 9.81*43, 0, 0;
 
   for (int i = 0; i < 4; i++)
   {
@@ -170,80 +174,94 @@ void CompensationControl<T>::Trunk_mass_compensation(mjData * d)
     // cout << foot_pos[2] << endl;
     // cout << foot_pos[3] << endl;
   }
-  // cout <<  << endl;
-  // cout << "0 : "<< foot_pos[0][0]<<", "<< foot_pos[0][1]<< ", "<< foot_pos[0][2] << endl;
-  // cout << "1 : "<< foot_pos[1][0]<<", "<< foot_pos[1][1]<< ", "<< foot_pos[1][2] << endl;
-  // cout << "2 : "<< foot_pos[2][0]<<", "<< foot_pos[2][1]<< ", "<< foot_pos[2][2] << endl;
-  // cout << "3 : "<< foot_pos[3][0]<<", "<< foot_pos[3][1]<< ", "<< foot_pos[3][2] << endl;
 
-  cal_Mat[0] << 1, 1, vec_body2foot[0][0], vec_body2foot[3][0];
-  cal_Mat[1] << 1, 1, vec_body2foot[1][0], vec_body2foot[2][0];
-  robot_.phase_[2] = 1;
-  robot_.phase_[3] = 1;
 
-  // cout << "phase_0 "<< robot_.phase_[0] << endl;
-  // cout << "phase_1 "<< robot_.phase_[1] << endl;
-  // cout << "phase_2 "<< robot_.phase_[2] << endl;
-  // cout << "phase_3 "<< robot_.phase_[3] << endl;
+
+
   //* 4점 지지
   if (robot_.phase_[0] == 1 && robot_.phase_[1] == 1 &&
       robot_.phase_[2] == 1 && robot_.phase_[3] == 1)
   {
+    cal_Mat[0] << 1, 1, vec_body2foot[0][0], vec_body2foot[3][0];
+    cal_Mat[1] << 1, 1, vec_body2foot[1][0], vec_body2foot[2][0];
 
-    result[0] = cal_Mat[0].inverse()*body_weight/2;
-    result[1] = cal_Mat[1].inverse()*body_weight/2;
+    result[0] = cal_Mat[0].inverse()*body_weight/4;
+    result[1] = cal_Mat[1].inverse()*body_weight/4;
 
     r_grf[0] << result[0][0], 0;
     r_grf[1] << result[1][0], 0;
     r_grf[2] << result[1][1], 0;
     r_grf[3] << result[0][1], 0;
-    // cout<< "1" << endl;
+    comp_state = 1;
   }
-  else if (robot_.phase_[0] == 1 && robot_.phase_[3] == 1)
+  else if (robot_.phase_[0] == 1 && robot_.phase_[1]== 1 && robot_.phase_[2] == 1)
   {
-    //* 2점 지지
-    result[0] = cal_Mat[0].inverse()*body_weight;
-    r_grf[0] << result[0][0], 0;
-    r_grf[3] << result[0][1], 0;
+    //! result_3 순서가 Phase를 둔 순서랑 같다
+    cal_Mat3 << 1, 1, 1, vec_body2foot[0][0], vec_body2foot[1][0], vec_body2foot[2][0], vec_body2foot[0][1], vec_body2foot[1][1], vec_body2foot[2][1];
 
-    r_grf[1] << 0, 0;
-    r_grf[2] << 0, 0;
-    // cout<< "2" << endl;
-  }
-  else if (robot_.phase_[1]==1 && robot_.phase_[2] == 1)
-  {
-    result[1] = cal_Mat[1].inverse()*body_weight;
-    r_grf[1] << result[1][0], 0;
-    r_grf[2] << result[1][1], 0;
-
-    r_grf[0] << 0, 0;
+    result_3 = cal_Mat3.inverse()*body_weight3;
+    //* 3점 지지
+    r_grf[0] << result_3[0], 0;
+    r_grf[1] << result_3[1], 0;
+    r_grf[2] << result_3[2], 0;
     r_grf[3] << 0, 0;
+
+    //* RR Flight
+    comp_state = 2;
   }
+  else if (robot_.phase_[0] == 1 && robot_.phase_[1]== 1 && robot_.phase_[3] == 1)
+  {
+    //! result_3 순서가 Phase를 둔 순서랑 같다
+    cal_Mat3 << 1, 1, 1, vec_body2foot[0][0], vec_body2foot[1][0], vec_body2foot[3][0], vec_body2foot[0][1], vec_body2foot[1][1], vec_body2foot[3][1];
 
-  robot_.phase_[2] == 0;
-  robot_.phase_[3] == 0;
+    result_3 = cal_Mat3.inverse()*body_weight3;
+    //* 3점 지지
+    r_grf[0] << result_3[0], 0;
+    r_grf[1] << result_3[1], 0;
+    r_grf[2] << 0, 0;
+    r_grf[3] << result_3[2], 0;
 
-  //* For Debugging
-  // result[0] = cal_Mat[0].inverse()*body_weight/2;
-  // result[1] = cal_Mat[1].inverse()*body_weight/2;
+    //* RL Flight
+    comp_state = 3;
+  }
+  else if (robot_.phase_[1] == 1 && robot_.phase_[2] == 1 && robot_.phase_[3] == 1)
+  {
+    //! result_3 순서가 Phase를 둔 순서랑 같다
+    cal_Mat3 << 1, 1, 1, vec_body2foot[1][0], vec_body2foot[2][0], vec_body2foot[3][0], vec_body2foot[1][1], vec_body2foot[2][1], vec_body2foot[3][1];
 
-  // r_grf[0] << result[0][0], 0;
-  // r_grf[1] << result[1][0], 0;
-  // r_grf[2] << result[1][1], 0;
-  // r_grf[3] << result[0][1], 0;
+    result_3 = cal_Mat3.inverse()*body_weight3;
+    //* 3점 지지
+    r_grf[0] << 0, 0;
+    r_grf[1] << result_3[0], 0;
+    r_grf[2] << result_3[1], 0;
+    r_grf[3] << result_3[2], 0;
 
-  // cout << "0 : "<< r_grf[0][0]<< endl;
-  // cout << "1 : "<< r_grf[1][0]<< endl;
-  // cout << "2 : "<< r_grf[2][0]<< endl;
-  // cout << "3 : "<< r_grf[3][0]<< endl;
+    //* FL Flight
+    comp_state = 4;
+  }
+  else if (robot_.phase_[0] == 1 && robot_.phase_[2] == 1 && robot_.phase_[3] == 1)
+  {
+    //! result_3 순서가 Phase를 둔 순서랑 같다
+    cal_Mat3 << 1, 1, 1, vec_body2foot[0][0], vec_body2foot[2][0], vec_body2foot[3][0], vec_body2foot[0][1], vec_body2foot[2][1], vec_body2foot[3][1];
+
+    result_3 = cal_Mat3.inverse()*body_weight3;
+    //* 3점 지지
+    r_grf[0] << result_3[0], 0;
+    r_grf[1] << 0, 0;
+    r_grf[2] << result_3[1], 0;
+    r_grf[3] << result_3[2], 0;
+
+    //* FR Flight
+    comp_state = 5;
+  }
+  else {comp_state = 8;}
+
+  // cout << "comp_state : " << comp_state << endl;
+
 
   for (int i = 0; i < 4; i++)
   {
-    //* Flight phase는 무조건 0으로 들어가게끔 setting
-    // if (robot_.phase_[i] == 2)
-    // {
-    //   r_grf[i] << 0, 0;
-    // }
+
 
     Trunk_mass_compensation_joint_des_[i] = 0.5*robot_.jacbRW[i].transpose() * r_grf[i]/cos(M_PI/2-robot_.joint_pos_bi_act_[i][1]);
     // Trunk_mass_compensation_joint_des_[i] = robot_.jacbRW[i].transpose() * r_grf[i];

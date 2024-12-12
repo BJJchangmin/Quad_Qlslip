@@ -28,6 +28,7 @@ class CompensationControl
     T G_m, G_b;
     T C_I;
     T I_m, I_b;
+    T comp_state;
 
     T th_m[4], th_b[4], th_br[4];
     T dth_m[4], dth_b[4], dth_br[4];
@@ -41,6 +42,8 @@ class CompensationControl
     Vec3<T> vec_body2foot[4];
     Vec2<T> body_weight;
     Mat2<T> cal_Mat[2];
+    Mat3<T> cal_Mat3;
+    Vec3<T> body_weight3;
     Vec2<T> r_grf[4];
 
     Vec2<T> gravity_compensation_joint_des_[4];
