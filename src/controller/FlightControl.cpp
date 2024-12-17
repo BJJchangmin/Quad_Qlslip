@@ -26,7 +26,7 @@ FlightControl<T>::FlightControl(RobotLeg<T> & robot) : robot_(robot)
   {
     kp_r_[i] = 20*600;
     kd_r_[i] = 120;
-    kp_th_[i] =10*800;
+    kp_th_[i] =10*450;
     kd_th_[i] = 450;
   }
 

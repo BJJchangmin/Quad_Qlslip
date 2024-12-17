@@ -253,7 +253,7 @@ void FSM<T>::Start_PCV_setting(int Leg_num)
 
   // pcv_ptr_->p1[Leg_num] = 0.0;
   pcv_ptr_->p1[1] = 0.2;
-  pcv_ptr_->p1[2] = 0.22;
+  pcv_ptr_->p1[2] = 0.2;
   pcv_ptr_->p1[3] = 0.1;
 
 

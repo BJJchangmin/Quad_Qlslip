@@ -80,7 +80,7 @@ void BezierTrajectory<T>::Desired_Touch_Down_state(int Leg_num)
 
   //* Gait Variable Setting
   // desired top
-  op_param_ptr_->r_des_top[Leg_num] = 0.365;
+  op_param_ptr_->r_des_top[Leg_num] = 0.34;
   op_param_ptr_->th_des_top[Leg_num] = 0;
 
 
