@@ -71,7 +71,7 @@ const int kErrorLength = 1024;          // load error string length
 //* ******************************** MY CONSTANTS & OBJECT DECLARATION ************************* *//
 //* ******************************************************************************************** *//
 
-extern const double sim_end_time = 12.0;       // simulation end time (seconds)
+extern const double sim_end_time = 15.0;       // simulation end time (seconds)
 unsigned int loop_iter = 0;             // loop iteration counter
 RobotLeg<float> robot = buildMclQuad<float>();  // robot model
 TrackingController<float> track_ctrl(robot);     // tracking controller
@@ -361,12 +361,12 @@ void YCM_controller()
 
   //*************** Velocity Trans ***************/
 
-  // double v_1 = 0.5;
-  // double v_2 = 0.85;
-  // double v_3 = 1.2;
-  double v_1 = 0.2;
-  double v_2 = 0.2;
-  double v_3 = 0.2;
+  //* Gait Variable Setting
+  v_ref = 0.6;
+  double v_1 = v_ref;
+  double v_2 = v_ref;
+  double v_3 = v_ref;
+
   if ((0 <= t) & (t < t1))
   {
     v_ref = v_1;  // 0.2

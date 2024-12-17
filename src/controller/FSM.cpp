@@ -96,6 +96,7 @@ void FSM<T>::phase_update(mjData * d)
         {
           if (swing_lock_[i] == false && swing_lock_phase_[i] == 1)
           {
+            //* Gait Variable Setting
             cout << "Touch Down" << i << endl;
             if(i == 0){pcv_ptr_->Gait_order = 1;}
             else if(i == 1){pcv_ptr_->Gait_order = 3;}
@@ -103,6 +104,7 @@ void FSM<T>::phase_update(mjData * d)
             else if(i == 3){pcv_ptr_->Gait_order = 2;}
             event_[i] = 3;
             Touch_down_state(i);
+
             //** PCV_Control */
             PCV_control(i);
           }
@@ -119,7 +121,9 @@ void FSM<T>::phase_update(mjData * d)
   //************************************ 2족처럼 Phase 맞춰주기 위한 과정 ******************************* */
   if(start_[0] == 1 || start_[1] == 1 || start_[2] == 1 || start_[3] == 1)
   {
-    liff_off_ratio_ = 0.8;
+    //* Gait Variable Setting
+    liff_off_ratio_ = 0.5;
+
     for(size_t i = 0; i < 4; i++)
     {
       if(time_ >= td_param_ptr_->t_TD[i] && td_param_ptr_->t_TD[i] > lo_param_ptr_->t_LO[i] )
@@ -132,19 +136,19 @@ void FSM<T>::phase_update(mjData * d)
         pcv_ptr_->time[i] = time_ - td_param_ptr_->t_TD[i];
         pcv_ptr_->Ratio[i] = pcv_ptr_->time[i]/pcv_ptr_->update_Period[i] + pcv_ptr_->Offset_phase[i]; //? Offset을 넣는다면 위치는 여기라고 생각한다. 하지만 첫번째 Touch Down 했을 때만으로 한정짓는다면 어떤 장치가 필요한가?
 
-        if (pcv_ptr_->Ratio[3] >= liff_off_ratio_  && phase_[0][0] == 1 && pcv_ptr_->Gait_order == 1)
+        if (pcv_ptr_->Ratio[3] >= liff_off_ratio_  && phase_[1][0] == 1 && phase_[2][0] == 1 )
         {
           End_PCV_setting(3);
         }
-        else if (pcv_ptr_->Ratio[1] >= liff_off_ratio_ && phase_[3][0] == 1  && pcv_ptr_->Gait_order == 2)
+        else if (pcv_ptr_->Ratio[1] >= liff_off_ratio_ && phase_[3][0] == 1 && phase_[0][0] == 1 )
         {
           End_PCV_setting(1);
         }
-        else if (pcv_ptr_->Ratio[2] >= liff_off_ratio_ && phase_[1][0] == 1  && pcv_ptr_->Gait_order == 3)
+        else if (pcv_ptr_->Ratio[2] >= liff_off_ratio_ && phase_[3][0] == 1 && phase_[0][0] == 1  )
         {
           End_PCV_setting(2);
         }
-        else if (pcv_ptr_->Ratio[0] >= liff_off_ratio_ && phase_[2][0] == 1  && pcv_ptr_->Gait_order == 4)
+        else if (pcv_ptr_->Ratio[0] >= liff_off_ratio_ && phase_[1][0] == 1 && phase_[2][0] == 1  )
         {
           cout << "Hello" << endl;
           End_PCV_setting(0);
@@ -241,17 +245,26 @@ void FSM<T>::Start_PCV_setting(int Leg_num)
   //* PCV Control Setting
   //! Gait에 따라 다르게 FL 기준으로 다르게 setting 해줘야함
   //! 생각 잘 해봐야하는게 Des Phase와 Offset_Phase는 알고리즘상 반대가 되어야하는게 맞다.
-  pcv_ptr_->Des_Phase[3] = 0.25;
-  pcv_ptr_->Des_Phase[2] = 0.75;
-  pcv_ptr_->Des_Phase[1] = 0.50;
-  pcv_ptr_->p1[Leg_num] = 0.9;
+
+  //* Gait Variable Setting
+  pcv_ptr_->Des_Phase[3] = 0.0;
+  pcv_ptr_->Des_Phase[2] = 0.5;
+  pcv_ptr_->Des_Phase[1] = 0.5;
+
+  // pcv_ptr_->p1[Leg_num] = 0.0;
+  pcv_ptr_->p1[1] = 0.2;
+  pcv_ptr_->p1[2] = 0.22;
+  pcv_ptr_->p1[3] = 0.1;
+
+
 
 
   //* Trotting Gait -> [0,3]세트, [1,2]세트
+  //* Gait Variable Setting
   if(Leg_num == 0){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0;}
-  if(Leg_num == 1){pcv_ptr_->Offset_phase[Leg_num]= 0.5; pcv_ptr_->Offset_GAP[Leg_num] = 0.5;}
-  if(Leg_num == 2){pcv_ptr_->Offset_phase[Leg_num]= 0.25; pcv_ptr_->Offset_GAP[Leg_num] = 0.25;}
-  if(Leg_num == 3){pcv_ptr_->Offset_phase[Leg_num]= 0.75; pcv_ptr_->Offset_GAP[Leg_num] = 0.75;}
+  if(Leg_num == 1){pcv_ptr_->Offset_phase[Leg_num]= 0.49; pcv_ptr_->Offset_GAP[Leg_num] = 0.5;}
+  if(Leg_num == 2){pcv_ptr_->Offset_phase[Leg_num]= 0.49; pcv_ptr_->Offset_GAP[Leg_num] = 0.5;}
+  if(Leg_num == 3){pcv_ptr_->Offset_phase[Leg_num]= 0.0; pcv_ptr_->Offset_GAP[Leg_num] = 0.0;}
 
 
 }

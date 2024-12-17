@@ -254,6 +254,32 @@ void CompensationControl<T>::Trunk_mass_compensation(mjData * d)
     //* FR Flight
     comp_state = 5;
   }
+  else if ( robot_.phase_[0] == 1 && robot_.phase_[1] == 2 && robot_.phase_[2] == 2 && robot_.phase_[3] == 1 )
+  {
+    cal_Mat[0] << 1, 1, vec_body2foot[0][0], vec_body2foot[3][0];
+
+    result[0] = cal_Mat[0].inverse()*body_weight/2;
+
+    r_grf[0] << result[0][0], 0;
+    r_grf[1] << 0, 0;
+    r_grf[2] << 0, 0;
+    r_grf[3] << result[0][1], 0;
+
+    comp_state = 6;
+  }
+  else if ( robot_.phase_[0] == 2 && robot_.phase_[1] == 1 && robot_.phase_[2] == 1 && robot_.phase_[3] == 2 )
+  {
+    cal_Mat[1] << 1, 1, vec_body2foot[1][0], vec_body2foot[2][0];
+
+    result[1] = cal_Mat[1].inverse()*body_weight/2;
+
+    r_grf[0] << 0, 0;
+    r_grf[1] << result[1][0], 0;
+    r_grf[2] << result[1][1], 0;
+    r_grf[3] << 0, 0;
+
+    comp_state = 7;
+  }
   else {comp_state = 8;}
 
   // cout << "comp_state : " << comp_state << endl;

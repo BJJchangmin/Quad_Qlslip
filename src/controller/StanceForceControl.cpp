@@ -21,8 +21,8 @@ StanceForceControl<T>::StanceForceControl(RobotLeg<T> & robot) : robot_(robot)
     dthbr_[i] = 0;
     dr_[i] = 0;
 
-    // spring_K_[i] = 10*10; // 0.1 goood
-    spring_K_[i] = 10*430;
+    spring_K_[i] = 10*430; // 0.1 goood
+    // spring_K_[i] = 10*170;
     kp_tau_[i] = 10*10;
     kd_tau_[i] = 10*90; //150 good
 
@@ -55,9 +55,11 @@ void StanceForceControl<T>::spring_force_control(int Leg_num)
 
   if (Leg_num == 3 || Leg_num == 2)
   {
+    //! Stance Control에서 theta 각도가 커지면 r 방향의 더 큰힘을 넣어줘야함. 각도를 줬을 때 로봇이 많이 기울어지면 더 큰 값을 넣어줘야함
     force_rw_stance_des_[Leg_num][0] = spring_K_[Leg_num] * error_pos_[Leg_num][0] -(robot_.M_d_R)*(1/(2*tan(thbr_[Leg_num]/2)))*dthbr_[Leg_num]*dr_[Leg_num]+
-    (robot_.M_d_R + robot_.thigh_mass_[Leg_num]+robot_.shank_mass_[Leg_num] + 7)*g;
-    // force_rw_stance_des_[Leg_num][0] = spring_K_[Leg_num] * error_pos_[Leg_num][0];
+    (robot_.M_d_R + robot_.thigh_mass_[Leg_num]+robot_.shank_mass_[Leg_num] + 6.5)*g;
+
+    // force_rw_stance_des_[Leg_num][0] = spring_K_[Leg_num] * error_pos_[Leg_num][0]8;
   }
   else
   {
