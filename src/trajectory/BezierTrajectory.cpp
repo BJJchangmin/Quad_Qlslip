@@ -79,7 +79,11 @@ void BezierTrajectory<T>::Desired_Touch_Down_state(int Leg_num)
   // T th_r = 0;
 
   // desired top
-  op_param_ptr_->r_des_top[Leg_num] = 0.3;
+  //*small Touch Down Angle
+  // op_param_ptr_->r_des_top[Leg_num] = 0.35;
+  //*Large Touch Down Angle
+  op_param_ptr_->r_des_top[Leg_num] = 0.33;
+
   op_param_ptr_->th_des_top[Leg_num] = 0;
 
 
@@ -93,7 +97,11 @@ void BezierTrajectory<T>::Desired_Touch_Down_state(int Leg_num)
   op_param_ptr_->r_des_TD[Leg_num] = 0.4;
   // op_param_ptr_->r_des_TD[Leg_num] = r_ref[Leg_num];
   // op_param_ptr_->th_des_TD[Leg_num] = lo_param_ptr_->th_LO[Leg_num] + op_param_ptr_->u[Leg_num];
-  op_param_ptr_->th_des_TD[Leg_num] = 0.25;
+
+  //*small Touch Down Angle
+  //op_param_ptr_->th_des_TD[Leg_num] = 0.1;
+  //*Large Touch Down Angle
+  op_param_ptr_->th_des_TD[Leg_num] = 0.22;
 
   T t_b = st_time/2;
 

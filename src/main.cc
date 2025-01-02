@@ -71,7 +71,7 @@ const int kErrorLength = 1024;          // load error string length
 //* ******************************** MY CONSTANTS & OBJECT DECLARATION ************************* *//
 //* ******************************************************************************************** *//
 
-extern const double sim_end_time = 12.0;       // simulation end time (seconds)
+extern const double sim_end_time = 30.0;       // simulation end time (seconds)
 unsigned int loop_iter = 0;             // loop iteration counter
 RobotLeg<float> robot = buildMclQuad<float>();  // robot model
 TrackingController<float> track_ctrl(robot);     // tracking controller

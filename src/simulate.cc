@@ -2679,7 +2679,7 @@ void Simulate::RenderLoop() {
       this->cam.fixedcamid = -1;
       this->cam.trackbodyid = 0;
       this->cam.distance = 2;
-      this->cam.azimuth = -90.0;
+      this->cam.azimuth = -90.0 ;
       this->cam.elevation = 0;
       // this->cam.distance = 3.0;
       // this->cam.lookat[0] = d_->qvel[0];

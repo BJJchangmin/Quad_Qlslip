@@ -244,7 +244,17 @@ void FSM<T>::Start_PCV_setting(int Leg_num)
   pcv_ptr_->Des_Phase[3] = 0.25;
   pcv_ptr_->Des_Phase[2] = 0.75;
   pcv_ptr_->Des_Phase[1] = 0.50;
-  pcv_ptr_->p1[Leg_num] = 0.9;
+  // pcv_ptr_->p1[Leg_num] = 0.0;
+
+  //* Desired Touch Down Angle이 작을 때 (th)
+  // pcv_ptr_->p1[1] = 1.39;
+  // pcv_ptr_->p1[2] = 1.39;
+  // pcv_ptr_->p1[3] = 0.95;
+
+  //* Desired Touch Down Angle이 클 때
+  pcv_ptr_->p1[1] = 1.46;
+  pcv_ptr_->p1[2] = 1.46;
+  pcv_ptr_->p1[3] = 0.94;
 
 
   //* Trotting Gait -> [0,3]세트, [1,2]세트

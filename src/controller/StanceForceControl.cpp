@@ -56,7 +56,7 @@ void StanceForceControl<T>::spring_force_control(int Leg_num)
   if (Leg_num == 3 || Leg_num == 2)
   {
     force_rw_stance_des_[Leg_num][0] = spring_K_[Leg_num] * error_pos_[Leg_num][0] -(robot_.M_d_R)*(1/(2*tan(thbr_[Leg_num]/2)))*dthbr_[Leg_num]*dr_[Leg_num]+
-    (robot_.M_d_R + robot_.thigh_mass_[Leg_num]+robot_.shank_mass_[Leg_num] + 7)*g;
+    (robot_.M_d_R + robot_.thigh_mass_[Leg_num]+robot_.shank_mass_[Leg_num] + 3)*g;
     // force_rw_stance_des_[Leg_num][0] = spring_K_[Leg_num] * error_pos_[Leg_num][0];
   }
   else
